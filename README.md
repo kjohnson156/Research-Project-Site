@@ -1,2 +1,2 @@
-# rmarkdown-website-examples
-Examples of R Markdown Websites
+# rmarkdown-website-test
+Test buliding a website fully from Rmarkdown
