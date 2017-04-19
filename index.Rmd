@@ -1,5 +1,42 @@
 ---
-title: "My Website"
+title: "Overview and Background"
 ---
 
-Hello, Website!
+
+As any instructor will tell you, teaching is an ever evolving project. You can always "do better", you can always "get better" at teaching. The content may stay stagnent, the instructor may stay stagnent, but the face and characteristics of the students being served are always changing. 
+
+This project enhances a current course redesign project designed to improve student performance in Chemistry 111 (increased GPA, decrease DWF rate) by providing a deeper look at the characteristics of who takes this course, and who passes this course. It is essential for faculty and administrators to have a holistic view of their students, and not consider the effects of changes such as a course redesign independent of other factors that affect student success. This project uses data mining techniques to examine historical trends and assess the impact of the redesign while controlling for other relevant factors. 
+
+----
+
+# Background
+
+* In Fall 15 Erik Wasinger conducted a course redesign to create a significantly enriched active learning component relative to previous all-lecture style formats in Chem 111, the first semester chemistry course for STEM majors. The results of this work can be found [here](https://contentbuilder.merlot.org/toolkit/html/snapshot.php?id=79772174898323).
+
+* This project uses student records data to explore historical trends of Chem 111 students. 
+
+* The aim is to use data to provide support by way of  the current [Sustaining Success](https://contentbuilder.merlot.org/toolkit/html/snapshot.php?id=61030667052633) project for Chem 111. 
+
+* Specifically we use data visualization and statistical analysis techniques to 
+    - understand how the population that takes Chem 111 compares to the overall campus population. 
+    - understand how this population has been changing over the past 5 years. 
+    - understand how existing factors such as demographics and academic preparation contribute to a Chem 111 student's success.
+    - assess the current course redesign for differential impact on different student groups.
+
+
+---
+
+# How Did you Sustain Course Redesign Success?
+
+* Assessment of course redesign tends to occur by comparing course-level aggregate level measures such as DWF rate or average GPA after one semester of a redesigned course, to the same course by the same instructor one semester prior. 
+    - This is an acceptable surface level comparison, but it does not do a sufficient job at explaining or examining factors that also contribute to student success in a holistic manner. 
+    - Aggregate measures do not take into consideration student level factors that also contribute to success. It is inaccurate to claim that a redesign caused student improvement without accounting for other factors in a student's life, such as how they are performing in other classes, their academic preparation and other demographic statuses that the literature have shown to be related to academic performance. 
+
+* Digging deeper into the factors leading to student success helps to ensure that redesigned courses are serving the target population sufficiently. 
+
+* Examining how the characteristics of students taking Chemistry 111 has been changing allows instructors to better understand the students that they are serving. 
+    - This could lead to development of culturally relevant teaching strategies or curriculum. 
+
+* Furthermore, this information could be useful to administration to ensure support systems are in place to serve the current and future student body. 
+    - Such as allocating additional resources to evidence based student success initiatives such as Supplemental Instructions in light of a growing first generation population. 
+

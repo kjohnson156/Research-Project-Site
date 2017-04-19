@@ -1,9 +1,21 @@
-name: "my-website"
+name: "Sustaining Success at Chico State"
 output_dir: "."
 navbar:
-  title: "My Website"
+  title: "Sustaining Success in First Semester Chemistry under a Shifting Demographic Student Body"
   left:
-    - text: "Home"
+    - text: "Abstract"
       href: index.html
-    - text: "About"
-      href: about.html
+    - text: "Activities"
+      href: activities.html
+    - text: "Historical Trends"
+      href: trends.html
+    - text: "Analysis Results"
+      href: crt.html
+    - text: "Lessons Learned"
+      href: lessons.html
+output:
+  html_document:
+    highlight: textmate
+    include:
+      after_body: footer.html
+    css: styles.css
