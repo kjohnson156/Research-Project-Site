@@ -7,12 +7,17 @@ navbar:
       href: index.html
     - text: "Activities"
       href: activities.html
-    - text: "Historical Trends"
-      href: trends.html
-    - text: "Analysis Results"
-      href: crt.html
-    - text: "Lessons Learned"
-      href: lessons.html
+      menu:
+        - text: "menu text"
+        - text: "Historical Trends"
+          href: trends.html
+        - text: "Analysis Results"
+          href: crt.html
+        - text: "Lessons Learned"
+          href: lessons.html
+  right:
+    - icon: fa-question fa-lg
+      href: https://example.com
 output:
   html_document:
     highlight: textmate

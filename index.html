@@ -22,6 +22,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -179,21 +180,33 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Abstract</a>
 </li>
-<li>
-  <a href="activities.html">Activities</a>
-</li>
-<li>
-  <a href="trends.html">Historical Trends</a>
-</li>
-<li>
-  <a href="crt.html">Analysis Results</a>
-</li>
-<li>
-  <a href="lessons.html">Lessons Learned</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Activities
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">menu text</li>
+    <li>
+      <a href="trends.html">Historical Trends</a>
+    </li>
+    <li>
+      <a href="crt.html">Analysis Results</a>
+    </li>
+    <li>
+      <a href="lessons.html">Lessons Learned</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://example.com">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
