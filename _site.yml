@@ -1,26 +1,27 @@
-name: "Sustaining Success at Chico State"
+name: "Robin Donatello"
 output_dir: "."
 navbar:
-  title: "Sustaining Success in First Semester Chemistry under a Shifting Demographic Student Body"
+  title: "Sustaining Success in Chemistry"
   left:
-    - text: "Abstract"
+    - text: "Overview"
       href: index.html
+    - text: "Background"
+      href: background.html
     - text: "Activities"
       href: activities.html
-      menu:
-        - text: "menu text"
-        - text: "Historical Trends"
-          href: trends.html
-        - text: "Analysis Results"
-          href: crt.html
-        - text: "Lessons Learned"
-          href: lessons.html
+    - text: "Trends"
+      href: trends.html
+    - text: "Lessons"
+      href: lessons.html
   right:
-    - icon: fa-question fa-lg
-      href: https://example.com
+      - text: ""
+        icon: fa-envelope-o
+        href: mailto:rdonatello@csuchico.edu
+      - text: ""
+        icon: fa-github-alt
+        href: https://github.com/norcalbiostat
 output:
   html_document:
+    theme: cosmo
     highlight: textmate
-    include:
-      after_body: footer.html
     css: styles.css

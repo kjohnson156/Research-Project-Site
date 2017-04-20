@@ -1,5 +1,4 @@
----
-title: "Historical Trends in the Student Body"
----
+
+# Historical Trends in the Student Body
 
 historical trends here
