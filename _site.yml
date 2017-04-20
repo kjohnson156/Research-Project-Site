@@ -1,12 +1,12 @@
 name: "Robin Donatello"
 output_dir: "."
 navbar:
-  title: "Sustaining Success in Chemistry"
+  title: "SUSTAINING SUCCESS IN CHEMISTRY"
   left:
     - text: "Overview"
       href: index.html
     - text: "Background"
-      href: background.html
+      href: bg.html
     - text: "Activities"
       href: activities.html
     - text: "Trends"

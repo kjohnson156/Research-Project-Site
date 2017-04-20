@@ -1,5 +1,0 @@
----
-title: "Analysis of the Course Redesign for Chemistry 111"
----
-
-analysis results here
