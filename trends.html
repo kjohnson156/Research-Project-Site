@@ -177,20 +177,38 @@ $(document).ready(function () {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li>
-  <a href="index.html">Overview</a>
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Overview
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="bg.html">Background</a>
+    </li>
+    <li>
+      <a href="activities.html">Activities</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="trends.html">Historical Trends</a>
+    </li>
+    <li>
+      <a href="crt.html">Course Redesign</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="bg.html">Background</a>
-</li>
-<li>
-  <a href="activities.html">Activities</a>
-</li>
-<li>
-  <a href="trends.html">Trends</a>
-</li>
-<li>
-  <a href="lessons.html">Lessons</a>
+  <a href="impact.html">Impact</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -223,7 +241,691 @@ $(document).ready(function () {
 
 <div id="historical-trends-in-the-student-body" class="section level1">
 <h1>Historical Trends in the Student Body</h1>
-<p>historical trends here</p>
+<div id="course-level-measurements" class="section level2">
+<h2>Course Level Measurements</h2>
+<div id="total-enrollment-for-chem-111-across-all-sections-per-term" class="section level3">
+<h3>Total enrollment for Chem 111 across all sections per term</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Spring term enrollment has steadily increased since 2009.</p>
+</div>
+</div>
+<div id="distribution-of-class-size" class="section level2">
+<h2>Distribution of class size</h2>
+<p>Overall class sizes range from 50 to 164, with an IQR of 26, a median of 155, and a mean of 136.2.</p>
+<p>Each dot in the figure below represents a single section. The table directly following the figure shows the actual class size for each section that term.</p>
+<p><img src="trends_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Enrollment per section, per term</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">F09</th>
+<th align="right">S10</th>
+<th align="right">F10</th>
+<th align="right">S11</th>
+<th align="right">F11</th>
+<th align="right">S12</th>
+<th align="right">F12</th>
+<th align="right">S13</th>
+<th align="right">F13</th>
+<th align="right">S14</th>
+<th align="right">F14</th>
+<th align="right">S15</th>
+<th align="right">F15</th>
+<th align="right">S16</th>
+<th align="right">F16</th>
+<th align="right">Sum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="right">163</td>
+<td align="right">164</td>
+<td align="right">160</td>
+<td align="right">93</td>
+<td align="right">159</td>
+<td align="right">159</td>
+<td align="right">162</td>
+<td align="right">160</td>
+<td align="right">164</td>
+<td align="right">162</td>
+<td align="right">155</td>
+<td align="right">144</td>
+<td align="right">155</td>
+<td align="right">163</td>
+<td align="right">160</td>
+<td align="right">2323</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">91</td>
+<td align="right">0</td>
+<td align="right">94</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">185</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td align="right">161</td>
+<td align="right">0</td>
+<td align="right">156</td>
+<td align="right">0</td>
+<td align="right">138</td>
+<td align="right">0</td>
+<td align="right">157</td>
+<td align="right">138</td>
+<td align="right">164</td>
+<td align="right">134</td>
+<td align="right">156</td>
+<td align="right">136</td>
+<td align="right">154</td>
+<td align="right">136</td>
+<td align="right">153</td>
+<td align="right">1783</td>
+</tr>
+<tr class="even">
+<td>17</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">94</td>
+<td align="right">50</td>
+<td align="right">116</td>
+<td align="right">57</td>
+<td align="right">141</td>
+<td align="right">56</td>
+<td align="right">128</td>
+<td align="right">642</td>
+</tr>
+<tr class="odd">
+<td>Sum</td>
+<td align="right">324</td>
+<td align="right">164</td>
+<td align="right">316</td>
+<td align="right">184</td>
+<td align="right">297</td>
+<td align="right">253</td>
+<td align="right">319</td>
+<td align="right">298</td>
+<td align="right">422</td>
+<td align="right">346</td>
+<td align="right">427</td>
+<td align="right">337</td>
+<td align="right">450</td>
+<td align="right">355</td>
+<td align="right">441</td>
+<td align="right">4933</td>
+</tr>
+</tbody>
+</table>
+<div id="class-level-gpa" class="section level3">
+<h3>Class-level GPA</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dfw" class="section level3">
+<h3>DFW</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dfw-rate" class="section level3">
+<h3>DFW Rate</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="individual-student-measurements" class="section level1">
+<h1>Individual Student Measurements</h1>
+<div id="demographics" class="section level2">
+<h2>Demographics</h2>
+<div id="gender" class="section level3">
+<h3>Gender</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Across all semesters, 43.2% of students taking Chem111 are female. This percentage appears to be increasing in the past two years.</p>
+</div>
+<div id="age" class="section level3">
+<h3>Age</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The black horizonal line represents the average age across all students under consideration. Students taking Chemistry in the fall are on average younger than those taking chemistry in the Spring. The obvious exception is this past Spring 2016 seems to be an unusually young cohort for spring. Recall this is age at admission, not the age when the student is taking Chem 111.</p>
+</div>
+<div id="area-where-a-student-is-from" class="section level3">
+<h3>Area Where a Student is From</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="citizenship" class="section level3">
+<h3>Citizenship</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="students-who-are-recieving-services-from-dss" class="section level3">
+<h3>Students who are recieving services from DSS</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="eop-status" class="section level3">
+<h3>EOP Status</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="reach" class="section level3">
+<h3>REACH</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="any-formal-student-group-fsg" class="section level3">
+<h3>Any formal student group (fsg)</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="race-code" class="section level3">
+<h3>Race Code</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="urm" class="section level3">
+<h3>URM</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="soc" class="section level3">
+<h3>SOC</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="pre-enrollment-information" class="section level2">
+<h2>Pre-enrollment Information</h2>
+<div id="admission-index" class="section level3">
+<h3>Admission Index</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Mean(sd) HSEI per section, per term (09-12)</caption>
+<thead>
+<tr class="header">
+<th align="center">section</th>
+<th align="center">F09</th>
+<th align="center">S10</th>
+<th align="center">F10</th>
+<th align="center">S11</th>
+<th align="center">F11</th>
+<th align="center">S12</th>
+<th align="center">F12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">3.7 (0.42)</td>
+<td align="center">3.73 (0.4)</td>
+<td align="center">3.68 (0.41)</td>
+<td align="center">3.74 (0.42)</td>
+<td align="center">3.73 (0.39)</td>
+<td align="center">3.66 (0.4)</td>
+<td align="center">3.7 (0.39)</td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">3.63 (0.4)</td>
+<td align="center"></td>
+<td align="center">3.73 (0.37)</td>
+<td align="center"></td>
+<td align="center">3.62 (0.4)</td>
+<td align="center"></td>
+<td align="center">3.69 (0.41)</td>
+</tr>
+<tr class="odd">
+<td align="center">6</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">3.65 (0.38)</td>
+<td align="center"></td>
+<td align="center">3.72 (0.41)</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Mean(sd) HSEI per section, per term (13-16)</caption>
+<thead>
+<tr class="header">
+<th align="center">section</th>
+<th align="center">S13</th>
+<th align="center">F13</th>
+<th align="center">S14</th>
+<th align="center">F14</th>
+<th align="center">S15</th>
+<th align="center">F15</th>
+<th align="center">S16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">3.76 (0.36)</td>
+<td align="center">3.71 (0.36)</td>
+<td align="center">3.69 (0.38)</td>
+<td align="center">3.74 (0.37)</td>
+<td align="center">3.72 (0.36)</td>
+<td align="center">3.74 (0.38)</td>
+<td align="center">3.69 (0.32)</td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">3.66 (0.36)</td>
+<td align="center">3.68 (0.36)</td>
+<td align="center">3.7 (0.37)</td>
+<td align="center">3.74 (0.38)</td>
+<td align="center">3.64 (0.39)</td>
+<td align="center">3.77 (0.34)</td>
+<td align="center">3.69 (0.32)</td>
+</tr>
+<tr class="odd">
+<td align="center">17</td>
+<td align="center"></td>
+<td align="center">3.67 (0.4)</td>
+<td align="center">3.73 (0.38)</td>
+<td align="center">3.75 (0.36)</td>
+<td align="center">3.72 (0.3)</td>
+<td align="center">3.7 (0.36)</td>
+<td align="center">3.8 (0.3)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="tests-and-benchmarks" class="section level2">
+<h2>Tests and Benchmarks</h2>
+<div id="ge-breadth-course-completion-status" class="section level3">
+<h3>GE-Breadth Course Completion Status</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="elm" class="section level3">
+<h3>ELM</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ept" class="section level3">
+<h3>EPT</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="college-prep" class="section level3">
+<h3>College prep</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Mean(SD) for number of college prep classes by term.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">Engl</th>
+<th align="center">Math</th>
+<th align="center">Lab Sci</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>F09</td>
+<td align="center">6.93 (2.84)</td>
+<td align="center">6.97 (3.21)</td>
+<td align="center">5.31 (2.67)</td>
+</tr>
+<tr class="even">
+<td>S10</td>
+<td align="center">6.83 (2.95)</td>
+<td align="center">6.9 (3.37)</td>
+<td align="center">5.33 (2.72)</td>
+</tr>
+<tr class="odd">
+<td>F10</td>
+<td align="center">7.07 (2.76)</td>
+<td align="center">7.22 (3.23)</td>
+<td align="center">5.64 (2.79)</td>
+</tr>
+<tr class="even">
+<td>S11</td>
+<td align="center">6.73 (3)</td>
+<td align="center">7.12 (3.45)</td>
+<td align="center">5.11 (2.74)</td>
+</tr>
+<tr class="odd">
+<td>F11</td>
+<td align="center">6.93 (2.81)</td>
+<td align="center">6.99 (3.31)</td>
+<td align="center">5.54 (2.81)</td>
+</tr>
+<tr class="even">
+<td>S12</td>
+<td align="center">6.63 (3.04)</td>
+<td align="center">6.81 (3.49)</td>
+<td align="center">5.25 (2.83)</td>
+</tr>
+<tr class="odd">
+<td>F12</td>
+<td align="center">7.14 (2.64)</td>
+<td align="center">7.18 (2.98)</td>
+<td align="center">5.89 (2.72)</td>
+</tr>
+<tr class="even">
+<td>S13</td>
+<td align="center">6.68 (3.06)</td>
+<td align="center">6.97 (3.49)</td>
+<td align="center">5.27 (2.84)</td>
+</tr>
+<tr class="odd">
+<td>F13</td>
+<td align="center">7.11 (2.64)</td>
+<td align="center">7.23 (3.03)</td>
+<td align="center">5.95 (2.76)</td>
+</tr>
+<tr class="even">
+<td>S14</td>
+<td align="center">6.77 (2.95)</td>
+<td align="center">6.94 (3.38)</td>
+<td align="center">5.42 (2.83)</td>
+</tr>
+<tr class="odd">
+<td>F14</td>
+<td align="center">6.99 (2.82)</td>
+<td align="center">7.23 (3.28)</td>
+<td align="center">5.92 (2.92)</td>
+</tr>
+<tr class="even">
+<td>S15</td>
+<td align="center">6.66 (3.13)</td>
+<td align="center">6.97 (3.58)</td>
+<td align="center">5.39 (2.91)</td>
+</tr>
+<tr class="odd">
+<td>F15</td>
+<td align="center">6.98 (2.82)</td>
+<td align="center">7.52 (3.38)</td>
+<td align="center">5.95 (2.95)</td>
+</tr>
+<tr class="even">
+<td>S16</td>
+<td align="center">7.01 (2.82)</td>
+<td align="center">7.36 (3.27)</td>
+<td align="center">5.83 (2.8)</td>
+</tr>
+<tr class="odd">
+<td>F16</td>
+<td align="center">6.99 (2.78)</td>
+<td align="center">7.39 (3.27)</td>
+<td align="center">6.03 (2.9)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="academic-standing" class="section level2">
+<h2>Academic Standing</h2>
+<div id="college" class="section level3">
+<h3>College</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Percent of students in Chem 111 from each college</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">F13</th>
+<th align="right">S14</th>
+<th align="right">F14</th>
+<th align="right">S15</th>
+<th align="right">F15</th>
+<th align="right">S16</th>
+<th align="right">F16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AGR</td>
+<td align="right">4.5</td>
+<td align="right">6.1</td>
+<td align="right">5.2</td>
+<td align="right">6.5</td>
+<td align="right">6.7</td>
+<td align="right">13.8</td>
+<td align="right">8.7</td>
+</tr>
+<tr class="even">
+<td>BSS</td>
+<td align="right">7.4</td>
+<td align="right">5.2</td>
+<td align="right">6.1</td>
+<td align="right">5.0</td>
+<td align="right">7.3</td>
+<td align="right">6.5</td>
+<td align="right">8.5</td>
+</tr>
+<tr class="odd">
+<td>BUS</td>
+<td align="right">0.2</td>
+<td align="right">1.2</td>
+<td align="right">0.7</td>
+<td align="right">0.6</td>
+<td align="right">1.3</td>
+<td align="right">1.4</td>
+<td align="right">1.4</td>
+</tr>
+<tr class="even">
+<td>CME</td>
+<td align="right">12.6</td>
+<td align="right">17.3</td>
+<td align="right">12.5</td>
+<td align="right">14.2</td>
+<td align="right">13.8</td>
+<td align="right">14.1</td>
+<td align="right">11.4</td>
+</tr>
+<tr class="odd">
+<td>ECC</td>
+<td align="right">25.5</td>
+<td align="right">35.5</td>
+<td align="right">29.2</td>
+<td align="right">39.5</td>
+<td align="right">28.7</td>
+<td align="right">32.4</td>
+<td align="right">24.5</td>
+</tr>
+<tr class="even">
+<td>HFA</td>
+<td align="right">1.0</td>
+<td align="right">0.6</td>
+<td align="right">1.2</td>
+<td align="right">0.0</td>
+<td align="right">0.9</td>
+<td align="right">0.6</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td>NS</td>
+<td align="right">45.7</td>
+<td align="right">30.3</td>
+<td align="right">41.9</td>
+<td align="right">31.2</td>
+<td align="right">37.6</td>
+<td align="right">28.5</td>
+<td align="right">41.2</td>
+</tr>
+<tr class="even">
+<td>UGE</td>
+<td align="right">3.1</td>
+<td align="right">3.8</td>
+<td align="right">3.3</td>
+<td align="right">3.0</td>
+<td align="right">3.8</td>
+<td align="right">2.8</td>
+<td align="right">3.2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="student-level" class="section level3">
+<h3>Student Level</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Percent of students in Chem 111 by student level</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">F13</th>
+<th align="right">S14</th>
+<th align="right">F14</th>
+<th align="right">S15</th>
+<th align="right">F15</th>
+<th align="right">S16</th>
+<th align="right">F16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1_Fresh</td>
+<td align="right">0.6</td>
+<td align="right">0.3</td>
+<td align="right">0.5</td>
+<td align="right">0.4</td>
+<td align="right">0.5</td>
+<td align="right">0.5</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td>2_Soph</td>
+<td align="right">0.3</td>
+<td align="right">0.4</td>
+<td align="right">0.3</td>
+<td align="right">0.3</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0.3</td>
+</tr>
+<tr class="odd">
+<td>3_Jr</td>
+<td align="right">0.1</td>
+<td align="right">0.2</td>
+<td align="right">0.1</td>
+<td align="right">0.2</td>
+<td align="right">0.1</td>
+<td align="right">0.2</td>
+<td align="right">0.2</td>
+</tr>
+<tr class="even">
+<td>4_Sr</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="units-taken-this-semester" class="section level3">
+<h3>Units taken this semester</h3>
+<p><img src="trends_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Mean(sd) student course load per section per term (09-12)</caption>
+<thead>
+<tr class="header">
+<th align="center">section</th>
+<th align="center">F09</th>
+<th align="center">S10</th>
+<th align="center">F10</th>
+<th align="center">S11</th>
+<th align="center">F11</th>
+<th align="center">S12</th>
+<th align="center">F12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">12.03 (2.16)</td>
+<td align="center">12.57 (2.36)</td>
+<td align="center">12.22 (2.44)</td>
+<td align="center">12.41 (2.3)</td>
+<td align="center">12.79 (1.88)</td>
+<td align="center">12.07 (2.1)</td>
+<td align="center">12.5 (1.74)</td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">12.43 (2.08)</td>
+<td align="center"></td>
+<td align="center">12.15 (2.19)</td>
+<td align="center"></td>
+<td align="center">12.09 (2.56)</td>
+<td align="center"></td>
+<td align="center">12.44 (1.87)</td>
+</tr>
+<tr class="odd">
+<td align="center">6</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">12.69 (2.26)</td>
+<td align="center"></td>
+<td align="center">12.47 (2.32)</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Mean(sd) student course load per section per term (13-16)</caption>
+<thead>
+<tr class="header">
+<th align="center">section</th>
+<th align="center">S13</th>
+<th align="center">F13</th>
+<th align="center">S14</th>
+<th align="center">F14</th>
+<th align="center">S15</th>
+<th align="center">F15</th>
+<th align="center">S16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">12.34 (1.94)</td>
+<td align="center">12.17 (2.07)</td>
+<td align="center">12.42 (1.93)</td>
+<td align="center">12.18 (2.08)</td>
+<td align="center">12.54 (2.26)</td>
+<td align="center">12.54 (1.87)</td>
+<td align="center">12.94 (2.12)</td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">12.21 (2.04)</td>
+<td align="center">12.32 (1.98)</td>
+<td align="center">12.5 (1.8)</td>
+<td align="center">12.56 (2.24)</td>
+<td align="center">12.65 (2.17)</td>
+<td align="center">12.5 (1.88)</td>
+<td align="center">12.63 (1.97)</td>
+</tr>
+<tr class="odd">
+<td align="center">17</td>
+<td align="center"></td>
+<td align="center">12.54 (1.8)</td>
+<td align="center">12.42 (1.99)</td>
+<td align="center">12.41 (1.81)</td>
+<td align="center">12.7 (2.11)</td>
+<td align="center">12.32 (1.99)</td>
+<td align="center">12.87 (1.75)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 
 

@@ -1,0 +1,7 @@
+base
+dplyr
+knitr
+RColorBrewer
+ggplot2
+gridExtra
+rpart

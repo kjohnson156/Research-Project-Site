@@ -1,0 +1,650 @@
+
+# Purpose
+This report examines the effect of the course redesign for a single instructor over two years. 
+
+* Student and class level characteristics are used as covariates. 
+* Univariate descriptions for these characteristics can be found in the Exploratory analysis document (Phase 1b.)
+* Each predictor is compared to the intervention condition ( CRT vs Traditional), and to the outcomes (GPA and receipt of a repeatable grade.)
+* Comparisons are made on two groups 
+    - Traditional class (F14) vs. all other CRT cohorts (F15, S16, F16)
+    - F14 vs. F16 only 
+
+## Analysis Plan
+
+1. Bivariate associations of covariate with outcome, and with CRT condition. 
+2. Model building - Start with variables that were shown to be bivariately associated with either intervention or outcome, build a multivariable statistical model to assess the effect of the CRT on student performance. 
+3. Supervised machine learning to build a Decision tree for the binary outcome of passing CHEM 111. 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr);library(knitr); library(RColorBrewer)
+library(ggplot2);library(gridExtra)
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
+               fig.align = 'center',  fig.width=6, fig.height=4)
+'%ni%' <- Negate('%in%')
+
+
+# source helper functions
+source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
+
+#chem <- read.delim("/Users/rdonatello/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
+chem <- read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
+
+ew <- chem %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
+                        !is.na(gender) & !is.na(stulevel)) %>% 
+      droplevels() %>%
+      mutate(repeat_grade = ifelse(grade %in% c('D ', 'F ', 'W ', 'WU'), 1, 0),
+             pass = factor(repeat_grade, labels=c("Pass", "Fail")),
+             term_idx = factor(term_idx, levels=c("F14","F15", "S16", "F16")),
+             crt = factor(crt, labels=c("Traditional", "crt")), 
+             DSS = ifelse(dss.1==1 | dss == 'Y', 'DSS', 'not in DSS'), 
+             soc = factor(soc, levels=c('Non-SOC', 'SOC', 'Multiple/Mixed')), 
+             eop = factor(eop, labels=c("Non-EOP", "EOP"))) %>%
+      select(-dss.1, -dss, -erss_stulevel, erss_enrstat)
+
+# viz opts
+term.col <- brewer.pal(9, "Set1")[c(5,3)]
+crt.col <- brewer.pal(9, "Set1")[1:2]
+
+class <- ew %>% 
+          group_by(term_idx,dfw, dfw_rate, classgpa, crt) %>% 
+          summarise(N=n()) %>% 
+          select(term_idx, crt, N, dfw, dfw_rate,classgpa)
+
+f146 <- filter(ew, term_idx %in% c("F14", "F16")) %>% droplevels()
+```
+
+#### Outcome measurements
+
+**1. GPA**
+
+Since GPA is being treated as a continuous variable, distributions of GPA are displayed using boxplots with overlaid violin plots. The diamonds represent the average or mean value for that group. Two-sample T-tests and ANOVA tests are used to compare the average GPA across levels of the covariate of interest. 
+
+**2. Receipt of a repeatable grade**
+
+We also dichotomize the grade a student received and create an indicator for whether or not the student received a _repeatable grade_ (D, F, W, WU) for this analysis. This is also called the _failure rate_ in some places in this report. 
+
+Where the sample size is large enough, $\chi^{2}$ tests for equal proportions across two / and multiple groups are conducted, otherwise Fishers Exact Tests are used. Any comparison where a zero cell occurs (a combination of factors that does not exist in the data), no statistical test is conducted. 
+
+# CRT vs. Student Performance
+
+We examine four semesters of data from a single instructor. Three quarters of the data come from the redesigned courses (F15, S16, F16), colored in blue on most plots, and are compared to the last traditional course offering in F14, colored in red on most plots.  
+
+```{r}
+kable(class, digits=2)
+```
+
+### GPA
+The overall distribution of gpa for the crt courses has shifted in the positive direction compared to the traditional courses. The mean for Fall 15 and F16 are higher than F14, with S16 closer to F14 than the other redesigned terms. 
+
+```{r}
+ggplot(ew, aes(y=gpa, x=term_idx, fill=crt)) + 
+        geom_boxplot(alpha=.5, width=.3) +
+        geom_violin(alpha=.3) + xlab("") + 
+        scale_fill_manual(values=crt.col, guide=FALSE) + 
+        stat_summary(fun.y=mean, geom="point", shape=18, size=4) 
+```
+
+There is a significant improvement in average GPA in the CRT sections compared to traditional (p=.017). 
+
+```{r}
+gpa.crt.ew <- univ.gpa(ew, col.var = 'crt')
+gpa.crt.ew$test
+```
+
+There is also a significant improvement in average GPA in F16 compared to F14 (p=.003). 
+
+```{r}
+gpa.crt.f146 <- univ.gpa(f146, col.var = 'crt')
+gpa.crt.f146$test
+```
+
+### DWF rate
+```{r}
+ggplot(class, aes(y=dfw_rate, x=term_idx, col = crt, shape=crt)) +  geom_point(size=5) + scale_color_manual(values=crt.col, guide=FALSE) + scale_y_continuous(limits=c(0,1)) + xlab("")
+```
+
+The proportion of repeatable grades does not differ significantly across semesters (p=.10)
+```{r}
+chisq.test(ew$repeat_grade, ew$crt)
+```
+
+The failure rate in F16 is lower than the failure rate in F14, but only marginally so (p=.096)
+```{r}
+chisq.test(f146$repeat_grade, f146$crt)
+```
+
+# Student Characteristics 
+
+## Gender
+#### CRT vs. Traditional 
+
+There is no statistical difference in the proportion of females enrolled in CHEM 111 across the last for semesters. 
+```{r}
+g.term <- biv.n.row.pct(df=ew, row.var = 'gender', col.var = 'term_idx')
+
+kable(g.term$table, row.names = FALSE)
+g.term$plot + scale_y_continuous(limits=c(.25, .75))
+chisq.test(table(ew$gender, ew$term_idx))
+```
+
+The %Female in F16 (50.7%) is also not statistically significantly different from the % Female in F14 (42.9%). 
+```{r}
+t.test((gender=="F") ~ term_idx, data=f146)
+```
+
+#### Performance - GPA
+No statistical difference in GPA between males and females. 
+
+**Full Sample**
+```{r}
+gpa.gender.ew <- univ.gpa(ew, col.var = 'gender')
+kable(gpa.gender.ew$table, digits=2)
+gpa.gender.ew$plot
+gpa.gender.ew$test
+```
+
+**F14 & F16 only**
+```{r}
+gpa.gender.f146 <- univ.gpa(f146, col.var = 'gender')
+kable(gpa.gender.f146$table, digits=2)
+gpa.gender.f146$plot
+gpa.gender.f146$test
+```
+
+
+#### Performance - DWF rate
+There is no difference in dwf rate between males and females.
+
+**Full Sample**
+```{r}
+gender.dwf.ew <- biv.n.row.pct(ew, col.var = 'gender', row.var='repeat_grade')
+kable(gender.dwf.ew$table, row.names = FALSE)
+chisq.test(ew$repeat_grade, ew$gender)
+```
+
+**F14 & F16 only**
+```{r}
+gender.dwf.f146<- biv.n.row.pct(f146, col.var = 'gender',row.var='repeat_grade')
+kable(gender.dwf.f146$table, row.names = FALSE)
+chisq.test(f146$repeat_grade, f146$gender)
+```
+
+## Age 
+
+#### CRT vs. Traditional 
+**Full Sample**
+Students are significantly older on average in the traditional group compared to the CRT group, although there are more higher end outliers in the CRT group. 
+
+```{r}
+age.crt.ew <- biv.mean(df=ew, var='age', group='crt')
+kable(age.crt.ew$table, digits=2)
+age.crt.ew$plot
+age.crt.ew$test
+```
+
+**F14 & F16 only**
+The average age in F14 is 20.7, which on average is significantly higher than the average age in F16 (19.9). 
+```{r}
+age.crt.f146 <- biv.mean(df=f146, var='age', group='crt')
+kable(age.crt.f146$table, digits=2)
+age.crt.f146$plot
+age.crt.f146$test
+```
+
+#### Performance - GPA
+GPA and Age have a complex relationship. It is not quite linear, especially in the older age range. 
+```{r}
+ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by age - full sample") + 
+        scale_color_manual(values=crt.col) 
+
+ggplot(f146, aes(x=age, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by age - for Fall '14 and '16 only") + 
+        scale_color_manual(values=crt.col) 
+```
+
+Excluding outliers in the oldest 5% (age > 25), we get closer to a more linear relationship. Subsequent analysis may want to consider excluding these older students, or analyzing them separately. Or dichotomizing age. 
+
+```{r}
+ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by age index - full sample") + 
+        geom_smooth(method=lm, se=FALSE)+ 
+        scale_color_manual(values=crt.col) + scale_x_continuous(limits=c(17,25))
+
+ggplot(f146, aes(x=age, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by age index - for Fall '14 and '16 only") + 
+        geom_smooth(method=lm, se=FALSE)+ 
+        scale_color_manual(values=crt.col) + scale_x_continuous(limits=c(17,25))
+```
+
+
+#### Performance - DWF rate [[NOT DONE YET]]
+
+**Full Sample**
+
+
+**F14 & F16 only**
+
+
+## Race / Ethnicity
+The demographic shift across all chem classes is displayed in the Exploratory Analysis document. How does this compare to the campus-wide shift? 
+
+```{r}
+eth.term <- biv.n.row.pct(df=ew, row.var = 'race_code', col.var = 'term_idx')
+kable(eth.term$table, row.names = FALSE)
+eth.term$plot
+```
+
+There are too many ethnicities with low sample sizes to compare statistically. Here we just look at two smaller groupings of race/ethnicity. 
+
+
+## Underrepresented Minority (URM)
+* Non-URM: Asian, NHOPI, White
+* URM: Black, HL
+* UNK: Mult, Unk
+
+#### CRT vs. Traditional 
+
+**Full Sample**
+The distribution of URM across the past four terms has changed significantly. 
+```{r}
+urm.term <- biv.n.row.pct(df=ew, row.var = 'urm_status', col.var = 'term_idx')
+kable(urm.term$table, row.names = FALSE)
+urm.term$plot
+chisq.test(table(ew$urm_status, ew$term_idx))
+```
+
+**F14 & F16 only**
+No statistical difference in the distribution of proportions between years. 
+```{r}
+urm.146 <- biv.n.row.pct(df=f146, row.var = 'urm_status', col.var = 'term_idx')
+kable(urm.146$table, row.names = FALSE)
+chisq.test(table(f146$urm_status, f146$term_idx))
+```
+
+
+#### Performance - GPA
+**Full Sample**
+URM students have significantly lower GPA (.38 lower) compared to non-URM students. The GPA for students with unknown URM status have marginally lower (.23) GPA compared to non-URM students. 
+
+```{r}
+gpa.urm.ew <- univ.gpa(ew, col.var = 'urm_status')
+kable(gpa.urm.ew$table, digits=2)
+gpa.urm.ew$plot
+summary(gpa.urm.ew$test)
+```
+
+**F14 & F16 only**
+URM students have marginally lower GPA (.23 lower) on average compared to non-URM students. The GPA for students with unknown URM status is not different than the average GPA for non-URM students. 
+
+```{r}
+gpa.urm.f146 <- univ.gpa(f146, col.var = 'urm_status')
+kable(gpa.urm.f146$table, digits=2)
+gpa.urm.f146$plot
+summary(gpa.urm.f146$test)
+```
+
+#### Performance - DWF rate
+
+**Full Sample**
+There is a statistical difference in DWF rate by URM status in the full cohort.
+```{r}
+urm.dwf.ew <- biv.n.row.pct(ew, col.var = 'urm_status', row.var='repeat_grade')
+kable(urm.dwf.ew$table, row.names = FALSE)
+chisq.test(ew$repeat_grade, ew$urm_status)
+```
+
+**F14 & F16 only**
+There is no difference in dwf rate by URM status comparing F14 to F16 only. 
+```{r}
+urm.dwf.f146 <- biv.n.row.pct(f146, col.var = 'urm_status', row.var='repeat_grade')
+kable(urm.dwf.f146$table, row.names = FALSE)
+chisq.test(f146$repeat_grade, f146$urm_status)
+```
+
+
+## Students of Color (SOC)
+* Non-SOC= White
+* SOC = AIAN, Asian, Black, HL, NHOPI
+* Multiple/Mixed = Multi, Unk
+
+
+#### CRT vs. Traditional 
+
+**Full Sample**
+The distribution of SOC across the past four terms has changed significantly (p=.01)
+```{r}
+soc.term <- biv.n.row.pct(df=ew, row.var = 'soc', col.var = 'term_idx')
+kable(soc.term$table, row.names = FALSE)
+soc.term$plot
+chisq.test(table(ew$soc, ew$term_idx))
+```
+
+**F14 & F16 only**
+No statistical difference in the distribution of proportions between F14 & F16. 
+```{r}
+soc.146 <- biv.n.row.pct(df=f146, row.var = 'soc', col.var = 'term_idx')
+kable(soc.146$table, row.names = FALSE)
+chisq.test(table(f146$soc, f146$term_idx))
+```
+
+
+#### Performance - GPA
+**Full Sample**
+
+Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher). 
+```{r}
+gpa.soc.ew <- univ.gpa(ew, col.var = 'soc')
+kable(gpa.soc.ew$table, digits=2)
+gpa.soc.ew$plot
+summary(gpa.soc.ew$test)
+```
+
+**F14 & F16 only**
+Only comparing F14 and F16, non-SOC students have a significantly higher GPA compared to students of color (.28 higher), and marginally higher than those from Multiple/Mixed ethnicities (.29 higher). 
+
+```{r}
+gpa.soc.f146 <- univ.gpa(f146, col.var = 'soc')
+kable(gpa.soc.f146$table, digits=2)
+gpa.soc.f146$plot
+summary(gpa.soc.f146$test)
+```
+
+#### Performance - DWF rate
+
+**Full Sample**
+There is strong statistical difference in DWF rate by SOC status in the full cohort.
+```{r}
+soc.dwf.ew <- biv.n.row.pct(ew, col.var = 'soc', row.var='repeat_grade')
+kable(soc.dwf.ew$table, row.names = FALSE)
+chisq.test(ew$repeat_grade, ew$soc)
+```
+
+**F14 & F16 only**
+There is a marginal difference in dwf rate by SOC status when looking at F14 and F16 only. 
+```{r}
+soc.dwf.f146 <- biv.n.row.pct(f146, col.var = 'soc', row.var='repeat_grade')
+kable(soc.dwf.f146$table, row.names = FALSE)
+chisq.test(f146$repeat_grade, f146$soc)
+```
+
+
+# Student Groups 
+
+## EOP
+The number of EOP students is too small to make accurate comparisons. 
+
+#### CRT vs. Traditional 
+
+**Full Sample**
+The distribution of EOP student status has not changed significantly. 
+```{r}
+eop.term <- biv.n.row.pct(df=ew, row.var = 'eop', col.var = 'term_idx')
+kable(eop.term$table, row.names = FALSE)
+chisq.test(table(ew$eop, ew$term_idx))
+```
+
+#### Performance - GPA
+**Full Sample**
+There is no significant difference in average GPA for students in EOP compared to non-EOP students. 
+```{r}
+gpa.eop.ew <- univ.gpa(ew, col.var = 'eop')
+kable(gpa.eop.ew$table, digits=2)
+gpa.eop.ew$plot
+gpa.eop.ew$test
+```
+
+**F14 & F16 only**
+EOP students did significantly better compared to non-EOP students when looking at the F14 and F16 cohorts only. 
+
+```{r}
+gpa.eop.f146 <- univ.gpa(f146, col.var = 'eop')
+kable(gpa.eop.f146$table, digits=2)
+gpa.eop.f146$plot
+gpa.eop.f146$test
+```
+
+#### Performance - DWF rate
+
+**Full Sample**
+There is no difference in the % of repeatable grades between EOP and non-EOP students. 
+```{r}
+eop.dwf.ew <- biv.n.row.pct(ew, col.var = 'eop', row.var='repeat_grade')
+kable(eop.dwf.ew$table, row.names = FALSE)
+chisq.test(ew$repeat_grade, ew$eop)
+```
+
+**F14 & F16 only**
+There is no difference in the % of repeatable grades between EOP and non-EOP students.
+```{r}
+eop.dwf.f146 <- biv.n.row.pct(f146, col.var = 'eop', row.var='repeat_grade')
+kable(eop.dwf.f146$table, row.names = FALSE)
+fisher.test(f146$repeat_grade, f146$eop)
+```
+
+
+## Any formal student group (FSG)
+
+
+
+## First Generation
+
+#### CRT vs. Traditional 
+
+**Full Sample**
+The distribution of first generation student status has not changed significantly across the past four terms. 
+```{r}
+firstgeneration.term <- biv.n.row.pct(df=ew, row.var = 'firstgeneration', col.var = 'term_idx')
+kable(firstgeneration.term$table, row.names = FALSE)
+chisq.test(table(ew$firstgeneration, ew$term_idx))
+```
+
+#### Performance - GPA
+**Full Sample**
+First generation students have significantly lower GPA compared to non-first gen students. 
+```{r}
+gpa.firstgeneration.ew <- univ.gpa(ew, col.var = 'firstgeneration')
+kable(gpa.firstgeneration.ew$table, digits=2)
+gpa.firstgeneration.ew$plot
+gpa.firstgeneration.ew$test
+```
+
+**F14 & F16 only**
+When comparing the F14 and F16 cohorts only, this difference disappears. 
+
+```{r}
+gpa.firstgeneration.f146 <- univ.gpa(f146, col.var = 'firstgeneration')
+kable(gpa.firstgeneration.f146$table, digits=2)
+gpa.firstgeneration.f146$plot
+gpa.firstgeneration.f146$test
+```
+
+#### Performance - DWF rate
+
+**Full Sample**
+A significantly higher proportion of first generation students received repeatable grades. 
+```{r}
+firstgeneration.dwf.ew <- biv.n.row.pct(ew, col.var = 'firstgeneration', row.var='repeat_grade')
+kable(firstgeneration.dwf.ew$table, row.names = FALSE)
+chisq.test(ew$repeat_grade, ew$firstgeneration)
+```
+
+**F14 & F16 only**
+Again, this difference disappears when considering only F14 vs F16 cohorts. 
+```{r}
+firstgeneration.dwf.f146 <- biv.n.row.pct(f146, col.var = 'firstgeneration', row.var='repeat_grade')
+kable(firstgeneration.dwf.f146$table, row.names = FALSE)
+fisher.test(f146$repeat_grade, f146$firstgeneration)
+```
+
+
+
+# College Prep
+This section examines the relationship between the amount and type of college prep
+courses (HS and college) a student has at the time of admission, and the student's 
+gpa in Chem 111.
+
+
+## Admissions Index (HS Eligibility)
+
+```{r}
+ggplot(ew, aes(y=admission_index, x=term_idx, fill=crt)) + geom_boxplot(alpha=.5, width=.4) +
+       geom_violin(alpha=.3) + xlab("") + 
+       scale_fill_manual(values=crt.col, guide=FALSE) + 
+       stat_summary(fun.y=mean, geom="point", shape=18, size=4) 
+```
+
+Average admission index is marginally statistically different across years. 
+```{r}
+summary(aov(admission_index ~ term_idx, data=ew))
+```
+
+#### GPA
+In the following scatterplots, each dot represents one student. Due to the discrete nature of gpa and number of classes, many points are overlaid on the same spot. So the darker the point, the more students are represented there. 
+
+```{r}
+ggplot(ew, aes(x=admission_index, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by Admission index - by CRT group") + 
+        scale_color_manual(values=crt.col) 
+
+ggplot(f146, aes(x=admission_index, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by Admission index - for Fall '14 and '16 only") + 
+        scale_color_manual(values=crt.col) 
+```
+
+Admissions index does not have a strictly linear relationship with GPA. 
+A standard linear model is not appropriate, a spline model with a knot around 3.5 should be used instead. <span style="color:red">Do this</span>
+
+#### DFW 
+```{r}
+ggplot(ew, aes(y=admission_index, x=pass, fill=pass)) +  
+       geom_boxplot(alpha=.5, width=.4) +
+       geom_violin(alpha=.3) + xlab("") + 
+       scale_fill_manual(values=crt.col, guide=FALSE) + 
+       stat_summary(fun.y=mean, geom="point", shape=18, size=4) + 
+       theme_minimal() + 
+       ggtitle("Distribution of admissions index by success status.") 
+```
+
+There is a strong relationship between admissions index and whether or not
+the student will pass the class. 
+```{r}
+t.test(admission_index ~ pass, data=ew)
+```
+
+## ELM Status
+
+
+## EPT Status
+
+
+## GE Status
+
+
+
+
+# Bivariate Summary
+
+Factors that were associated with GPA or passing the class
+
+* Admissions index - but not linearly
+* 
+
+Comparing the entire cohort to F14 and F16 only -- often differences seen in the entire cohort were not seen when only considering the F14 and F16 cohorts only. Even though there is only one spring term included, this may be an indication of a "semester" effect that we have seen evidence of in other places. 
+
+
+# Multivariate modeling
+
+## GPA - recap of relationship
+```{r}
+ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
+        ggtitle("GPA by age index - full sample") + 
+        geom_smooth(method=lm, se=FALSE)+ 
+        scale_color_manual(values=crt.col) +     
+        scale_x_continuous(limits=c(17,25))
+```
+For those under 25, after accounting for a **linear** effect of age, the CRT significantly improves GPA. 
+```{r}
+summary(lm(gpa ~ age + crt, data=filter(ew, age<=25)))
+```
+
+
+## HS eligibility [In progress]
+```{r}
+ggplot(ew, aes(x=admission_index, y=gpa, col=crt)) + 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + 
+        theme_minimal() + 
+        ggtitle("GPA by Admission index - by CRT group") + 
+        scale_color_manual(values=crt.col) 
+```        
+
+Fit a linear spline model, with a knot at 3.75. That is, 
+two linear models with differing slopes.
+
+```{r}
+ew$lowai <- (ew$admission_index - 3.75)
+ew$lowai[ew$admission_index < 3.75] <- 0
+
+fit.spline <- lm(gpa~admission_index + lowai, data=ew)
+plot(fit.spline$model$gpa~fit.spline$model$admission_index)
+lines(sort(predict(fit.spline)) ~ sort(fit.spline$model$admission_index), lwd=2)
+```
+
+Interaction between admissions index and CRT -- allow there to be separate slopes between CRT groups in both high and low admission index areas. 
+-- in other words-- does the CRT group _change_ the relationship between admissions index and GPA? 
+```{r}
+summary(lm(gpa~admission_index + lowai + gpa, data=ew))
+summary(lm(gpa~admission_index + lowai + crt + 
+             crt*admission_index + lowai*crt, data=ew))
+```
+
+
+---- 
+Notes
+
+```{r}
+a <- lm(gpa ~ crt + gender + firstgeneration, data=ew)
+summary(a)
+```
+* can we show that SI is the cause of the reduction of the GAP between first gen and/or URM students. 
+
+* DFW rate as a function of attendance
+* HS eligibility vs. SI visits
+* 
+
+```{r}
+a <- lm(gpa ~ crt + gender + firstgeneration, data=filter(ew, term_idx %in% c('F14', 'F16')))
+summary(a)
+```
+
+* add logistic regression of repeatable grade vs crt
+```{r}
+b <- glm(repeat_grade ~ crt + admission_index, 
+         data=ew, family='binomial')
+summary(b)
+exp(coef(b))
+```
+
+* don't forget to add difference between chem performance and other classes 
+* plot gap in gpa and dwf across term
+
+
+# CART - Predicting a failing grade. 
+Work in progress...
+
+```{r}
+library(rpart)
+a <- rpart(repeat_grade ~ crt + age + gender, 
+           data=ew, method="class")
+#a <- prune(a, cp=.014)
+
+plot(a, uniform=TRUE)
+text(a, use.n=TRUE, all=TRUE, cex=.8)
+```

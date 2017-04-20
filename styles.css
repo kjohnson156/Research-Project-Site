@@ -22,3 +22,13 @@ h1 {
   background: url('../images/bg_hr.png') repeat-x bottom;
   color: #BD2031;
 }
+
+h2 {
+  font-size: 32px;
+   color:#da2537;
+}
+
+h3 {
+  font-size: 24px;
+     color:#6d121c;
+}

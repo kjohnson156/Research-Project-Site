@@ -5,14 +5,19 @@ navbar:
   left:
     - text: "Overview"
       href: index.html
-    - text: "Background"
-      href: bg.html
-    - text: "Activities"
-      href: activities.html
-    - text: "Trends"
-      href: trends.html
-    - text: "Lessons"
-      href: lessons.html
+      menu:
+        - text: "Background"
+          href: bg.html
+        - text: "Activities"
+          href: activities.html
+    - text: "Analysis"
+      menu: 
+        - text: "Historical Trends"
+          href: trends.html
+        - text: "Course Redesign"
+          href: crt.html
+    - text: "Impact"
+      href: impact.html
   right:
       - text: ""
         icon: fa-envelope-o
