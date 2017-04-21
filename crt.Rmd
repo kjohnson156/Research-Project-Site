@@ -6,6 +6,8 @@ output:
     toc_depth: 2
 ---
 
+To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (`W/I`) are exluded from this analysis. A repeatable grade is defined as a student reciving a *D*, *D+*, *F* grade, or an unexcused withdrawl *WU*. 
+
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr);library(knitr); library(RColorBrewer)
 library(ggplot2);library(gridExtra)
@@ -21,9 +23,9 @@ source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/hel
 raw <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
 
 ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
-                        !is.na(gender) & !is.na(stulevel)) %>% 
+                        !is.na(gender) & !is.na(stulevel) & grade %ni% c('W ', 'I ')) %>% 
       droplevels() %>%
-      mutate(repeat_grade = ifelse(grade %in% c('D ', 'F ', 'W ', 'WU'), 1, 0),
+      mutate(repeat_grade = ifelse(grade %in% c('D ', 'D+', 'F ', 'WU'), 1, 0),
              pass = factor(repeat_grade, labels=c("Pass", "Fail")),
              term_idx = factor(term_idx, levels=c("F14","F15", "S16", "F16")),
              crt = factor(crt, labels=c("Traditional", "crt")), 
@@ -32,10 +34,10 @@ ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
              eop = factor(eop, labels=c("Non-EOP", "EOP"))) %>%
       select(-dss.1, -dss, -erss_stulevel, erss_enrstat)
 
-class <- ew %>% 
-          group_by(term_idx,dfw, dfw_rate, classgpa, crt) %>% 
-          summarise(N=n()) %>% 
-          select(term_idx, crt, N, dfw, dfw_rate,classgpa)
+
+class <- ew %>% group_by(year, term, term_idx, section, crt) %>%
+          summarise(classgpa = mean(gpa), dwf = sum(repeat_grade), 
+                    N = n(), dwf_rate = dwf/N)
 
 f146 <- filter(ew, term_idx %in% c("F14", "F16")) %>% droplevels()
 

@@ -1,4 +1,5 @@
 ---
+title: 'Historical Trends in Students taking Chem 111'
 output:
   html_document:
     toc: true
@@ -6,15 +7,20 @@ output:
     toc_depth: 2
 ---
 
+This section analyses the trends in characteristics of the student group who is taking Chemistry 111, and compares them to the campus level averages. 
+
+We consider data from Fall 2009 - Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (`W/I`) are exluded from this analysis. A repeatable grade is defined as a student reciving a `D, D+`, or `F` grades, or an unexcused withdrawl `WU`. 
+
+
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr);library(knitr); library(RColorBrewer)
-library(ggplot2);library(gridExtra)
+library(ggplot2);library(gridExtra); library(grid)
 library(scales); library(foreach)
 
 '%ni%' <- Negate('%in%')
 
 opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
-               fig.align = 'center',  fig.width=6, fig.height=4)
+               fig.align = 'center',  fig.width=8, fig.height=5)
 options(knitr.kable.NA = '') 
 
 source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
@@ -23,25 +29,25 @@ raw <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Minin
 chem <- raw %>% mutate(term_idx = factor(term_idx, 
                         levels = c("F09", "S10", "F10", "S11", "F11", "S12", "F12", "S13", 
                                     "F13", "S14", "F14", "S15", "F15", "S16", "F16")), 
-                       DSS = ifelse(dss.1==1 | dss == 'Y', 'DSS', 'not in DSS')) %>%
-                select(-dss.1, -dss, -erss_stulevel, erss_enrstat)
+                       DSS = ifelse(dss.1==1 | dss == 'Y', 'DSS', 'not in DSS'), 
+                       repeat_grade = ifelse(grade %in% c('D ', 'D+', 'F ', 'WU'), 1, 0)) %>%
+                select(-dss.1, -dss, -erss_stulevel, erss_enrstat, -dfw_rate) %>%
+                filter(grade %ni% c('W ', 'I ')) %>% droplevels()
 
-class <- chem %>% 
-          select(classgpa, dfw_rate, enrollment, dfw, section, term_idx, year, term) %>% 
-          unique()
-
+# redo class level measures
+class <- chem %>% group_by(year, term, term_idx, section) %>%
+          summarise(classgpa = mean(gpa), dwf = sum(repeat_grade), 
+                    enrollment = n(), dwf_rate = dwf/enrollment)
+         
 yearlab <- c(2009, rep(2010:2016, each=2))
 term.col <- brewer.pal(9, "Set1")[c(7, 3)]
 
 ```
 
-# Historical Trends in the Student Body
 
-This section analyses the trends in characteristics of the student group who is taking Chemistry 111, and compares them to the campus level averages. 
+# Course Characteristics
 
-## Course Level Measurements
-
-### Total enrollment for Chem 111 across all sections per term
+## Enrollment
 ```{r}
 ggplot(chem, aes(x=term_idx, y=..count.., fill=term)) + geom_bar() +
   geom_text(stat="count", aes(y = ..count.., vjust=-.3, label=..count..)) +
@@ -51,12 +57,9 @@ ggplot(chem, aes(x=term_idx, y=..count.., fill=term)) + geom_bar() +
   
 Spring term enrollment has steadily increased since 2009. 
  
-## Distribution of class size
+## Class size
 
-Overall class sizes range from 50 to 164, with an IQR of 26, a median of 155, and a mean of 136.2.
-
-Each dot in the figure below represents a single section. The table directly following the
-figure shows the actual class size for each section that term. 
+Across all years, class sizes range from 50 to 164, with an IQR of 26, a median of 155, and a mean of 136.2.
 
 ```{r}
 ggplot(class, aes(x=term_idx, y=enrollment, group=term, col=term)) + 
@@ -65,46 +68,68 @@ ggplot(class, aes(x=term_idx, y=enrollment, group=term, col=term)) +
   scale_y_continuous(limits=c(40, 180)) + ggtitle("Enrollment per section")
 ```
   
+Fall class sizes have remained relativley constant between 140-160 since 2009, even with an additional section starting in 2013. 
 
 ```{r}
 kable(addmargins(table(chem$section, chem$term_idx)), caption="Enrollment per section, per term")
 ```
   
 
-### Class-level GPA
+## GPA
+The average class-level gpa across years is `r round(mean(class$classgpa, na.rm=TRUE), 2)`, with standard deviation `r round(sd(class$classgpa, na.rm=TRUE), 2)`. 
+
 ```{r}
 ggplot(class, aes(x=term_idx, y=classgpa, group=term, col=term)) + 
   geom_point() + geom_smooth(se=FALSE) + xlab("Semester") + 
   scale_color_manual(values=term.col, name = "Term") + theme_minimal() +
-  scale_y_continuous(limits = c(1,3)) + ylab("Class GPA")
+  scale_y_continuous(limits = c(1,3)) + ylab("Class Average GPA")
 ```
 
-  
-### DFW
+Spring and Fall semesters have different patterns of oscilating increase and decrease of class-level GPA. 
+
 ```{r}
-c_0NA <- class %>%
-  filter(term_idx != "NA")
-ggplot(c_0NA, aes(x=term_idx, y=dfw, group=term, col=term)) + ylab("# DFW") + 
+kable(biv.var(class, var='classgpa',  row.var='term', col.var='year'), 
+      row.names = FALSE, caption = "Term level mean(sd) GPA")
+```
+
+## DFW rate
+
+As expected we see a similar pattern, slightly different between Fall and Spring, for the number and % of student receiving a repeatable grade _(D/F/WU)_. 
+
+```{r, fig.height=6, fig.width=12}
+c_0NA <- class %>% filter(term_idx != "NA")
+
+a <- ggplot(c_0NA, aes(x=term_idx, y=dfw, group=term, col=term)) + ylab("") + 
                   geom_point() + geom_smooth(se=FALSE) + xlab("Semester") + 
                   scale_color_manual(values=term.col, name = "Term") + theme_minimal() + 
                   scale_y_continuous(limits=c(0,100), breaks=seq(0, 100, by=20)) + 
-                  ggtitle("Number of students receiving a repeatable grade per term")
+                  ggtitle("Frequency")
 
+b <- ggplot(class, aes(x=term_idx, y=dfw_rate, group=term, col=term)) + ylab("") + 
+            geom_point() + geom_smooth(se=FALSE) + xlab("Semester") + 
+            scale_color_manual(values=term.col, name = "Term")+ theme_minimal() + 
+            scale_y_continuous(limits=c(0,1), breaks=seq(0, .80, by=.20),
+                               labels = scales::percent_format()) + 
+            ggtitle("Percent") 
+
+grid_arrange_shared_legend(a, b, ncol = 2, nrow=1)
 ```
-  
 
-### DFW Rate
+As does the overall semester level rate. 
 ```{r}
-ggplot(class, aes(x=year, y=dfw_rate, group=term, col=term)) + ylab("% DWF") + 
-  geom_point() + geom_smooth(se=FALSE) + xlab("Semester") + 
-  scale_color_manual(values=term.col, name = "Term")+ theme_minimal() + 
-  scale_y_continuous(limits=c(0,.80), breaks=seq(0, .80, by=.20),
-                     labels = scales::percent_format()) + 
-  ggtitle("Percent of students receiving a repeatable grade per term") 
-```
-  
+dwf.by <- chem %>% group_by(year, term) %>% 
+            summarise(count=sum(repeat_grade), n=n()) %>%
+            mutate(pct=round(count/n,3)) %>% 
+            mutate(x = paste0(count, " (", pct*100,"%)")) %>%
+            select(-count, -pct, -n) %>% ungroup()
 
-# Individual Student Measurements
+bg <- reshape(as.data.frame(dwf.by), timevar = 'year', idvar='term', direction="wide")
+colnames(bg) <- gsub('x.', "",colnames(bg))
+
+kable(bg, row.names=FALSE, caption="Overall number and % of repeatable grades per term and year")
+```
+
+# Student Characteristics 
 
 ## Demographics
 
@@ -407,8 +432,8 @@ ggplot(cpt, aes(x=term_idx, y=prop, col=CP, group=CP)) + geom_point() +
 cont.varlist <- c('cp_engl', 'cp_math', 'cp_lab')
 
 samp.means <- foreach(i = 1:3, .combine = rbind) %dopar% {
-                biv.mean.wide(df=chem, var=cont.varlist[i], 
-                              group='term_idx', col.lab=levels(chem$term_idx))
+                mv.mean.wide(df=chem, var=cont.varlist[i], 
+                             group='term_idx', col.lab=levels(chem$term_idx))
 }
 
 cp.out <- t(samp.means[c(2,4,6),])
