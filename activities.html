@@ -19,6 +19,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
@@ -163,6 +166,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -243,10 +341,13 @@ $(document).ready(function () {
 <h1>Timeline</h1>
 <ul>
 <li>The original timeline consisted of data collection and analysis completed in Fall, development of departmental recommendations and possible extensions to Chem 112 to occur in Spring.</li>
-<li>Due to disorganized nature of student information storage, coupled with a major Data Infrastructure systems overhaul occurring at the same time, clean, mostly accurate data was not fully obtained until Spring.</li>
-<li>Explore longitudinal trends in student characteristics and performance measures.</li>
-<li>Mine student data to identify student characteristics (demographics, academic preparation, academic status) that are statistically significantly associated with GPA in Chem 111.</li>
-<li>Analyze the effect of the course redesign on GPA in Chem 111 after controlling for characteristics that were found to be associated with GPA.</li>
+<li>Due to disorganized nature of student information storage, coupled with a major campus wide Data Infrastructure systems overhaul occurring at the same time, clean, mostly accurate data was not fully obtained until Spring.
+<ul>
+<li>And even then several updates to the data were necessary due to finding out that variables that we thought measured one thing, really did not.</li>
+</ul></li>
+<li>The first task is to explore longitudinal trends in student characteristics and performance measures.</li>
+<li>Then we use student data to identify student characteristics (demographics, academic preparation, academic status) that are statistically significantly associated with GPA in Chem 111.</li>
+<li>Lastly we analyze the effect of the course redesign on GPA in Chem 111 after controlling for characteristics that were found to be associated with student success. .</li>
 </ul>
 </div>
 <div id="describe-the-completed-project-activities-outcomes-and-deliverables." class="section level1">
@@ -264,13 +365,15 @@ $(document).ready(function () {
 <ul>
 <li><strong>Robin Donatello</strong> Faculty, Department of Mathematics and Statistics. Statistics and Data expert.</li>
 <li><strong>Erik Wasinger</strong> Faculty, Department of Chemistry and Biochemistry. Subject matter expert and implementer of the original (and sustaining) redesign.</li>
-<li><strong>Ricardo Aguilar</strong> Undergraduate student of Statistics. Data Analyst.</li>
+<li><strong>Ricardo Aguilar</strong> Undergraduate student of Statistics and Data Science. Data Analyst.</li>
 </ul>
-<p>The project team met weekly during Spring 16 to discuss analysis results. This is a necessary component to any statistical analysis to ensure that the subject matter expert. The subject matter expert (Erik) helps put context and meaning to the data that the statisticians and analysts (Robin and Ricardo) generate. As initial results are discussed, interesting relationships emerge that inevitably raise more research questions from Erik, that Robin and Ricardo turn into statistical questions, code, and more results to discuss and put into the bigger picture.</p>
+<p>The project team met weekly during Spring 16 to discuss analysis results. This is a necessary component to any statistical analysis. Erik is essential to the analysis to put context and meaning to the data that the statisticians and analysts (Robin and Ricardo) generate. As initial results are discussed, interesting relationships emerge that inevitably raise more research questions from Erik, that Robin and Ricardo turn into statistical questions, code, and more results to discuss and put into the bigger picture.</p>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 

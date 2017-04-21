@@ -1,3 +1,49 @@
+---
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr);library(knitr); library(RColorBrewer)
+library(ggplot2);library(gridExtra)
+library(scales); library(foreach)
+
+'%ni%' <- Negate('%in%')
+
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
+               fig.align = 'center',  fig.width=6, fig.height=4, results = 'hide')
+options(knitr.kable.NA = '') 
+
+source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
+raw <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
+
+ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
+                        !is.na(gender) & !is.na(stulevel)) %>% 
+      droplevels() %>%
+      mutate(repeat_grade = ifelse(grade %in% c('D ', 'F ', 'W ', 'WU'), 1, 0),
+             pass = factor(repeat_grade, labels=c("Pass", "Fail")),
+             term_idx = factor(term_idx, levels=c("F14","F15", "S16", "F16")),
+             crt = factor(crt, labels=c("Traditional", "crt")), 
+             DSS = ifelse(dss.1==1 | dss == 'Y', 'DSS', 'not in DSS'), 
+             soc = factor(soc, levels=c('Non-SOC', 'SOC', 'Multiple/Mixed')), 
+             eop = factor(eop, labels=c("Non-EOP", "EOP"))) %>%
+      select(-dss.1, -dss, -erss_stulevel, erss_enrstat)
+
+class <- ew %>% 
+          group_by(term_idx,dfw, dfw_rate, classgpa, crt) %>% 
+          summarise(N=n()) %>% 
+          select(term_idx, crt, N, dfw, dfw_rate,classgpa)
+
+f146 <- filter(ew, term_idx %in% c("F14", "F16")) %>% droplevels()
+
+# viz opts
+yearlab <- c(2009, rep(2010:2016, each=2))
+term.col <- brewer.pal(9, "Set1")[c(7, 3)]
+crt.col <- brewer.pal(9, "Set1")[1:2]
+```
 
 # Purpose
 This report examines the effect of the course redesign for a single instructor over two years. 
@@ -15,43 +61,7 @@ This report examines the effect of the course redesign for a single instructor o
 2. Model building - Start with variables that were shown to be bivariately associated with either intervention or outcome, build a multivariable statistical model to assess the effect of the CRT on student performance. 
 3. Supervised machine learning to build a Decision tree for the binary outcome of passing CHEM 111. 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(dplyr);library(knitr); library(RColorBrewer)
-library(ggplot2);library(gridExtra)
-opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
-               fig.align = 'center',  fig.width=6, fig.height=4)
-'%ni%' <- Negate('%in%')
 
-
-# source helper functions
-source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
-
-#chem <- read.delim("/Users/rdonatello/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
-chem <- read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
-
-ew <- chem %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
-                        !is.na(gender) & !is.na(stulevel)) %>% 
-      droplevels() %>%
-      mutate(repeat_grade = ifelse(grade %in% c('D ', 'F ', 'W ', 'WU'), 1, 0),
-             pass = factor(repeat_grade, labels=c("Pass", "Fail")),
-             term_idx = factor(term_idx, levels=c("F14","F15", "S16", "F16")),
-             crt = factor(crt, labels=c("Traditional", "crt")), 
-             DSS = ifelse(dss.1==1 | dss == 'Y', 'DSS', 'not in DSS'), 
-             soc = factor(soc, levels=c('Non-SOC', 'SOC', 'Multiple/Mixed')), 
-             eop = factor(eop, labels=c("Non-EOP", "EOP"))) %>%
-      select(-dss.1, -dss, -erss_stulevel, erss_enrstat)
-
-# viz opts
-term.col <- brewer.pal(9, "Set1")[c(5,3)]
-crt.col <- brewer.pal(9, "Set1")[1:2]
-
-class <- ew %>% 
-          group_by(term_idx,dfw, dfw_rate, classgpa, crt) %>% 
-          summarise(N=n()) %>% 
-          select(term_idx, crt, N, dfw, dfw_rate,classgpa)
-
-f146 <- filter(ew, term_idx %in% c("F14", "F16")) %>% droplevels()
-```
 
 #### Outcome measurements
 
@@ -639,7 +649,7 @@ exp(coef(b))
 # CART - Predicting a failing grade. 
 Work in progress...
 
-```{r}
+```{r, eval=FALSE}
 library(rpart)
 a <- rpart(repeat_grade ~ crt + age + gender, 
            data=ew, method="class")

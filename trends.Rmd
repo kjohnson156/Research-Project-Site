@@ -1,20 +1,25 @@
-
-# Historical Trends in the Student Body
+---
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr);library(knitr); library(RColorBrewer)
 library(ggplot2);library(gridExtra)
 library(scales); library(foreach)
 
-opts_chunk$set(warning=FALSE, message=FALSE, cache=TRUE, echo=FALSE, fig.align = 'center')
+'%ni%' <- Negate('%in%')
+
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
+               fig.align = 'center',  fig.width=6, fig.height=4)
 options(knitr.kable.NA = '') 
 
 source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
 raw <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
-```
 
-
-```{r}
 chem <- raw %>% mutate(term_idx = factor(term_idx, 
                         levels = c("F09", "S10", "F10", "S11", "F11", "S12", "F12", "S13", 
                                     "F13", "S14", "F14", "S15", "F15", "S16", "F16")), 
@@ -27,7 +32,12 @@ class <- chem %>%
 
 yearlab <- c(2009, rep(2010:2016, each=2))
 term.col <- brewer.pal(9, "Set1")[c(7, 3)]
+
 ```
+
+# Historical Trends in the Student Body
+
+This section analyses the trends in characteristics of the student group who is taking Chemistry 111, and compares them to the campus level averages. 
 
 ## Course Level Measurements
 
@@ -481,4 +491,6 @@ units_out2 <- units_out[c(1,2,4),c(1,9:15)]
 kable(units_out1,  align='c', row.names=FALSE, caption='Mean(sd) student course load per section per term (09-12)')
 kable(units_out2,  align='c', row.names=FALSE, caption='Mean(sd) student course load per section per term (13-16)')
 ```
+
+
 

@@ -1,13 +1,14 @@
----
-title: "Abstract"
----
 
+# Abstract
 
-As any instructor will tell you, teaching is an ever evolving project. You can always "do better", you can always "get better" at teaching. The content may stay stagnent, the instructor may stay stagnent, but the face and characteristics of the students being served are always changing. 
+As any instructor will tell you, teaching is an ever evolving project. You can always "do better", you can always "get better" at teaching. The content may stay stagnant, the instructor may stay stagnant, but the face and characteristics of the students being served are always changing. 
 
-This project enhances a current course redesign project designed to improve student performance in Chemistry 111 (increased GPA, decrease DWF rate) by providing a deeper look at the characteristics of who takes this course, and who passes this course. It is essential for faculty and administrators to have a holistic view of their students, and not consider the effects of changes such as a course redesign independent of other factors that affect student success. This project uses data mining techniques to examine historical trends and assess the impact of the redesign while controlling for other relevant factors. 
+This project enhances a current current [Sustaining Success](https://contentbuilder.merlot.org/toolkit/html/snapshot.php?id=61030667052633)  project designed to improve student performance in Chemistry 111 (increased GPA, decrease DWF rate) by providing a deeper look at the characteristics of who takes this course, and who passes this course. It is essential for faculty and administrators to have a holistic view of their students, and not consider the effects of changes such as a course redesign independent of other factors that affect student success. This project uses data mining techniques to examine historical trends and assess the impact of the redesign while controlling for other relevant factors. 
 
 
 <hr>
 
 <p>This work was conducted under a <a href="http://courseredesign.csuprojects.org/wp/sustaining-success/">Sustaining Success in Course Redesign Project</a> funded by the CSU Chancelors Office for 2016-17. The results and views expressed from this work do not represent official views from the CSU System, California State University, Chico nor any of the Colleges and Departments within. </p>
+
+
+

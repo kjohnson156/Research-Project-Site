@@ -19,6 +19,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
@@ -163,6 +166,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -241,11 +339,12 @@ $(document).ready(function () {
 
 <div id="historical-trends-in-the-student-body" class="section level1">
 <h1>Historical Trends in the Student Body</h1>
+<p>This section analyses the trends in characteristics of the student group who is taking Chemistry 111, and compares them to the campus level averages.</p>
 <div id="course-level-measurements" class="section level2">
 <h2>Course Level Measurements</h2>
 <div id="total-enrollment-for-chem-111-across-all-sections-per-term" class="section level3">
 <h3>Total enrollment for Chem 111 across all sections per term</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Spring term enrollment has steadily increased since 2009.</p>
 </div>
 </div>
@@ -253,7 +352,7 @@ $(document).ready(function () {
 <h2>Distribution of class size</h2>
 <p>Overall class sizes range from 50 to 164, with an IQR of 26, a median of 155, and a mean of 136.2.</p>
 <p>Each dot in the figure below represents a single section. The table directly following the figure shows the actual class size for each section that term.</p>
-<p><img src="trends_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" /></p>
 <table>
 <caption>Enrollment per section, per term</caption>
 <thead>
@@ -377,15 +476,15 @@ $(document).ready(function () {
 </table>
 <div id="class-level-gpa" class="section level3">
 <h3>Class-level GPA</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dfw" class="section level3">
 <h3>DFW</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dfw-rate" class="section level3">
 <h3>DFW Rate</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>
@@ -395,56 +494,56 @@ $(document).ready(function () {
 <h2>Demographics</h2>
 <div id="gender" class="section level3">
 <h3>Gender</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Across all semesters, 43.2% of students taking Chem111 are female. This percentage appears to be increasing in the past two years.</p>
 </div>
 <div id="age" class="section level3">
 <h3>Age</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>The black horizonal line represents the average age across all students under consideration. Students taking Chemistry in the fall are on average younger than those taking chemistry in the Spring. The obvious exception is this past Spring 2016 seems to be an unusually young cohort for spring. Recall this is age at admission, not the age when the student is taking Chem 111.</p>
 </div>
 <div id="area-where-a-student-is-from" class="section level3">
 <h3>Area Where a Student is From</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 <div id="citizenship" class="section level3">
 <h3>Citizenship</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-11-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="students-who-are-recieving-services-from-dss" class="section level3">
 <h3>Students who are recieving services from DSS</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-12-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="eop-status" class="section level3">
 <h3>EOP Status</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="reach" class="section level3">
 <h3>REACH</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-14-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="any-formal-student-group-fsg" class="section level3">
 <h3>Any formal student group (fsg)</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="race-code" class="section level3">
 <h3>Race Code</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-16-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="urm" class="section level3">
 <h3>URM</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="soc" class="section level3">
 <h3>SOC</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-18-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="pre-enrollment-information" class="section level2">
 <h2>Pre-enrollment Information</h2>
 <div id="admission-index" class="section level3">
 <h3>Admission Index</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
 <table>
 <caption>Mean(sd) HSEI per section, per term (09-12)</caption>
 <thead>
@@ -545,19 +644,19 @@ $(document).ready(function () {
 <h2>Tests and Benchmarks</h2>
 <div id="ge-breadth-course-completion-status" class="section level3">
 <h3>GE-Breadth Course Completion Status</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-21-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="elm" class="section level3">
 <h3>ELM</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-22-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="ept" class="section level3">
 <h3>EPT</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-23-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="college-prep" class="section level3">
 <h3>College prep</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-24-1.png" width="576" style="display: block; margin: auto;" /></p>
 <table>
 <caption>Mean(SD) for number of college prep classes by term.</caption>
 <thead>
@@ -667,7 +766,7 @@ $(document).ready(function () {
 <h2>Academic Standing</h2>
 <div id="college" class="section level3">
 <h3>College</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-26-1.png" width="576" style="display: block; margin: auto;" /></p>
 <table>
 <caption>Percent of students in Chem 111 from each college</caption>
 <thead>
@@ -768,7 +867,7 @@ $(document).ready(function () {
 </div>
 <div id="student-level" class="section level3">
 <h3>Student Level</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-27-1.png" width="576" style="display: block; margin: auto;" /></p>
 <table>
 <caption>Percent of students in Chem 111 by student level</caption>
 <thead>
@@ -829,7 +928,7 @@ $(document).ready(function () {
 </div>
 <div id="units-taken-this-semester" class="section level3">
 <h3>Units taken this semester</h3>
-<p><img src="trends_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="trends_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" /></p>
 <table>
 <caption>Mean(sd) student course load per section per term (09-12)</caption>
 <thead>
@@ -930,6 +1029,8 @@ $(document).ready(function () {
 
 
 
+</div>
+</div>
 
 </div>
 

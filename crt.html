@@ -19,6 +19,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
@@ -163,6 +166,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -272,96 +370,18 @@ $(document).ready(function () {
 <div id="crt-vs.student-performance" class="section level1">
 <h1>CRT vs. Student Performance</h1>
 <p>We examine four semesters of data from a single instructor. Three quarters of the data come from the redesigned courses (F15, S16, F16), colored in blue on most plots, and are compared to the last traditional course offering in F14, colored in red on most plots.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term_idx</th>
-<th align="left">crt</th>
-<th align="right">N</th>
-<th align="right">dfw</th>
-<th align="right">dfw_rate</th>
-<th align="right">classgpa</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">F14</td>
-<td align="left">Traditional</td>
-<td align="right">154</td>
-<td align="right">69</td>
-<td align="right">0.45</td>
-<td align="right">1.53</td>
-</tr>
-<tr class="even">
-<td align="left">F15</td>
-<td align="left">crt</td>
-<td align="right">154</td>
-<td align="right">55</td>
-<td align="right">0.36</td>
-<td align="right">1.78</td>
-</tr>
-<tr class="odd">
-<td align="left">S16</td>
-<td align="left">crt</td>
-<td align="right">163</td>
-<td align="right">64</td>
-<td align="right">0.39</td>
-<td align="right">1.65</td>
-</tr>
-<tr class="even">
-<td align="left">F16</td>
-<td align="left">crt</td>
-<td align="right">152</td>
-<td align="right">52</td>
-<td align="right">0.34</td>
-<td align="right">1.89</td>
-</tr>
-</tbody>
-</table>
 <div id="gpa" class="section level3">
 <h3>GPA</h3>
 <p>The overall distribution of gpa for the crt courses has shifted in the positive direction compared to the traditional courses. The mean for Fall 15 and F16 are higher than F14, with S16 closer to F14 than the other redesigned terms.</p>
 <p><img src="crt_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>There is a significant improvement in average GPA in the CRT sections compared to traditional (p=.017).</p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = -2.393, df = 244.28, p-value = 0.01747
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.43809097 -0.04250256
-## sample estimates:
-## mean in group Traditional         mean in group crt 
-##                  1.529221                  1.769518</code></pre>
 <p>There is also a significant improvement in average GPA in F16 compared to F14 (p=.003).</p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = -2.9944, df = 298.38, p-value = 0.00298
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.5910981 -0.1222724
-## sample estimates:
-## mean in group Traditional         mean in group crt 
-##                  1.529221                  1.885906</code></pre>
 </div>
 <div id="dwf-rate" class="section level3">
 <h3>DWF rate</h3>
 <p><img src="crt_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>The proportion of repeatable grades does not differ significantly across semesters (p=.10)</p>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
-## 
-## data:  ew$repeat_grade and ew$crt
-## X-squared = 2.587, df = 1, p-value = 0.1077</code></pre>
 <p>The failure rate in F16 is lower than the failure rate in F14, but only marginally so (p=.096)</p>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
-## 
-## data:  f146$repeat_grade and f146$crt
-## X-squared = 2.7706, df = 1, p-value = 0.09601</code></pre>
 </div>
 </div>
 <div id="student-characteristics" class="section level1">
@@ -370,182 +390,20 @@ $(document).ready(function () {
 <h2>Gender</h2>
 <div id="crt-vs.traditional" class="section level4">
 <h4>CRT vs. Traditional</h4>
-<p>There is no statistical difference in the proportion of females enrolled in CHEM 111 across the last for semesters.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">gender</th>
-<th align="left">F14</th>
-<th align="left">F15</th>
-<th align="left">S16</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">F</td>
-<td align="left">66 (42.9%)</td>
-<td align="left">63 (40.9%)</td>
-<td align="left">85 (52.1%)</td>
-<td align="left">77 (50.7%)</td>
-</tr>
-<tr class="even">
-<td align="left">M</td>
-<td align="left">88 (57.1%)</td>
-<td align="left">91 (59.1%)</td>
-<td align="left">78 (47.9%)</td>
-<td align="left">75 (49.3%)</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(ew$gender, ew$term_idx)
-## X-squared = 5.888, df = 3, p-value = 0.1172</code></pre>
+<p>There is no statistical difference in the proportion of females enrolled in CHEM 111 across the last for semesters. <img src="crt_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>The %Female in F16 (50.7%) is also not statistically significantly different from the % Female in F14 (42.9%).</p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  (gender == &quot;F&quot;) by term_idx
-## t = -1.3671, df = 303.83, p-value = 0.1726
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.19029273  0.03427769
-## sample estimates:
-## mean in group F14 mean in group F16 
-##         0.4285714         0.5065789</code></pre>
 </div>
 <div id="performance---gpa" class="section level4">
 <h4>Performance - GPA</h4>
 <p>No statistical difference in GPA between males and females.</p>
-<p><strong>Full Sample</strong></p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">gender</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">F</td>
-<td align="right">1.70</td>
-<td align="right">0.96</td>
-</tr>
-<tr class="even">
-<td align="left">M</td>
-<td align="right">1.71</td>
-<td align="right">1.10</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-11-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = -0.14619, df = 607.56, p-value = 0.8838
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.1755966  0.1512652
-## sample estimates:
-## mean in group F mean in group M 
-##        1.702431        1.714596</code></pre>
-<p><strong>F14 &amp; F16 only</strong></p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">gender</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">F</td>
-<td align="right">1.73</td>
-<td align="right">1.02</td>
-</tr>
-<tr class="even">
-<td align="left">M</td>
-<td align="right">1.69</td>
-<td align="right">1.08</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-12-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = 0.32211, df = 300.28, p-value = 0.7476
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.1988806  0.2767303
-## sample estimates:
-## mean in group F mean in group M 
-##        1.725175        1.686250</code></pre>
+<p><strong>Full Sample</strong> <img src="crt_files/figure-html/unnamed-chunk-11-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>F14 &amp; F16 only</strong> <img src="crt_files/figure-html/unnamed-chunk-12-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="performance---dwf-rate" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p>There is no difference in dwf rate between males and females.</p>
 <p><strong>Full Sample</strong></p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">F</th>
-<th align="left">M</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">186 (63.9%)</td>
-<td align="left">198 (59.6%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">105 (36.1%)</td>
-<td align="left">134 (40.4%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
-## 
-## data:  ew$repeat_grade and ew$gender
-## X-squared = 1.0267, df = 1, p-value = 0.3109</code></pre>
 <p><strong>F14 &amp; F16 only</strong></p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">F</th>
-<th align="left">M</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">92 (64.3%)</td>
-<td align="left">94 (57.7%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">51 (35.7%)</td>
-<td align="left">69 (42.3%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
-## 
-## data:  f146$repeat_grade and f146$gender
-## X-squared = 1.1545, df = 1, p-value = 0.2826</code></pre>
 </div>
 </div>
 <div id="age" class="section level2">
@@ -553,73 +411,8 @@ $(document).ready(function () {
 <div id="crt-vs.traditional-1" class="section level4">
 <h4>CRT vs. Traditional</h4>
 <p><strong>Full Sample</strong> Students are significantly older on average in the traditional group compared to the CRT group, although there are more higher end outliers in the CRT group.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">crt</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Traditional</td>
-<td align="right">20.72</td>
-<td align="right">3.37</td>
-</tr>
-<tr class="even">
-<td align="left">crt</td>
-<td align="right">20.04</td>
-<td align="right">2.72</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df[, var] by df[, group]
-## t = 2.2872, df = 222.09, p-value = 0.02313
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  0.09480549 1.27554375
-## sample estimates:
-## mean in group Traditional         mean in group crt 
-##                  20.72238                  20.03721</code></pre>
-<p><strong>F14 &amp; F16 only</strong> The average age in F14 is 20.7, which on average is significantly higher than the average age in F16 (19.9).</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">crt</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Traditional</td>
-<td align="right">20.72</td>
-<td align="right">3.37</td>
-</tr>
-<tr class="even">
-<td align="left">crt</td>
-<td align="right">19.89</td>
-<td align="right">2.61</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-16-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df[, var] by df[, group]
-## t = 2.4214, df = 287.4, p-value = 0.01608
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  0.1560667 1.5116915
-## sample estimates:
-## mean in group Traditional         mean in group crt 
-##                  20.72238                  19.88850</code></pre>
+<p><strong>F14 &amp; F16 only</strong> The average age in F14 is 20.7, which on average is significantly higher than the average age in F16 (19.9). <img src="crt_files/figure-html/unnamed-chunk-16-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="performance---gpa-1" class="section level4">
 <h4>Performance - GPA</h4>
@@ -636,75 +429,6 @@ $(document).ready(function () {
 <div id="race-ethnicity" class="section level2">
 <h2>Race / Ethnicity</h2>
 <p>The demographic shift across all chem classes is displayed in the Exploratory Analysis document. How does this compare to the campus-wide shift?</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">race_code</th>
-<th align="left">F14</th>
-<th align="left">F15</th>
-<th align="left">S16</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Asian</td>
-<td align="left">14 (9.1%)</td>
-<td align="left">9 (5.8%)</td>
-<td align="left">12 (7.4%)</td>
-<td align="left">9 (5.9%)</td>
-</tr>
-<tr class="even">
-<td align="left">Black</td>
-<td align="left">6 (3.9%)</td>
-<td align="left">6 (3.9%)</td>
-<td align="left">3 (1.8%)</td>
-<td align="left">2 (1.3%)</td>
-</tr>
-<tr class="odd">
-<td align="left">HL</td>
-<td align="left">38 (24.7%)</td>
-<td align="left">57 (37%)</td>
-<td align="left">77 (47.2%)</td>
-<td align="left">58 (38.2%)</td>
-</tr>
-<tr class="even">
-<td align="left">Mult</td>
-<td align="left">7 (4.5%)</td>
-<td align="left">8 (5.2%)</td>
-<td align="left">3 (1.8%)</td>
-<td align="left">11 (7.2%)</td>
-</tr>
-<tr class="odd">
-<td align="left">Unk</td>
-<td align="left">22 (14.3%)</td>
-<td align="left">10 (6.5%)</td>
-<td align="left">12 (7.4%)</td>
-<td align="left">13 (8.6%)</td>
-</tr>
-<tr class="even">
-<td align="left">White</td>
-<td align="left">67 (43.5%)</td>
-<td align="left">63 (40.9%)</td>
-<td align="left">54 (33.1%)</td>
-<td align="left">58 (38.2%)</td>
-</tr>
-<tr class="odd">
-<td align="left">AIAN</td>
-<td align="left">NA</td>
-<td align="left">1 (0.6%)</td>
-<td align="left">2 (1.2%)</td>
-<td align="left">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NHOPI</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">1 (0.7%)</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>There are too many ethnicities with low sample sizes to compare statistically. Here we just look at two smaller groupings of race/ethnicity.</p>
 </div>
@@ -717,241 +441,20 @@ $(document).ready(function () {
 </ul>
 <div id="crt-vs.traditional-2" class="section level4">
 <h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of URM across the past four terms has changed significantly.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">urm_status</th>
-<th align="left">F14</th>
-<th align="left">F15</th>
-<th align="left">S16</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-URM</td>
-<td align="left">81 (52.6%)</td>
-<td align="left">72 (46.8%)</td>
-<td align="left">66 (40.5%)</td>
-<td align="left">68 (44.7%)</td>
-</tr>
-<tr class="even">
-<td align="left">Unknown</td>
-<td align="left">29 (18.8%)</td>
-<td align="left">18 (11.7%)</td>
-<td align="left">15 (9.2%)</td>
-<td align="left">24 (15.8%)</td>
-</tr>
-<tr class="odd">
-<td align="left">URM</td>
-<td align="left">44 (28.6%)</td>
-<td align="left">64 (41.6%)</td>
-<td align="left">82 (50.3%)</td>
-<td align="left">60 (39.5%)</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-20-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(ew$urm_status, ew$term_idx)
-## X-squared = 18.282, df = 6, p-value = 0.005566</code></pre>
+<p><strong>Full Sample</strong> The distribution of URM across the past four terms has changed significantly. <img src="crt_files/figure-html/unnamed-chunk-20-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> No statistical difference in the distribution of proportions between years.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">urm_status</th>
-<th align="left">F14</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-URM</td>
-<td align="left">81 (52.6%)</td>
-<td align="left">68 (44.7%)</td>
-</tr>
-<tr class="even">
-<td align="left">Unknown</td>
-<td align="left">29 (18.8%)</td>
-<td align="left">24 (15.8%)</td>
-</tr>
-<tr class="odd">
-<td align="left">URM</td>
-<td align="left">44 (28.6%)</td>
-<td align="left">60 (39.5%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(f146$urm_status, f146$term_idx)
-## X-squared = 4.0546, df = 2, p-value = 0.1317</code></pre>
 </div>
 <div id="performance---gpa-2" class="section level4">
 <h4>Performance - GPA</h4>
 <p><strong>Full Sample</strong> URM students have significantly lower GPA (.38 lower) compared to non-URM students. The GPA for students with unknown URM status have marginally lower (.23) GPA compared to non-URM students.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">urm_status</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-URM</td>
-<td align="right">1.90</td>
-<td align="right">1.09</td>
-</tr>
-<tr class="even">
-<td align="left">Unknown</td>
-<td align="right">1.67</td>
-<td align="right">1.05</td>
-</tr>
-<tr class="odd">
-<td align="left">URM</td>
-<td align="right">1.51</td>
-<td align="right">0.92</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-22-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-## Call:
-## lm(formula = df$gpa ~ df[, col.var])
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.8961 -0.6271  0.1039  0.7914  2.3333 
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)           1.89609    0.06079  31.193  &lt; 2e-16 ***
-## df[, col.var]Unknown -0.22942    0.12671  -1.811   0.0707 .  
-## df[, col.var]URM     -0.38751    0.08907  -4.351 1.59e-05 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.019 on 607 degrees of freedom
-##   (13 observations deleted due to missingness)
-## Multiple R-squared:  0.0305, Adjusted R-squared:  0.02731 
-## F-statistic: 9.548 on 2 and 607 DF,  p-value: 8.263e-05</code></pre>
 <p><strong>F14 &amp; F16 only</strong> URM students have marginally lower GPA (.23 lower) on average compared to non-URM students. The GPA for students with unknown URM status is not different than the average GPA for non-URM students.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">urm_status</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-URM</td>
-<td align="right">1.83</td>
-<td align="right">1.13</td>
-</tr>
-<tr class="even">
-<td align="left">Unknown</td>
-<td align="right">1.58</td>
-<td align="right">1.10</td>
-</tr>
-<tr class="odd">
-<td align="left">URM</td>
-<td align="right">1.60</td>
-<td align="right">0.89</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-23-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-## Call:
-## lm(formula = df$gpa ~ df[, col.var])
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.8260 -0.5961  0.1170  0.7170  2.4170 
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)           1.82603    0.08683  21.029   &lt;2e-16 ***
-## df[, col.var]Unknown -0.24301    0.16826  -1.444   0.1497    
-## df[, col.var]URM     -0.22987    0.13463  -1.707   0.0888 .  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.049 on 300 degrees of freedom
-##   (3 observations deleted due to missingness)
-## Multiple R-squared:  0.01244,    Adjusted R-squared:  0.005854 
-## F-statistic: 1.889 on 2 and 300 DF,  p-value: 0.153</code></pre>
 </div>
 <div id="performance---dwf-rate-1" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> There is a statistical difference in DWF rate by URM status in the full cohort.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">Non-URM</th>
-<th align="left">Unknown</th>
-<th align="left">URM</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">197 (68.6%)</td>
-<td align="left">54 (62.8%)</td>
-<td align="left">133 (53.2%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">90 (31.4%)</td>
-<td align="left">32 (37.2%)</td>
-<td align="left">117 (46.8%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  ew$repeat_grade and ew$urm_status
-## X-squared = 13.529, df = 2, p-value = 0.001154</code></pre>
 <p><strong>F14 &amp; F16 only</strong> There is no difference in dwf rate by URM status comparing F14 to F16 only.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">Non-URM</th>
-<th align="left">Unknown</th>
-<th align="left">URM</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">97 (65.1%)</td>
-<td align="left">31 (58.5%)</td>
-<td align="left">58 (55.8%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">52 (34.9%)</td>
-<td align="left">22 (41.5%)</td>
-<td align="left">46 (44.2%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  f146$repeat_grade and f146$urm_status
-## X-squared = 2.3789, df = 2, p-value = 0.3044</code></pre>
 </div>
 </div>
 <div id="students-of-color-soc" class="section level2">
@@ -963,242 +466,20 @@ $(document).ready(function () {
 </ul>
 <div id="crt-vs.traditional-3" class="section level4">
 <h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of SOC across the past four terms has changed significantly (p=.01)</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">soc</th>
-<th align="left">F14</th>
-<th align="left">F15</th>
-<th align="left">S16</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-SOC</td>
-<td align="left">67 (43.5%)</td>
-<td align="left">63 (40.9%)</td>
-<td align="left">54 (33.1%)</td>
-<td align="left">58 (38.2%)</td>
-</tr>
-<tr class="even">
-<td align="left">SOC</td>
-<td align="left">58 (37.7%)</td>
-<td align="left">73 (47.4%)</td>
-<td align="left">94 (57.7%)</td>
-<td align="left">70 (46.1%)</td>
-</tr>
-<tr class="odd">
-<td align="left">Multiple/Mixed</td>
-<td align="left">29 (18.8%)</td>
-<td align="left">18 (11.7%)</td>
-<td align="left">15 (9.2%)</td>
-<td align="left">24 (15.8%)</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-26-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(ew$soc, ew$term_idx)
-## X-squared = 15.445, df = 6, p-value = 0.01707</code></pre>
+<p><strong>Full Sample</strong> The distribution of SOC across the past four terms has changed significantly (p=.01) <img src="crt_files/figure-html/unnamed-chunk-26-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> No statistical difference in the distribution of proportions between F14 &amp; F16.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">soc</th>
-<th align="left">F14</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-SOC</td>
-<td align="left">67 (43.5%)</td>
-<td align="left">58 (38.2%)</td>
-</tr>
-<tr class="even">
-<td align="left">SOC</td>
-<td align="left">58 (37.7%)</td>
-<td align="left">70 (46.1%)</td>
-</tr>
-<tr class="odd">
-<td align="left">Multiple/Mixed</td>
-<td align="left">29 (18.8%)</td>
-<td align="left">24 (15.8%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(f146$soc, f146$term_idx)
-## X-squared = 2.2317, df = 2, p-value = 0.3276</code></pre>
 </div>
 <div id="performance---gpa-3" class="section level4">
 <h4>Performance - GPA</h4>
 <p><strong>Full Sample</strong></p>
-<p>Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher).</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">soc</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-SOC</td>
-<td align="right">1.93</td>
-<td align="right">1.06</td>
-</tr>
-<tr class="even">
-<td align="left">SOC</td>
-<td align="right">1.54</td>
-<td align="right">0.97</td>
-</tr>
-<tr class="odd">
-<td align="left">Multiple/Mixed</td>
-<td align="right">1.67</td>
-<td align="right">1.05</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-## Call:
-## lm(formula = df$gpa ~ df[, col.var])
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.93291 -0.53737  0.06709  0.76263  2.46263 
-## 
-## Coefficients:
-##                             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                  1.93291    0.06615  29.220  &lt; 2e-16 ***
-## df[, col.var]SOC            -0.39554    0.08924  -4.432 1.11e-05 ***
-## df[, col.var]Multiple/Mixed -0.26624    0.12932  -2.059   0.0399 *  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.018 on 607 degrees of freedom
-##   (13 observations deleted due to missingness)
-## Multiple R-squared:  0.03161,    Adjusted R-squared:  0.02841 
-## F-statistic: 9.905 on 2 and 607 DF,  p-value: 5.846e-05</code></pre>
+<p>Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher). <img src="crt_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> Only comparing F14 and F16, non-SOC students have a significantly higher GPA compared to students of color (.28 higher), and marginally higher than those from Multiple/Mixed ethnicities (.29 higher).</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">soc</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-SOC</td>
-<td align="right">1.87</td>
-<td align="right">1.13</td>
-</tr>
-<tr class="even">
-<td align="left">SOC</td>
-<td align="right">1.59</td>
-<td align="right">0.93</td>
-</tr>
-<tr class="odd">
-<td align="left">Multiple/Mixed</td>
-<td align="right">1.58</td>
-<td align="right">1.10</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-29-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-## Call:
-## lm(formula = df$gpa ~ df[, col.var])
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.8724 -0.5929  0.1170  0.7170  2.4170 
-## 
-## Coefficients:
-##                             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                  1.87236    0.09436  19.842   &lt;2e-16 ***
-## df[, col.var]SOC            -0.27944    0.13240  -2.111   0.0356 *  
-## df[, col.var]Multiple/Mixed -0.28934    0.17196  -1.683   0.0935 .  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.047 on 300 degrees of freedom
-##   (3 observations deleted due to missingness)
-## Multiple R-squared:  0.01743,    Adjusted R-squared:  0.01088 
-## F-statistic: 2.661 on 2 and 300 DF,  p-value: 0.07152</code></pre>
 </div>
 <div id="performance---dwf-rate-2" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> There is strong statistical difference in DWF rate by SOC status in the full cohort.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">Non-SOC</th>
-<th align="left">SOC</th>
-<th align="left">Multiple/Mid</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">172 (71.1%)</td>
-<td align="left">158 (53.6%)</td>
-<td align="left">54 (62.8%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">70 (28.9%)</td>
-<td align="left">137 (46.4%)</td>
-<td align="left">32 (37.2%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  ew$repeat_grade and ew$soc
-## X-squared = 17.304, df = 2, p-value = 0.0001748</code></pre>
 <p><strong>F14 &amp; F16 only</strong> There is a marginal difference in dwf rate by SOC status when looking at F14 and F16 only.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">Non-SOC</th>
-<th align="left">SOC</th>
-<th align="left">Multiple/Mid</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">85 (68%)</td>
-<td align="left">70 (54.7%)</td>
-<td align="left">31 (58.5%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">40 (32%)</td>
-<td align="left">58 (45.3%)</td>
-<td align="left">22 (41.5%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  f146$repeat_grade and f146$soc
-## X-squared = 4.8433, df = 2, p-value = 0.08877</code></pre>
 </div>
 </div>
 </div>
@@ -1210,172 +491,17 @@ $(document).ready(function () {
 <div id="crt-vs.traditional-4" class="section level4">
 <h4>CRT vs. Traditional</h4>
 <p><strong>Full Sample</strong> The distribution of EOP student status has not changed significantly.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">eop</th>
-<th align="left">F14</th>
-<th align="left">F15</th>
-<th align="left">S16</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-EOP</td>
-<td align="left">148 (96.1%)</td>
-<td align="left">142 (92.2%)</td>
-<td align="left">154 (94.5%)</td>
-<td align="left">148 (97.4%)</td>
-</tr>
-<tr class="even">
-<td align="left">EOP</td>
-<td align="left">6 (3.9%)</td>
-<td align="left">12 (7.8%)</td>
-<td align="left">9 (5.5%)</td>
-<td align="left">4 (2.6%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(ew$eop, ew$term_idx)
-## X-squared = 4.8324, df = 3, p-value = 0.1845</code></pre>
 </div>
 <div id="performance---gpa-4" class="section level4">
 <h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> There is no significant difference in average GPA for students in EOP compared to non-EOP students.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">eop</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-EOP</td>
-<td align="right">1.72</td>
-<td align="right">1.03</td>
-</tr>
-<tr class="even">
-<td align="left">EOP</td>
-<td align="right">1.57</td>
-<td align="right">1.06</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-33-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = 0.73174, df = 30.732, p-value = 0.4699
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.2626311  0.5563696
-## sample estimates:
-## mean in group Non-EOP     mean in group EOP 
-##              1.715835              1.568966</code></pre>
+<p><strong>Full Sample</strong> There is no significant difference in average GPA for students in EOP compared to non-EOP students. <img src="crt_files/figure-html/unnamed-chunk-33-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> EOP students did significantly better compared to non-EOP students when looking at the F14 and F16 cohorts only.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">eop</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Non-EOP</td>
-<td align="right">1.68</td>
-<td align="right">1.06</td>
-</tr>
-<tr class="even">
-<td align="left">EOP</td>
-<td align="right">2.28</td>
-<td align="right">0.76</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-34-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = -2.4029, df = 10.23, p-value = 0.03662
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -1.14508848 -0.04494564
-## sample estimates:
-## mean in group Non-EOP     mean in group EOP 
-##              1.684983              2.280000</code></pre>
 </div>
 <div id="performance---dwf-rate-3" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> There is no difference in the % of repeatable grades between EOP and non-EOP students.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">Non-EOP</th>
-<th align="left">EOP</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">369 (62.3%)</td>
-<td align="left">15 (48.4%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">223 (37.7%)</td>
-<td align="left">16 (51.6%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
-## 
-## data:  ew$repeat_grade and ew$eop
-## X-squared = 1.8684, df = 1, p-value = 0.1717</code></pre>
 <p><strong>F14 &amp; F16 only</strong> There is no difference in the % of repeatable grades between EOP and non-EOP students.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">Non-EOP</th>
-<th align="left">EOP</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">178 (60.1%)</td>
-<td align="left">8 (80%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">118 (39.9%)</td>
-<td align="left">2 (20%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Fisher&#39;s Exact Test for Count Data
-## 
-## data:  f146$repeat_grade and f146$eop
-## p-value = 0.3255
-## alternative hypothesis: true odds ratio is not equal to 1
-## 95 percent confidence interval:
-##  0.03847708 1.94071678
-## sample estimates:
-## odds ratio 
-##  0.3781551</code></pre>
 </div>
 </div>
 <div id="any-formal-student-group-fsg" class="section level2">
@@ -1386,172 +512,17 @@ $(document).ready(function () {
 <div id="crt-vs.traditional-5" class="section level4">
 <h4>CRT vs. Traditional</h4>
 <p><strong>Full Sample</strong> The distribution of first generation student status has not changed significantly across the past four terms.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">firstgeneration</th>
-<th align="left">F14</th>
-<th align="left">F15</th>
-<th align="left">S16</th>
-<th align="left">F16</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">N</td>
-<td align="left">83 (53.9%)</td>
-<td align="left">85 (55.2%)</td>
-<td align="left">83 (50.9%)</td>
-<td align="left">84 (55.3%)</td>
-</tr>
-<tr class="even">
-<td align="left">Y</td>
-<td align="left">71 (46.1%)</td>
-<td align="left">69 (44.8%)</td>
-<td align="left">80 (49.1%)</td>
-<td align="left">68 (44.7%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  table(ew$firstgeneration, ew$term_idx)
-## X-squared = 0.79561, df = 3, p-value = 0.8505</code></pre>
 </div>
 <div id="performance---gpa-5" class="section level4">
 <h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> First generation students have significantly lower GPA compared to non-first gen students.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">firstgeneration</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">N</td>
-<td align="right">1.84</td>
-<td align="right">1.03</td>
-</tr>
-<tr class="even">
-<td align="left">Y</td>
-<td align="right">1.55</td>
-<td align="right">1.01</td>
-</tr>
-</tbody>
-</table>
-<p><img src="crt_files/figure-html/unnamed-chunk-38-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = 3.5196, df = 597.78, p-value = 0.0004651
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  0.1291194 0.4551394
-## sample estimates:
-## mean in group N mean in group Y 
-##        1.843902        1.551773</code></pre>
+<p><strong>Full Sample</strong> First generation students have significantly lower GPA compared to non-first gen students. <img src="crt_files/figure-html/unnamed-chunk-38-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> When comparing the F14 and F16 cohorts only, this difference disappears.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">firstgeneration</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">N</td>
-<td align="right">1.74</td>
-<td align="right">1.08</td>
-</tr>
-<tr class="even">
-<td align="left">Y</td>
-<td align="right">1.66</td>
-<td align="right">1.02</td>
-</tr>
-</tbody>
-</table>
 <p><img src="crt_files/figure-html/unnamed-chunk-39-1.png" width="576" style="display: block; margin: auto;" /></p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  df$gpa by df[, col.var]
-## t = 0.68688, df = 297.85, p-value = 0.4927
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.1547448  0.3206862
-## sample estimates:
-## mean in group N mean in group Y 
-##        1.742683        1.659712</code></pre>
 </div>
 <div id="performance---dwf-rate-4" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> A significantly higher proportion of first generation students received repeatable grades.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">N</th>
-<th align="left">Y</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">221 (66%)</td>
-<td align="left">163 (56.6%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">114 (34%)</td>
-<td align="left">125 (43.4%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
-## 
-## data:  ew$repeat_grade and ew$firstgeneration
-## X-squared = 5.3641, df = 1, p-value = 0.02056</code></pre>
 <p><strong>F14 &amp; F16 only</strong> Again, this difference disappears when considering only F14 vs F16 cohorts.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">repeat_grade</th>
-<th align="left">N</th>
-<th align="left">Y</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="left">101 (60.5%)</td>
-<td align="left">85 (61.2%)</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">66 (39.5%)</td>
-<td align="left">54 (38.8%)</td>
-</tr>
-</tbody>
-</table>
-<pre><code>## 
-##  Fisher&#39;s Exact Test for Count Data
-## 
-## data:  f146$repeat_grade and f146$firstgeneration
-## p-value = 1
-## alternative hypothesis: true odds ratio is not equal to 1
-## 95 percent confidence interval:
-##  0.5967252 1.5816788
-## sample estimates:
-## odds ratio 
-##  0.9722734</code></pre>
 </div>
 </div>
 </div>
@@ -1562,12 +533,6 @@ $(document).ready(function () {
 <h2>Admissions Index (HS Eligibility)</h2>
 <p><img src="crt_files/figure-html/unnamed-chunk-42-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Average admission index is marginally statistically different across years.</p>
-<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)  
-## term_idx      3   0.87  0.2906    2.45 0.0628 .
-## Residuals   517  61.34  0.1186                 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 102 observations deleted due to missingness</code></pre>
 <div id="gpa-1" class="section level4">
 <h4>GPA</h4>
 <p>In the following scatterplots, each dot represents one student. Due to the discrete nature of gpa and number of classes, many points are overlaid on the same spot. So the darker the point, the more students are represented there.</p>
@@ -1578,17 +543,6 @@ $(document).ready(function () {
 <h4>DFW</h4>
 <p><img src="crt_files/figure-html/unnamed-chunk-45-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>There is a strong relationship between admissions index and whether or not the student will pass the class.</p>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  admission_index by pass
-## t = 7.0458, df = 455.27, p-value = 6.857e-12
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  0.1482162 0.2628756
-## sample estimates:
-## mean in group Pass mean in group Fail 
-##           3.824969           3.619423</code></pre>
 </div>
 </div>
 <div id="elm-status" class="section level2">
@@ -1615,26 +569,6 @@ $(document).ready(function () {
 <div id="gpa---recap-of-relationship" class="section level2">
 <h2>GPA - recap of relationship</h2>
 <p><img src="crt_files/figure-html/unnamed-chunk-47-1.png" width="576" style="display: block; margin: auto;" /> For those under 25, after accounting for a <strong>linear</strong> effect of age, the CRT significantly improves GPA.</p>
-<pre><code>## 
-## Call:
-## lm(formula = gpa ~ age + crt, data = filter(ew, age &lt;= 25))
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.8388 -0.7391  0.1592  0.6813  2.4658 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept)  1.06818    0.57395   1.861   0.0632 .
-## age          0.02479    0.02856   0.868   0.3857  
-## crtcrt       0.20102    0.09980   2.014   0.0444 *
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.027 on 580 degrees of freedom
-##   (11 observations deleted due to missingness)
-## Multiple R-squared:  0.007893,   Adjusted R-squared:  0.004472 
-## F-statistic: 2.307 on 2 and 580 DF,  p-value: 0.1005</code></pre>
 </div>
 <div id="hs-eligibility-in-progress" class="section level2">
 <h2>HS eligibility [In progress]</h2>
@@ -1642,145 +576,28 @@ $(document).ready(function () {
 <p>Fit a linear spline model, with a knot at 3.75. That is, two linear models with differing slopes.</p>
 <p><img src="crt_files/figure-html/unnamed-chunk-50-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Interaction between admissions index and CRT – allow there to be separate slopes between CRT groups in both high and low admission index areas. – in other words– does the CRT group <em>change</em> the relationship between admissions index and GPA?</p>
-<pre><code>## 
-## Call:
-## lm(formula = gpa ~ admission_index + lowai + gpa, data = ew)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -2.3565 -0.5172  0.1069  0.6346  2.6723 
-## 
-## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)   
-## (Intercept)      -0.9008     0.8681  -1.038  0.29996   
-## admission_index   0.6535     0.2448   2.670  0.00784 **
-## lowai             1.0626     0.4138   2.568  0.01052 * 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.9279 on 510 degrees of freedom
-##   (110 observations deleted due to missingness)
-## Multiple R-squared:  0.1765, Adjusted R-squared:  0.1732 
-## F-statistic: 54.64 on 2 and 510 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = gpa ~ admission_index + lowai + crt + crt * admission_index + 
-##     lowai * crt, data = ew)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -2.3509 -0.5661  0.1002  0.6192  2.6164 
-## 
-## Coefficients:
-##                        Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept)              0.3092     1.9091   0.162   0.8714  
-## admission_index          0.2446     0.5428   0.451   0.6524  
-## lowai                    2.1748     0.9207   2.362   0.0185 *
-## crtcrt                  -1.3190     2.1434  -0.615   0.5386  
-## admission_index:crtcrt   0.4573     0.6081   0.752   0.4525  
-## lowai:crtcrt            -1.3265     1.0306  -1.287   0.1987  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.9249 on 507 degrees of freedom
-##   (110 observations deleted due to missingness)
-## Multiple R-squared:  0.1867, Adjusted R-squared:  0.1787 
-## F-statistic: 23.28 on 5 and 507 DF,  p-value: &lt; 2.2e-16</code></pre>
 <hr />
 <p>Notes</p>
-<pre><code>## 
-## Call:
-## lm(formula = gpa ~ crt + gender + firstgeneration, data = ew)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.9103 -0.6688  0.0933  0.6933  2.6232 
-## 
-## Coefficients:
-##                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)       1.65723    0.10295  16.097  &lt; 2e-16 ***
-## crtcrt            0.24146    0.09518   2.537  0.01144 *  
-## genderM           0.01157    0.08289   0.140  0.88907    
-## firstgenerationY -0.29199    0.08289  -3.523  0.00046 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.02 on 606 degrees of freedom
-##   (13 observations deleted due to missingness)
-## Multiple R-squared:  0.0302, Adjusted R-squared:  0.0254 
-## F-statistic: 6.291 on 3 and 606 DF,  p-value: 0.0003305</code></pre>
 <ul>
 <li><p>can we show that SI is the cause of the reduction of the GAP between first gen and/or URM students.</p></li>
 <li>DFW rate as a function of attendance</li>
 <li>HS eligibility vs. SI visits</li>
 <li></li>
-</ul>
-<pre><code>## 
-## Call:
-## lm(formula = gpa ~ crt + gender + firstgeneration, data = filter(ew, 
-##     term_idx %in% c(&quot;F14&quot;, &quot;F16&quot;)))
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.9313 -0.8484  0.1393  0.7844  2.5221 
-## 
-## Coefficients:
-##                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)       1.57636    0.12518  12.593  &lt; 2e-16 ***
-## crtcrt            0.35492    0.12015   2.954  0.00339 ** 
-## genderM          -0.01565    0.12091  -0.129  0.89712    
-## firstgenerationY -0.08284    0.12066  -0.687  0.49286    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.041 on 299 degrees of freedom
-##   (3 observations deleted due to missingness)
-## Multiple R-squared:  0.03035,    Adjusted R-squared:  0.02062 
-## F-statistic:  3.12 on 3 and 299 DF,  p-value: 0.02637</code></pre>
-<ul>
-<li>add logistic regression of repeatable grade vs crt</li>
-</ul>
-<pre><code>## 
-## Call:
-## glm(formula = repeat_grade ~ crt + admission_index, family = &quot;binomial&quot;, 
-##     data = ew)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.6592  -0.9674  -0.6979   1.1675   2.0144  
-## 
-## Coefficients:
-##                 Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)       6.7069     1.1106   6.039 1.55e-09 ***
-## crtcrt           -0.2564     0.2264  -1.132    0.258    
-## admission_index  -1.8738     0.2950  -6.351 2.14e-10 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 694.84  on 520  degrees of freedom
-## Residual deviance: 647.94  on 518  degrees of freedom
-##   (102 observations deleted due to missingness)
-## AIC: 653.94
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-<pre><code>##     (Intercept)          crtcrt admission_index 
-##     818.0303082       0.7738621       0.1535372</code></pre>
-<ul>
+<li><p>add logistic regression of repeatable grade vs crt</p></li>
 <li>don’t forget to add difference between chem performance and other classes</li>
-<li>plot gap in gpa and dwf across term</li>
+<li><p>plot gap in gpa and dwf across term</p></li>
 </ul>
 </div>
 </div>
 <div id="cart---predicting-a-failing-grade." class="section level1">
 <h1>CART - Predicting a failing grade.</h1>
 <p>Work in progress…</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-55-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
