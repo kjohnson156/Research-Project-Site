@@ -15,7 +15,7 @@ We consider data from Fall 2009 - Fall 2016, for all sections of Chemistry 111. 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr);library(knitr); library(RColorBrewer)
 library(ggplot2);library(gridExtra); library(grid)
-library(scales); library(foreach)
+library(scales); library(foreach); library(plotly)
 
 '%ni%' <- Negate('%in%')
 
@@ -62,10 +62,12 @@ Spring term enrollment has steadily increased since 2009.
 Across all years, class sizes range from 50 to 164, with an IQR of 26, a median of 155, and a mean of 136.2.
 
 ```{r}
-ggplot(class, aes(x=term_idx, y=enrollment, group=term, col=term)) + 
+p <- ggplot(class, aes(x=term_idx, y=enrollment, group=term, col=term)) + 
   geom_point() + geom_smooth(se=FALSE) + xlab("Semester") + ylab("# of students per section") +
   scale_color_manual(values=term.col, name = "Term")+ theme_minimal() +
   scale_y_continuous(limits=c(40, 180)) + ggtitle("Enrollment per section")
+
+ggplotly(p)
 ```
   
 Fall class sizes have remained relativley constant between 140-160 since 2009, even with an additional section starting in 2013. 
