@@ -6,16 +6,15 @@ output:
     toc_depth: 2
 ---
 
-To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (`W/I`) are exluded from this analysis. A repeatable grade is defined as a student reciving a *D*, *D+*, *F* grade, or an unexcused withdrawl *WU*. 
-
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr);library(knitr); library(RColorBrewer)
 library(ggplot2);library(gridExtra)
 library(scales); library(foreach)
+library(plotly); library(grid)
 
 '%ni%' <- Negate('%in%')
 
-opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=FALSE,
                fig.align = 'center',  fig.width=6, fig.height=4, results = 'hide')
 options(knitr.kable.NA = '') 
 
@@ -28,44 +27,41 @@ ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
       mutate(repeat_grade = ifelse(grade %in% c('D ', 'D+', 'F ', 'WU'), 1, 0),
              pass = factor(repeat_grade, labels=c("Pass", "Fail")),
              term_idx = factor(term_idx, levels=c("F14","F15", "S16", "F16")),
-             crt = factor(crt, labels=c("Traditional", "crt")), 
              DSS = ifelse(dss.1==1 | dss == 'Y', 'DSS', 'not in DSS'), 
              soc = factor(soc, levels=c('Non-SOC', 'SOC', 'Multiple/Mixed')), 
              eop = factor(eop, labels=c("Non-EOP", "EOP"))) %>%
       select(-dss.1, -dss, -erss_stulevel, erss_enrstat)
 
+ew$crt[ew$term_idx == "F16"] <- 2
+ew$crt <- factor(ew$crt, labels=c("Traditional", "CRT", "CRT+SI"))
 
 class <- ew %>% group_by(year, term, term_idx, section, crt) %>%
-          summarise(classgpa = mean(gpa), dwf = sum(repeat_grade), 
-                    N = n(), dwf_rate = dwf/N)
+          summarise(classgpa = mean(gpa), dfw = sum(repeat_grade), 
+                    N = n(), dfw_rate = dfw/N)
 
 f146 <- filter(ew, term_idx %in% c("F14", "F16")) %>% droplevels()
 
 # viz opts
 yearlab <- c(2009, rep(2010:2016, each=2))
 term.col <- brewer.pal(9, "Set1")[c(7, 3)]
-crt.col <- brewer.pal(9, "Set1")[1:2]
+crt.col <- brewer.pal(9, "Set1")[1:3]
 ```
 
-# Purpose
-This report examines the effect of the course redesign for a single instructor over two years. 
+# Analysis Overview
 
-* Student and class level characteristics are used as covariates. 
-* Univariate descriptions for these characteristics can be found in the Exploratory analysis document (Phase 1b.)
-* Each predictor is compared to the intervention condition ( CRT vs Traditional), and to the outcomes (GPA and receipt of a repeatable grade.)
-* Comparisons are made on two groups 
-    - Traditional class (F14) vs. all other CRT cohorts (F15, S16, F16)
-    - F14 vs. F16 only 
+To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (`W/I`) are exluded from this analysis. A repeatable grade is defined as a student reciving a *D*, *D+*, *F* grade, or an unexcused withdrawl *WU*. 
 
-## Analysis Plan
-
-1. Bivariate associations of covariate with outcome, and with CRT condition. 
+1. Examine bivariate associations between outcome measures, covariates and the CRT intervention condition. 
+    a. Student and class level characteristics are used as covariates. 
+    b. Each predictor is compared to the intervention condition (CRT vs Traditional), and to the outcomes (GPA and receipt of a repeatable grade.)
+    c. Analysis is done on two sets of data samples: 
+        - All terms (Full sample) 
+        - Just F14 and F16 terms only 
 2. Model building - Start with variables that were shown to be bivariately associated with either intervention or outcome, build a multivariable statistical model to assess the effect of the CRT on student performance. 
-3. Supervised machine learning to build a Decision tree for the binary outcome of passing CHEM 111. 
+3. Use a supervised machine learning technique to identify other key characteristics highly predictive of a student recieving a repeatable grade. 
 
 
-
-#### Outcome measurements
+### Outcome measurements
 
 **1. GPA**
 
@@ -73,173 +69,168 @@ Since GPA is being treated as a continuous variable, distributions of GPA are di
 
 **2. Receipt of a repeatable grade**
 
-We also dichotomize the grade a student received and create an indicator for whether or not the student received a _repeatable grade_ (D, F, W, WU) for this analysis. This is also called the _failure rate_ in some places in this report. 
+We also dichotomize the grade a student received and create an indicator for whether or not the student received a repeatable grade. This is also called the _failure rate_ in some places in this report. 
 
 Where the sample size is large enough, $\chi^{2}$ tests for equal proportions across two / and multiple groups are conducted, otherwise Fishers Exact Tests are used. Any comparison where a zero cell occurs (a combination of factors that does not exist in the data), no statistical test is conducted. 
 
-# CRT vs. Student Performance
+# Performance Outcomes
 
-We examine four semesters of data from a single instructor. Three quarters of the data come from the redesigned courses (F15, S16, F16), colored in blue on most plots, and are compared to the last traditional course offering in F14, colored in red on most plots.  
-
-```{r}
-kable(class, digits=2)
-```
+We examine four semesters of data from a single instructor. One semester of traditional course offering from F14, two semesters of redesigned courses (F15, S16) and one semester of the redesign with an SI enhancement. These are colored in red, blue and green respectively in most plots. 
 
 ### GPA
-The overall distribution of gpa for the crt courses has shifted in the positive direction compared to the traditional courses. The mean for Fall 15 and F16 are higher than F14, with S16 closer to F14 than the other redesigned terms. 
+The overall distribution of gpa for the crt courses has shifted in the positive direction compared to the traditional courses. The mean for Fall 15 and F16 are higher than F14, with S16 closer to F14 than the other redesigned terms. The variance in GPA from the last semester is much higher than the rest, potentially indicating that the effect of SI did not have a uniform impact on increasing the GPA for all students. 
 
 ```{r}
 ggplot(ew, aes(y=gpa, x=term_idx, fill=crt)) + 
         geom_boxplot(alpha=.5, width=.3) +
-        geom_violin(alpha=.3) + xlab("") + 
+        geom_violin(alpha=.3) + xlab("") + theme_bw() + ylab("GPA") + xlab("Semester") + 
         scale_fill_manual(values=crt.col, guide=FALSE) + 
-        stat_summary(fun.y=mean, geom="point", shape=18, size=4) 
+        stat_summary(fun.y=mean, geom="point", shape=18, size=4)
 ```
 
-There is a significant improvement in average GPA in the CRT sections compared to traditional (p=.017). 
+
+### DWF rate
+The percent of students receiving a repeatable grade has declined over the past four semesters. 
+```{r}
+ggplot(class, aes(y=dfw_rate, x=term_idx, col = crt, shape=crt, label=paste0(round(dfw_rate*100,1),"%"))) + 
+          geom_text(nudge_y=.05)  + geom_point(size=5) + ylab("") + theme_bw() + 
+          scale_color_manual(values=crt.col, name="Class Type") + scale_shape_discrete(guide=FALSE) +  
+          scale_y_continuous(limits=c(0,1), labels=scales::percent) + xlab("") 
+```
+
+
+### Statistical Comparisons
+```{r, results='show'}
+cl <- class %>% ungroup() %>% arrange(term_idx) %>% select(term_idx, crt, classgpa, dfw, N, dfw_rate)
+names(cl) <- c("Term", "Type", "Ave. GPA", "# DFW", "Enrollment", "DFW Rate")
+kable(cl,
+      digits=2, align='c', row.names=FALSE, caption='Class level performance characteristics')
+```
 
 ```{r}
 gpa.crt.ew <- univ.gpa(ew, col.var = 'crt')
-gpa.crt.ew$test
-```
+crt.p <- format.pval(unlist(summary(aov(gpa.crt.ew$test)))[9], digits=2)
 
-There is also a significant improvement in average GPA in F16 compared to F14 (p=.003). 
-
-```{r}
 gpa.crt.f146 <- univ.gpa(f146, col.var = 'crt')
-gpa.crt.f146$test
 ```
 
-### DWF rate
-```{r}
-ggplot(class, aes(y=dfw_rate, x=term_idx, col = crt, shape=crt)) +  geom_point(size=5) + scale_color_manual(values=crt.col, guide=FALSE) + scale_y_continuous(limits=c(0,1)) + xlab("")
-```
+* There is a significant improvement in GPA averaged across all redesigned sections compared to traditional (p=`r crt.p`). 
+* There is also a significant improvement in average GPA in F16 compared to F14 (p=`r format.pval(gpa.crt.f146$test$p.value, digits=2)`). 
+* The failure rate in F16 is lower than the failure rate in F14, but only marginally so (p=`r format.pval(chisq.test(ew$repeat_grade, ew$crt)$p.value, digits=2)`)
+* The proportion of repeatable grades does not differ significantly across semesters (p=`r format.pval(chisq.test(f146$repeat_grade, f146$crt)$p.value, digits=2)`)
 
-The proportion of repeatable grades does not differ significantly across semesters (p=.10)
-```{r}
-chisq.test(ew$repeat_grade, ew$crt)
-```
-
-The failure rate in F16 is lower than the failure rate in F14, but only marginally so (p=.096)
-```{r}
-chisq.test(f146$repeat_grade, f146$crt)
-```
 
 # Student Characteristics 
 
 ## Gender
-#### CRT vs. Traditional 
+#### Course Type
 
-There is no statistical difference in the proportion of females enrolled in CHEM 111 across the last for semesters. 
+The gender distribution remained constant across the past four semesters.
+
 ```{r}
 g.term <- biv.n.row.pct(df=ew, row.var = 'gender', col.var = 'term_idx')
-
-kable(g.term$table, row.names = FALSE)
-g.term$plot + scale_y_continuous(limits=c(.25, .75))
 chisq.test(table(ew$gender, ew$term_idx))
-```
-
-The %Female in F16 (50.7%) is also not statistically significantly different from the % Female in F14 (42.9%). 
-```{r}
 t.test((gender=="F") ~ term_idx, data=f146)
 ```
 
+```{r, results='show'}
+kable(g.term$table, row.names = FALSE)
+
+g.term$plot + scale_y_continuous(labels=scales::percent, limits=c(.25, .75)) + theme_bw()
+```
+
+
 #### Performance - GPA
-No statistical difference in GPA between males and females. 
+There is no statistical difference in the average GPA between males and females, regardless of cohort. 
 
-**Full Sample**
 ```{r}
-gpa.gender.ew <- univ.gpa(ew, col.var = 'gender')
-kable(gpa.gender.ew$table, digits=2)
-gpa.gender.ew$plot
-gpa.gender.ew$test
-```
-
-**F14 & F16 only**
-```{r}
+gpa.gender.ew   <- univ.gpa(ew, col.var = 'gender')
 gpa.gender.f146 <- univ.gpa(f146, col.var = 'gender')
-kable(gpa.gender.f146$table, digits=2)
-gpa.gender.f146$plot
-gpa.gender.f146$test
+
+a <- data.frame(gpa.gender.ew$table, 
+               p = c(format.pval(gpa.gender.ew$test$p.value, digits=2), NA), 
+               gpa.gender.f146$table[,-1],
+               p2 = c(format.pval(gpa.gender.f146$test$p.value, digits=2), NA)
+               )
+
+names(a) <- c("Gender", "Full mean", "Full SD", "p-value",  "F14 & F16 mean", "F14 & F16 SD", "p-value")
+```
+
+```{r, results='show'}
+kable(a, digits=2, align='c')
+```
+
+```{r, fig.width=12}
+a <- gpa.gender.ew$plot + ggtitle("Full Sample") + xlab("")
+b <- gpa.gender.f146$plot + ggtitle("F14 & F16 only") + xlab("")
+
+grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="right")
 ```
 
 
-#### Performance - DWF rate
-There is no difference in dwf rate between males and females.
+#### Performance - DFW rate
+There is no difference in proportion of males and females getting a repeatable grade on the entire sample, or when using data on the F14 and F16 cohorts only.
 
-**Full Sample**
 ```{r}
 gender.dwf.ew <- biv.n.row.pct(ew, col.var = 'gender', row.var='repeat_grade')
-kable(gender.dwf.ew$table, row.names = FALSE)
-chisq.test(ew$repeat_grade, ew$gender)
+gender.dwf.f146<- biv.n.row.pct(f146, col.var = 'gender',row.var='repeat_grade')
 ```
 
-**F14 & F16 only**
-```{r}
-gender.dwf.f146<- biv.n.row.pct(f146, col.var = 'gender',row.var='repeat_grade')
-kable(gender.dwf.f146$table, row.names = FALSE)
-chisq.test(f146$repeat_grade, f146$gender)
+```{r, results='show'}
+a <- data.frame(g = c("No", "Yes"),
+           gender.dwf.ew$table[,-1], 
+           p=c(format.pval(chisq.test(ew$repeat_grade, ew$gender)$p.value, digits=2), NA), 
+           gender.dwf.f146$table[,-1], 
+           p=c(format.pval(chisq.test(f146$repeat_grade, f146$gender)$p.value, digits=2), NA)
+           )
+names(a) <- names(a) <- c("Repeatable Grade", "N (%) Female \n Full Sample", "N(%) Male \n Full Sample", "p-value",  
+                          "N(%) Female \n F 14 & 16", "N(%) Male \n F14 & F16", "p-value")
+
+kable(a, row.names = FALSE, align='c')
 ```
 
 ## Age 
 
-#### CRT vs. Traditional 
-**Full Sample**
-Students are significantly older on average in the traditional group compared to the CRT group, although there are more higher end outliers in the CRT group. 
+#### Course Type
+
+Students in F14 were on average 0.68 (0.01, 1.34) years older than those in the two CRT semesters (p=.04), and 0.87 (0.1, 1.65) years older than students in Fall 16 (p=.02).
 
 ```{r}
-age.crt.ew <- biv.mean(df=ew, var='age', group='crt')
-kable(age.crt.ew$table, digits=2)
-age.crt.ew$plot
-age.crt.ew$test
+age.crt.ew   <- biv.mean(df=ew, var='age', group='crt')
+age.crt.ew$plot + scale_fill_discrete(name="Class Type")
 ```
 
-**F14 & F16 only**
-The average age in F14 is 20.7, which on average is significantly higher than the average age in F16 (19.9). 
-```{r}
-age.crt.f146 <- biv.mean(df=f146, var='age', group='crt')
-kable(age.crt.f146$table, digits=2)
-age.crt.f146$plot
-age.crt.f146$test
+```{r, results='show'}
+kable(biv.mean.wide(df=ew, var='age', group='crt'), align='c', caption="Mean and SD for ages within class types")
 ```
+
+```{r, results='show'}
+kable(TukeyHSD(aov(age~crt, data=ew))$crt, digits=2, 
+      caption="Tukeys Honest Significant Difference for differences between all pairs")
+```
+
 
 #### Performance - GPA
-GPA and Age have a complex relationship. It is not quite linear, especially in the older age range. 
-```{r}
-ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
+GPA and Age have a non-linear relationship. For students less than 25 years of age, the pattern of relationship between age and GPA does not seem to differ greatly across the three course types. This indicates that the intervention has a similar affect on a students GPA regardless of their age. 
+```{r, fig.width=10}
+a <- ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
         geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by age - full sample") + 
-        scale_color_manual(values=crt.col) 
+        scale_color_manual(values=crt.col)  + ggtitle("Everyone")
 
-ggplot(f146, aes(x=age, y=gpa, col=crt)) + 
+b <- ggplot(filter(ew, age<25), aes(x=age, y=gpa, col=crt)) + 
         geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by age - for Fall '14 and '16 only") + 
-        scale_color_manual(values=crt.col) 
+        scale_color_manual(values=crt.col) + ggtitle("Age < 25yrs")
+
+grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="bottom")
 ```
 
-Excluding outliers in the oldest 5% (age > 25), we get closer to a more linear relationship. Subsequent analysis may want to consider excluding these older students, or analyzing them separately. Or dichotomizing age. 
-
 ```{r}
-ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
-        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by age index - full sample") + 
-        geom_smooth(method=lm, se=FALSE)+ 
-        scale_color_manual(values=crt.col) + scale_x_continuous(limits=c(17,25))
-
-ggplot(f146, aes(x=age, y=gpa, col=crt)) + 
-        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by age index - for Fall '14 and '16 only") + 
-        geom_smooth(method=lm, se=FALSE)+ 
-        scale_color_manual(values=crt.col) + scale_x_continuous(limits=c(17,25))
+out <- mlr.table(lm(gpa~age + crt, data=ew))
+out
 ```
-
 
 #### Performance - DWF rate [[NOT DONE YET]]
 
-**Full Sample**
-
-
-**F14 & F16 only**
 
 
 ## Race / Ethnicity

@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -337,100 +337,255 @@ div.tocify {
 </div>
 
 
+<div id="analysis-overview" class="section level1">
+<h1>Analysis Overview</h1>
 <p>To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (<code>W/I</code>) are exluded from this analysis. A repeatable grade is defined as a student reciving a <em>D</em>, <em>D+</em>, <em>F</em> grade, or an unexcused withdrawl <em>WU</em>.</p>
-<div id="purpose" class="section level1">
-<h1>Purpose</h1>
-<p>This report examines the effect of the course redesign for a single instructor over two years.</p>
-<ul>
-<li>Student and class level characteristics are used as covariates.</li>
-<li>Univariate descriptions for these characteristics can be found in the Exploratory analysis document (Phase 1b.)</li>
-<li>Each predictor is compared to the intervention condition ( CRT vs Traditional), and to the outcomes (GPA and receipt of a repeatable grade.)</li>
-<li>Comparisons are made on two groups
-<ul>
-<li>Traditional class (F14) vs. all other CRT cohorts (F15, S16, F16)</li>
-<li>F14 vs. F16 only</li>
-</ul></li>
-</ul>
-<div id="analysis-plan" class="section level2">
-<h2>Analysis Plan</h2>
 <ol style="list-style-type: decimal">
-<li>Bivariate associations of covariate with outcome, and with CRT condition.</li>
+<li>Examine bivariate associations between outcome measures, covariates and the CRT intervention condition.
+<ol style="list-style-type: lower-alpha">
+<li>Student and class level characteristics are used as covariates.</li>
+<li>Each predictor is compared to the intervention condition (CRT vs Traditional), and to the outcomes (GPA and receipt of a repeatable grade.)</li>
+<li>Analysis is done on two sets of data samples:
+<ul>
+<li>All terms (Full sample)</li>
+<li>Just F14 and F16 terms only</li>
+</ul></li>
+</ol></li>
 <li>Model building - Start with variables that were shown to be bivariately associated with either intervention or outcome, build a multivariable statistical model to assess the effect of the CRT on student performance.</li>
-<li>Supervised machine learning to build a Decision tree for the binary outcome of passing CHEM 111.</li>
+<li>Use a supervised machine learning technique to identify other key characteristics highly predictive of a student recieving a repeatable grade.</li>
 </ol>
-<div id="outcome-measurements" class="section level4">
-<h4>Outcome measurements</h4>
+<div id="outcome-measurements" class="section level3">
+<h3>Outcome measurements</h3>
 <p><strong>1. GPA</strong></p>
 <p>Since GPA is being treated as a continuous variable, distributions of GPA are displayed using boxplots with overlaid violin plots. The diamonds represent the average or mean value for that group. Two-sample T-tests and ANOVA tests are used to compare the average GPA across levels of the covariate of interest.</p>
 <p><strong>2. Receipt of a repeatable grade</strong></p>
-<p>We also dichotomize the grade a student received and create an indicator for whether or not the student received a <em>repeatable grade</em> (D, F, W, WU) for this analysis. This is also called the <em>failure rate</em> in some places in this report.</p>
+<p>We also dichotomize the grade a student received and create an indicator for whether or not the student received a repeatable grade. This is also called the <em>failure rate</em> in some places in this report.</p>
 <p>Where the sample size is large enough, <span class="math inline">\(\chi^{2}\)</span> tests for equal proportions across two / and multiple groups are conducted, otherwise Fishers Exact Tests are used. Any comparison where a zero cell occurs (a combination of factors that does not exist in the data), no statistical test is conducted.</p>
 </div>
 </div>
-</div>
-<div id="crt-vs.student-performance" class="section level1">
-<h1>CRT vs. Student Performance</h1>
-<p>We examine four semesters of data from a single instructor. Three quarters of the data come from the redesigned courses (F15, S16, F16), colored in blue on most plots, and are compared to the last traditional course offering in F14, colored in red on most plots.</p>
+<div id="performance-outcomes" class="section level1">
+<h1>Performance Outcomes</h1>
+<p>We examine four semesters of data from a single instructor. One semester of traditional course offering from F14, two semesters of redesigned courses (F15, S16) and one semester of the redesign with an SI enhancement. These are colored in red, blue and green respectively in most plots.</p>
 <div id="gpa" class="section level3">
 <h3>GPA</h3>
-<p>The overall distribution of gpa for the crt courses has shifted in the positive direction compared to the traditional courses. The mean for Fall 15 and F16 are higher than F14, with S16 closer to F14 than the other redesigned terms.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>There is a significant improvement in average GPA in the CRT sections compared to traditional (p=.017).</p>
-<p>There is also a significant improvement in average GPA in F16 compared to F14 (p=.003).</p>
+<p>The overall distribution of gpa for the crt courses has shifted in the positive direction compared to the traditional courses. The mean for Fall 15 and F16 are higher than F14, with S16 closer to F14 than the other redesigned terms. The variance in GPA from the last semester is much higher than the rest, potentially indicating that the effect of SI did not have a uniform impact on increasing the GPA for all students.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dwf-rate" class="section level3">
 <h3>DWF rate</h3>
-<p><img src="crt_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>The proportion of repeatable grades does not differ significantly across semesters (p=.10)</p>
-<p>The failure rate in F16 is lower than the failure rate in F14, but only marginally so (p=.096)</p>
+<p>The percent of students receiving a repeatable grade has declined over the past four semesters. <img src="crt_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="statistical-comparisons" class="section level3">
+<h3>Statistical Comparisons</h3>
+<table>
+<caption>Class level performance characteristics</caption>
+<thead>
+<tr class="header">
+<th align="center">Term</th>
+<th align="center">Type</th>
+<th align="center">Ave. GPA</th>
+<th align="center"># DFW</th>
+<th align="center">Enrollment</th>
+<th align="center">DFW Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">F14</td>
+<td align="center">Traditional</td>
+<td align="center">1.53</td>
+<td align="center">68</td>
+<td align="center">154</td>
+<td align="center">0.44</td>
+</tr>
+<tr class="even">
+<td align="center">F15</td>
+<td align="center">CRT</td>
+<td align="center">1.78</td>
+<td align="center">51</td>
+<td align="center">150</td>
+<td align="center">0.34</td>
+</tr>
+<tr class="odd">
+<td align="center">S16</td>
+<td align="center">CRT</td>
+<td align="center">1.65</td>
+<td align="center">58</td>
+<td align="center">157</td>
+<td align="center">0.37</td>
+</tr>
+<tr class="even">
+<td align="center">F16</td>
+<td align="center">CRT+SI</td>
+<td align="center">1.89</td>
+<td align="center">49</td>
+<td align="center">149</td>
+<td align="center">0.33</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>There is a significant improvement in GPA averaged across all redesigned sections compared to traditional (p=0.011).</li>
+<li>There is also a significant improvement in average GPA in F16 compared to F14 (p=0.003).</li>
+<li>The failure rate in F16 is lower than the failure rate in F14, but only marginally so (p=0.093)</li>
+<li>The proportion of repeatable grades does not differ significantly across semesters (p=0.058)</li>
+</ul>
 </div>
 </div>
 <div id="student-characteristics" class="section level1">
 <h1>Student Characteristics</h1>
 <div id="gender" class="section level2">
 <h2>Gender</h2>
-<div id="crt-vs.traditional" class="section level4">
-<h4>CRT vs. Traditional</h4>
-<p>There is no statistical difference in the proportion of females enrolled in CHEM 111 across the last for semesters. <img src="crt_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>The %Female in F16 (50.7%) is also not statistically significantly different from the % Female in F14 (42.9%).</p>
+<div id="course-type" class="section level4">
+<h4>Course Type</h4>
+<p>The gender distribution remained constant across the past four semesters.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">gender</th>
+<th align="left">F14</th>
+<th align="left">F15</th>
+<th align="left">S16</th>
+<th align="left">F16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">F</td>
+<td align="left">66 (42.9%)</td>
+<td align="left">62 (41.3%)</td>
+<td align="left">83 (52.9%)</td>
+<td align="left">77 (51.7%)</td>
+</tr>
+<tr class="even">
+<td align="left">M</td>
+<td align="left">88 (57.1%)</td>
+<td align="left">88 (58.7%)</td>
+<td align="left">74 (47.1%)</td>
+<td align="left">72 (48.3%)</td>
+</tr>
+</tbody>
+</table>
+<p><img src="crt_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="performance---gpa" class="section level4">
 <h4>Performance - GPA</h4>
-<p>No statistical difference in GPA between males and females.</p>
-<p><strong>Full Sample</strong> <img src="crt_files/figure-html/unnamed-chunk-11-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> <img src="crt_files/figure-html/unnamed-chunk-12-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>There is no statistical difference in the average GPA between males and females, regardless of cohort.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Gender</th>
+<th align="center">Full mean</th>
+<th align="center">Full SD</th>
+<th align="center">p-value</th>
+<th align="center">F14 &amp; F16 mean</th>
+<th align="center">F14 &amp; F16 SD</th>
+<th align="center">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">F</td>
+<td align="center">1.70</td>
+<td align="center">0.96</td>
+<td align="center">0.88</td>
+<td align="center">1.73</td>
+<td align="center">1.02</td>
+<td align="center">0.75</td>
+</tr>
+<tr class="even">
+<td align="center">M</td>
+<td align="center">1.71</td>
+<td align="center">1.10</td>
+<td align="center"></td>
+<td align="center">1.69</td>
+<td align="center">1.08</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<p><img src="crt_files/figure-html/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---dwf-rate" class="section level4">
-<h4>Performance - DWF rate</h4>
-<p>There is no difference in dwf rate between males and females.</p>
-<p><strong>Full Sample</strong></p>
-<p><strong>F14 &amp; F16 only</strong></p>
+<div id="performance---dfw-rate" class="section level4">
+<h4>Performance - DFW rate</h4>
+<p>There is no difference in proportion of males and females getting a repeatable grade on the entire sample, or when using data on the F14 and F16 cohorts only.</p>
+<p>Repeatable Grade N (%) Female Full Sample N(%) Male Full Sample p-value N(%) Female F 14 &amp; 16 N(%) Male F14 &amp; F16 p-value —————— —————————- ————————- ——— ————————- ———————– ——— No 186 (64.6%) 198 (61.5%) 0.48 92 (64.3%) 94 (58.8%) 0.38<br />
+Yes 102 (35.4%) 124 (38.5%) 51 (35.7%) 66 (41.2%)</p>
 </div>
 </div>
 <div id="age" class="section level2">
 <h2>Age</h2>
-<div id="crt-vs.traditional-1" class="section level4">
-<h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> Students are significantly older on average in the traditional group compared to the CRT group, although there are more higher end outliers in the CRT group.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> The average age in F14 is 20.7, which on average is significantly higher than the average age in F16 (19.9). <img src="crt_files/figure-html/unnamed-chunk-16-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div id="course-type-1" class="section level4">
+<h4>Course Type</h4>
+<p>Students in F14 were on average 0.68 (0.01, 1.34) years older than those in the two CRT semesters (p=.04), and 0.87 (0.1, 1.65) years older than students in Fall 16 (p=.02).</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
+<table>
+<caption>Mean and SD for ages within class types</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">Traditional</th>
+<th align="center">CRT</th>
+<th align="center">CRT+SI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>age</td>
+<td align="center">20.72 (3.37)</td>
+<td align="center">20.04 (2.73)</td>
+<td align="center">19.85 (2.55)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Tukeys Honest Significant Difference for differences between all pairs</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">diff</th>
+<th align="right">lwr</th>
+<th align="right">upr</th>
+<th align="right">p adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CRT-Traditional</td>
+<td align="right">-0.68</td>
+<td align="right">-1.34</td>
+<td align="right">-0.01</td>
+<td align="right">0.04</td>
+</tr>
+<tr class="even">
+<td>CRT+SI-Traditional</td>
+<td align="right">-0.87</td>
+<td align="right">-1.65</td>
+<td align="right">-0.10</td>
+<td align="right">0.02</td>
+</tr>
+<tr class="odd">
+<td>CRT+SI-CRT</td>
+<td align="right">-0.19</td>
+<td align="right">-0.87</td>
+<td align="right">0.48</td>
+<td align="right">0.78</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="performance---gpa-1" class="section level4">
 <h4>Performance - GPA</h4>
-<p>GPA and Age have a complex relationship. It is not quite linear, especially in the older age range. <img src="crt_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;" /><img src="crt_files/figure-html/unnamed-chunk-17-2.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Excluding outliers in the oldest 5% (age &gt; 25), we get closer to a more linear relationship. Subsequent analysis may want to consider excluding these older students, or analyzing them separately. Or dichotomizing age.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-18-1.png" width="576" style="display: block; margin: auto;" /><img src="crt_files/figure-html/unnamed-chunk-18-2.png" width="576" style="display: block; margin: auto;" /></p>
+<p>GPA and Age have a non-linear relationship. For students less than 25 years of age, the pattern of relationship between age and GPA does not seem to differ greatly across the three course types. This indicates that the intervention has a similar affect on a students GPA regardless of their age. <img src="crt_files/figure-html/unnamed-chunk-16-1.png" width="960" style="display: block; margin: auto;" /></p>
 </div>
 <div id="performance---dwf-rate-not-done-yet" class="section level4">
 <h4>Performance - DWF rate [[NOT DONE YET]]</h4>
-<p><strong>Full Sample</strong></p>
-<p><strong>F14 &amp; F16 only</strong></p>
 </div>
 </div>
 <div id="race-ethnicity" class="section level2">
 <h2>Race / Ethnicity</h2>
 <p>The demographic shift across all chem classes is displayed in the Exploratory Analysis document. How does this compare to the campus-wide shift?</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-18-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>There are too many ethnicities with low sample sizes to compare statistically. Here we just look at two smaller groupings of race/ethnicity.</p>
 </div>
 <div id="underrepresented-minority-urm" class="section level2">
@@ -440,19 +595,19 @@ div.tocify {
 <li>URM: Black, HL</li>
 <li>UNK: Mult, Unk</li>
 </ul>
-<div id="crt-vs.traditional-2" class="section level4">
+<div id="crt-vs.traditional" class="section level4">
 <h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of URM across the past four terms has changed significantly. <img src="crt_files/figure-html/unnamed-chunk-20-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Full Sample</strong> The distribution of URM across the past four terms has changed significantly. <img src="crt_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> No statistical difference in the distribution of proportions between years.</p>
 </div>
 <div id="performance---gpa-2" class="section level4">
 <h4>Performance - GPA</h4>
 <p><strong>Full Sample</strong> URM students have significantly lower GPA (.38 lower) compared to non-URM students. The GPA for students with unknown URM status have marginally lower (.23) GPA compared to non-URM students.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-22-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-21-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> URM students have marginally lower GPA (.23 lower) on average compared to non-URM students. The GPA for students with unknown URM status is not different than the average GPA for non-URM students.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-23-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-22-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---dwf-rate-1" class="section level4">
+<div id="performance---dwf-rate" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> There is a statistical difference in DWF rate by URM status in the full cohort.</p>
 <p><strong>F14 &amp; F16 only</strong> There is no difference in dwf rate by URM status comparing F14 to F16 only.</p>
@@ -465,19 +620,19 @@ div.tocify {
 <li>SOC = AIAN, Asian, Black, HL, NHOPI</li>
 <li>Multiple/Mixed = Multi, Unk</li>
 </ul>
-<div id="crt-vs.traditional-3" class="section level4">
+<div id="crt-vs.traditional-1" class="section level4">
 <h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of SOC across the past four terms has changed significantly (p=.01) <img src="crt_files/figure-html/unnamed-chunk-26-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Full Sample</strong> The distribution of SOC across the past four terms has changed significantly (p=.01) <img src="crt_files/figure-html/unnamed-chunk-25-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> No statistical difference in the distribution of proportions between F14 &amp; F16.</p>
 </div>
 <div id="performance---gpa-3" class="section level4">
 <h4>Performance - GPA</h4>
 <p><strong>Full Sample</strong></p>
-<p>Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher). <img src="crt_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher). <img src="crt_files/figure-html/unnamed-chunk-27-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> Only comparing F14 and F16, non-SOC students have a significantly higher GPA compared to students of color (.28 higher), and marginally higher than those from Multiple/Mixed ethnicities (.29 higher).</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-29-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---dwf-rate-2" class="section level4">
+<div id="performance---dwf-rate-1" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> There is strong statistical difference in DWF rate by SOC status in the full cohort.</p>
 <p><strong>F14 &amp; F16 only</strong> There is a marginal difference in dwf rate by SOC status when looking at F14 and F16 only.</p>
@@ -489,17 +644,17 @@ div.tocify {
 <div id="eop" class="section level2">
 <h2>EOP</h2>
 <p>The number of EOP students is too small to make accurate comparisons.</p>
-<div id="crt-vs.traditional-4" class="section level4">
+<div id="crt-vs.traditional-2" class="section level4">
 <h4>CRT vs. Traditional</h4>
 <p><strong>Full Sample</strong> The distribution of EOP student status has not changed significantly.</p>
 </div>
 <div id="performance---gpa-4" class="section level4">
 <h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> There is no significant difference in average GPA for students in EOP compared to non-EOP students. <img src="crt_files/figure-html/unnamed-chunk-33-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Full Sample</strong> There is no significant difference in average GPA for students in EOP compared to non-EOP students. <img src="crt_files/figure-html/unnamed-chunk-32-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> EOP students did significantly better compared to non-EOP students when looking at the F14 and F16 cohorts only.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-34-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-33-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---dwf-rate-3" class="section level4">
+<div id="performance---dwf-rate-2" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> There is no difference in the % of repeatable grades between EOP and non-EOP students.</p>
 <p><strong>F14 &amp; F16 only</strong> There is no difference in the % of repeatable grades between EOP and non-EOP students.</p>
@@ -510,17 +665,17 @@ div.tocify {
 </div>
 <div id="first-generation" class="section level2">
 <h2>First Generation</h2>
-<div id="crt-vs.traditional-5" class="section level4">
+<div id="crt-vs.traditional-3" class="section level4">
 <h4>CRT vs. Traditional</h4>
 <p><strong>Full Sample</strong> The distribution of first generation student status has not changed significantly across the past four terms.</p>
 </div>
 <div id="performance---gpa-5" class="section level4">
 <h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> First generation students have significantly lower GPA compared to non-first gen students. <img src="crt_files/figure-html/unnamed-chunk-38-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Full Sample</strong> First generation students have significantly lower GPA compared to non-first gen students. <img src="crt_files/figure-html/unnamed-chunk-37-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><strong>F14 &amp; F16 only</strong> When comparing the F14 and F16 cohorts only, this difference disappears.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-39-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-38-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---dwf-rate-4" class="section level4">
+<div id="performance---dwf-rate-3" class="section level4">
 <h4>Performance - DWF rate</h4>
 <p><strong>Full Sample</strong> A significantly higher proportion of first generation students received repeatable grades.</p>
 <p><strong>F14 &amp; F16 only</strong> Again, this difference disappears when considering only F14 vs F16 cohorts.</p>
@@ -532,17 +687,17 @@ div.tocify {
 <p>This section examines the relationship between the amount and type of college prep courses (HS and college) a student has at the time of admission, and the student’s gpa in Chem 111.</p>
 <div id="admissions-index-hs-eligibility" class="section level2">
 <h2>Admissions Index (HS Eligibility)</h2>
-<p><img src="crt_files/figure-html/unnamed-chunk-42-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-41-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Average admission index is marginally statistically different across years.</p>
 <div id="gpa-1" class="section level4">
 <h4>GPA</h4>
 <p>In the following scatterplots, each dot represents one student. Due to the discrete nature of gpa and number of classes, many points are overlaid on the same spot. So the darker the point, the more students are represented there.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-44-1.png" width="576" style="display: block; margin: auto;" /><img src="crt_files/figure-html/unnamed-chunk-44-2.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-43-1.png" width="576" style="display: block; margin: auto;" /><img src="crt_files/figure-html/unnamed-chunk-43-2.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Admissions index does not have a strictly linear relationship with GPA. A standard linear model is not appropriate, a spline model with a knot around 3.5 should be used instead. <span style="color:red">Do this</span></p>
 </div>
 <div id="dfw" class="section level4">
 <h4>DFW</h4>
-<p><img src="crt_files/figure-html/unnamed-chunk-45-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-44-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>There is a strong relationship between admissions index and whether or not the student will pass the class.</p>
 </div>
 </div>
@@ -569,13 +724,13 @@ div.tocify {
 <h1>Multivariate modeling</h1>
 <div id="gpa---recap-of-relationship" class="section level2">
 <h2>GPA - recap of relationship</h2>
-<p><img src="crt_files/figure-html/unnamed-chunk-47-1.png" width="576" style="display: block; margin: auto;" /> For those under 25, after accounting for a <strong>linear</strong> effect of age, the CRT significantly improves GPA.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-46-1.png" width="576" style="display: block; margin: auto;" /> For those under 25, after accounting for a <strong>linear</strong> effect of age, the CRT significantly improves GPA.</p>
 </div>
 <div id="hs-eligibility-in-progress" class="section level2">
 <h2>HS eligibility [In progress]</h2>
-<p><img src="crt_files/figure-html/unnamed-chunk-49-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-48-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Fit a linear spline model, with a knot at 3.75. That is, two linear models with differing slopes.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-50-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-49-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Interaction between admissions index and CRT – allow there to be separate slopes between CRT groups in both high and low admission index areas. – in other words– does the CRT group <em>change</em> the relationship between admissions index and GPA?</p>
 <hr />
 <p>Notes</p>
@@ -620,7 +775,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
