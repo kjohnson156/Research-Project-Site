@@ -211,7 +211,7 @@ kable(TukeyHSD(aov(age~crt, data=ew))$crt, digits=2,
 
 
 #### Performance - GPA
-GPA and Age have a non-linear relationship. For students less than 25 years of age, the pattern of relationship between age and GPA does not seem to differ greatly across the three course types. This indicates that the intervention has a similar affect on a students GPA regardless of their age. 
+GPA and Age have a non-linear relationship. For students less than 25 years of age, the pattern of relationship between age and GPA does not significantly differ across the three course types. This indicates that the intervention has a similar affect on a students GPA regardless of their age. 
 ```{r, fig.width=10}
 a <- ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
         geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
@@ -225,8 +225,7 @@ grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="bottom")
 ```
 
 ```{r}
-out <- mlr.table(lm(gpa~age + crt, data=ew))
-out
+summary(aov(lm(gpa~age + crt + age*crt, data=ew)))
 ```
 
 #### Performance - DWF rate [[NOT DONE YET]]
