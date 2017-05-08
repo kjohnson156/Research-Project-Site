@@ -18,8 +18,8 @@ opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cach
                fig.align = 'center',  fig.width=6, fig.height=4, results = 'hide')
 options(knitr.kable.NA = '') 
 
-source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
-raw <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
+source("~/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
+raw <-read.delim("~/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
 
 ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
                         !is.na(gender) & !is.na(stulevel) & grade %ni% c('W ', 'I ')) %>% 
@@ -206,12 +206,12 @@ kable(biv.mean.wide(df=ew, var='age', group='crt'), align='c', caption="Mean and
 
 ```{r, results='show'}
 kable(TukeyHSD(aov(age~crt, data=ew))$crt, digits=2, 
-      caption="Tukeys Honest Significant Difference for differences between all pairs")
+      caption="Tukeys Honest Significant Difference for differences in average age between all pairs of class types")
 ```
 
 
 #### Performance - GPA
-GPA and Age have a non-linear relationship. For students less than 25 years of age, the pattern of relationship between age and GPA does not significantly differ across the three course types. This indicates that the intervention has a similar affect on a students GPA regardless of their age. 
+GPA and Age have a non-linear relationship across the entire age range present. For students less than 25 years of age, the pattern of relationship between age and GPA does not significantly differ across the three course types. An interaction term between age and course type was tested in a linear model and found to be significant. This indicates that the intervention has a similar affect on a students GPA regardless of their age. 
 ```{r, fig.width=10}
 a <- ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
         geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
@@ -226,10 +226,22 @@ grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="bottom")
 
 ```{r}
 summary(aov(lm(gpa~age + crt + age*crt, data=ew)))
+summary(aov(lm(gpa~age + crt, data=ew)))
 ```
 
-#### Performance - DWF rate [[NOT DONE YET]]
+#### Performance - DFW rate [[NOT DONE YET]]
+```{r}
+age.dfw.ew   <- biv.mean(df=ew, var='age', group='pass')
+age.dfw.ew$plot + scale_fill_discrete(name="")
+```
 
+```{r, results='show'}
+kable(biv.mean.wide(df=ew, var='age', group='crt'), align='c', caption="Mean and SD for ages within class types")
+```
+
+
+**Sumary**
+* CRT has a positive effect on GPA and DWF rate after controlling for age. 
 
 
 ## Race / Ethnicity
