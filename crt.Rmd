@@ -7,19 +7,20 @@ output:
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(dplyr);library(knitr); library(RColorBrewer)
+library(dplyr); library(RColorBrewer)
 library(ggplot2);library(gridExtra)
+library(knitr); library(kableExtra)
 library(scales); library(foreach)
 library(plotly); library(grid)
 
 '%ni%' <- Negate('%in%')
 
-opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=FALSE,
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
                fig.align = 'center',  fig.width=6, fig.height=4, results = 'hide')
-options(knitr.kable.NA = '') 
+options(knitr.kable.NA = '', knitr.table.format = "html") 
 
-source("~/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
-raw <-read.delim("~/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
+source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
+raw <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
 
 ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
                         !is.na(gender) & !is.na(stulevel) & grade %ni% c('W ', 'I ')) %>% 
@@ -45,6 +46,7 @@ f146 <- filter(ew, term_idx %in% c("F14", "F16")) %>% droplevels()
 yearlab <- c(2009, rep(2010:2016, each=2))
 term.col <- brewer.pal(9, "Set1")[c(7, 3)]
 crt.col <- brewer.pal(9, "Set1")[1:3]
+sex.col <- brewer.pal(10, "Paired")[c(8,10)]
 ```
 
 # Analysis Overview
@@ -103,8 +105,8 @@ ggplot(class, aes(y=dfw_rate, x=term_idx, col = crt, shape=crt, label=paste0(rou
 ```{r, results='show'}
 cl <- class %>% ungroup() %>% arrange(term_idx) %>% select(term_idx, crt, classgpa, dfw, N, dfw_rate)
 names(cl) <- c("Term", "Type", "Ave. GPA", "# DFW", "Enrollment", "DFW Rate")
-kable(cl,
-      digits=2, align='c', row.names=FALSE, caption='Class level performance characteristics')
+
+kable(cl, digits=2, align='c', row.names=FALSE, caption='Class level performance characteristics') %>%  kable_styling(bootstrap_options="striped", full_width=F)
 ```
 
 ```{r}
@@ -125,7 +127,7 @@ gpa.crt.f146 <- univ.gpa(f146, col.var = 'crt')
 ## Gender
 #### Course Type
 
-The gender distribution remained constant across the past four semesters.
+Since Fall 14, the gender distribution has become closer to equal, with slightly more females than males since Spring 16. This difference is moderately statistically significant ($\chi^2_{3}$=6.5, p=.09).
 
 ```{r}
 g.term <- biv.n.row.pct(df=ew, row.var = 'gender', col.var = 'term_idx')
@@ -134,9 +136,10 @@ t.test((gender=="F") ~ term_idx, data=f146)
 ```
 
 ```{r, results='show'}
-kable(g.term$table, row.names = FALSE)
+kable(g.term$table, row.names = FALSE, align='c') %>%  kable_styling(bootstrap_options="striped", full_width=F)
 
-g.term$plot + scale_y_continuous(labels=scales::percent, limits=c(.25, .75)) + theme_bw()
+g.term$plot + scale_y_continuous(labels=scales::percent, limits=c(.25, .75)) + 
+  theme_bw() + ylab("") + xlab("Semester") + scale_color_manual(values=sex.col)
 ```
 
 
@@ -153,16 +156,21 @@ a <- data.frame(gpa.gender.ew$table,
                p2 = c(format.pval(gpa.gender.f146$test$p.value, digits=2), NA)
                )
 
-names(a) <- c("Gender", "Full mean", "Full SD", "p-value",  "F14 & F16 mean", "F14 & F16 SD", "p-value")
+names(a) <- c("Gender", "Mean", "SD", "p-value",  "Mean", "SD", "p-value")
 ```
 
 ```{r, results='show'}
-kable(a, digits=2, align='c')
+kable(a[,1:4], digits=2, align='c', caption="Full Sample") %>% 
+  kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
+
+kable(a[,c(1,5:7)], digits=2, align='c', caption="F14-F16 only") %>% 
+  kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+
 ```
 
-```{r, fig.width=12}
-a <- gpa.gender.ew$plot + ggtitle("Full Sample") + xlab("")
-b <- gpa.gender.f146$plot + ggtitle("F14 & F16 only") + xlab("")
+```{r, fig.width=12, fig.height=6}
+a <- gpa.gender.ew$plot + ggtitle("Full Sample") + xlab("") + scale_fill_manual(values=sex.col)
+b <- gpa.gender.f146$plot + ggtitle("F14 & F16 only") + xlab("") + scale_fill_manual(values=sex.col)
 
 grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="right")
 ```
@@ -176,17 +184,26 @@ gender.dwf.ew <- biv.n.row.pct(ew, col.var = 'gender', row.var='repeat_grade')
 gender.dwf.f146<- biv.n.row.pct(f146, col.var = 'gender',row.var='repeat_grade')
 ```
 
-```{r, results='show'}
+```{r}
 a <- data.frame(g = c("No", "Yes"),
            gender.dwf.ew$table[,-1], 
            p=c(format.pval(chisq.test(ew$repeat_grade, ew$gender)$p.value, digits=2), NA), 
            gender.dwf.f146$table[,-1], 
            p=c(format.pval(chisq.test(f146$repeat_grade, f146$gender)$p.value, digits=2), NA)
            )
-names(a) <- names(a) <- c("Repeatable Grade", "N (%) Female \n Full Sample", "N(%) Male \n Full Sample", "p-value",  
-                          "N(%) Female \n F 14 & 16", "N(%) Male \n F14 & F16", "p-value")
 
-kable(a, row.names = FALSE, align='c')
+names(a) <- c("Repeat Grade", "N (%) Female", "N(%) Male", "p-value",  
+                          "N(%) Female", "N(%) Male", "p-value")
+
+```
+
+```{r, results='show'}
+kable(a[,1:4], digits=2, align='c', caption="Full Sample") %>% 
+  kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
+
+kable(a[,c(1,5:7)], digits=2, align='c', caption="F14-F16 only") %>% 
+  kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+
 ```
 
 ## Age 
@@ -197,37 +214,62 @@ Students in F14 were on average 0.68 (0.01, 1.34) years older than those in the 
 
 ```{r}
 age.crt.ew   <- biv.mean(df=ew, var='age', group='crt')
-age.crt.ew$plot + scale_fill_discrete(name="Class Type")
+age.crt.ew$plot + scale_fill_manual(name="Class Type", values=crt.col)
 ```
 
 ```{r, results='show'}
-kable(biv.mean.wide(df=ew, var='age', group='crt'), align='c', caption="Mean and SD for ages within class types")
-```
+kable(biv.mean.wide(df=ew, var='age', group='crt'), align='c', 
+      caption="Mean and SD for ages within class types")  %>% 
+      kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
 
-```{r, results='show'}
 kable(TukeyHSD(aov(age~crt, data=ew))$crt, digits=2, 
-      caption="Tukeys Honest Significant Difference for differences in average age between all pairs of class types")
+      caption="Tukeys Honest Significant Difference for differences in average age between all pairs of class types") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
 ```
+
+<br></br><br></br><br></br><br></br><br></br><br></br>
+
 
 
 #### Performance - GPA
-GPA and Age have a non-linear relationship across the entire age range present. For students less than 25 years of age, the pattern of relationship between age and GPA does not significantly differ across the three course types. An interaction term between age and course type was tested in a linear model and found to be significant. This indicates that the intervention has a similar affect on a students GPA regardless of their age. 
+GPA and age appear to have a non-linear relationship. Zooming in on students under 25, the relationship between age and GPA is decreasing until about 20, then increases afterward. 
+
 ```{r, fig.width=10}
 a <- ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
         geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        scale_color_manual(values=crt.col)  + ggtitle("Everyone")
+        scale_color_manual(name="Course Type", values=crt.col)  + ggtitle("Everyone")
 
 b <- ggplot(filter(ew, age<25), aes(x=age, y=gpa, col=crt)) + 
         geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        scale_color_manual(values=crt.col) + ggtitle("Age < 25yrs")
+        scale_color_manual(values=crt.col) + ggtitle("Under 25yrs")
 
 grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="bottom")
 ```
 
-```{r}
-summary(aov(lm(gpa~age + crt + age*crt, data=ew)))
-summary(aov(lm(gpa~age + crt, data=ew)))
+
+
+A linear spline model was fit with a knot at 20 to allow the slopes to differ while controlling for the effect of the course type. 
+
+```{r, results='show'}
+lt25 <- subset(ew, age<25)
+lt25$older <- (lt25$age - 20)
+lt25$older[lt25$age<20] <- 0
+
+fit.spline <- lm(gpa~age + older + crt, data=lt25)
+
+a <- mlr.table(fit.spline)
+names(a) <- c("Estimate", "CI", "p-value")
+rownames(a) <- c("Age", "Over 20", "CRT", "CRT + SI")
+
+kable(a, align='c') %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
 ```
+
+Under 20, there is a very slight ($\beta=-0.09$) and non-significantly different from zero downward trend in GPA as age increases. For each year older than 20 a student is, the average GPA increases by 0.19 (p=.06). Students in the CRT + SI course have on average 0.34 higher GPA compared to students in the traditional class (p=.005).
+  
+An interaction term between age and course type was tested but found to be non-significant. This indicates that the intervention has a similar positive effect on a student's GPA regardless of their age. 
+
+<br>
 
 #### Performance - DFW rate [[NOT DONE YET]]
 ```{r}

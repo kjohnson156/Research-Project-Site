@@ -19,15 +19,16 @@ library(scales); library(foreach); library(plotly)
 
 '%ni%' <- Negate('%in%')
 
-opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=TRUE,
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, row.names = FALSE, cache=FALSE,
                fig.align = 'center',  fig.width=8, fig.height=5)
 options(knitr.kable.NA = '') 
 
-setwd("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/")
-source("code/helper functions.R")
-source("code/campus_datasets.R")
+source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
+rawtrends <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
 
-rawtrends <-read.delim("data/chem_data_20170227.txt", sep = "\t")
+campus_aves <- read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/campus_aves.txt", sep="\t")
+campus_props <- read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/campus_props.txt", sep="\t")
+
 
 chem <- rawtrends %>% filter(grade %ni% c('W ', 'I ') & erss_stulevel < 5) %>% droplevels() %>%
             mutate(term_idx = factor(term_idx, 
@@ -187,44 +188,69 @@ ggplotly(a, tooltip = c("y", "group"))
 ### Citizenship
 
 ```{r}
+campus.pnc <- campus_props %>% filter(var=="citizen" & level=="N") %>% 
+              mutate(pnc = pct) %>% select(term_idx, term, pnc)
 ct <- chem %>%
   filter(term_idx != "NA") %>%
   group_by(term, term_idx, section) %>% 
-  summarise(pnc = mean((citizen=="N"), na.rm=TRUE))
-ggplot(ct, aes(x=term_idx, y=pnc, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("% Not Citizens") + 
-  scale_color_manual(values=term.col, name = "Term")+ theme_bw() +
+  summarise(pnc = mean((citizen=="N"), na.rm=TRUE)) %>%
+  bind_rows(campus.pnc) %>% mutate(percent_noncitizen = round(pnc,2))
+
+b <- ggplot(ct, aes(x=term_idx, y=percent_noncitizen, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of students that are not citizens per section") + xlab("Semester") +
   scale_y_continuous(limits=c(0, .25), labels = scales::percent_format())
-  
+ggplotly(b, tooltip = c("y", "x", "group"))
+
+rm(b, campus.pnc, ct)
 ```
   
   
 ### Students who are recieving services from DSS
 ```{r}
+campus.pd <- campus_props %>% filter(var=="dss" & level=="Y") %>% 
+              mutate(pd = pct) %>% select(term_idx, term, pd)
 dt <- chem %>%
   filter(term_idx != "NA") %>%
   group_by(term, term_idx, section) %>% 
-  summarise(pd = mean((DSS=="DSS"), na.rm=TRUE))
-ggplot(dt, aes(x=term_idx, y=pd, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("% Receiving DSS services") + 
-  scale_color_manual(values=term.col, name = "Term")+ theme_bw() +
+  summarise(pd = mean((DSS=="DSS"), na.rm=TRUE)) %>%
+  bind_rows(campus.pd) %>% mutate(percent_dss = round(pd,2))
+cc <- ggplot(dt, aes(x=term_idx, y=percent_dss, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of DSS students per section") + xlab("Semester") +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, .1))
+
+ggplotly(cc, tooltip = c("y", "x", "group"))
+
+rm(cc, dt, campus.pd)
 ```
   
   
 ### EOP Status
 ```{r}
+campus.peop <- campus_props %>% filter(var=="eopstat" & level=="Y") %>% 
+              mutate(peop = pct) %>% select(term_idx, term, peop)
+
 eopt <- chem %>%
   filter(term_idx != "NA") %>%
   group_by(term, term_idx, section) %>% 
-  summarise(peop = mean(eop, na.rm=TRUE))
-ggplot(eopt, aes(x=term_idx, y=peop, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("% EOP") + 
-  scale_color_manual(values=term.col, name = "Term")+ theme_bw() +
+  summarise(peop = mean(eop, na.rm=TRUE)) %>%
+  bind_rows(campus.peop) %>% mutate(percent_eop = round(peop,2))
+
+d <- ggplot(eopt, aes(x=term_idx, y=percent_eop, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of EOP students per section") + xlab("Semester") +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, .25))
+
+ campus.pd <- campus_props %>% filter(var=="dss" & level=="Y") %>% 
+              mutate(pd = pct) %>% select(term_idx, term, pd)
+
+ggplotly(d, tooltip = c("y", "x", "group"))
+
+rm(d, eopt, campus.pd)
 ```
   
 
@@ -364,32 +390,49 @@ ggplot(get, aes(x=term_idx, y=prop, col=GE, group=GE)) + geom_point() + xlab("Se
 
 ### ELM
 ```{r}
+campus.pelm <- campus_props %>% filter(var=="elm" & level=="1") %>% 
+              mutate(pelm = pct) %>% select(term_idx, term, pelm)
+
 elmt <- chem %>%
   filter(term_idx != "NA") %>%
   group_by(term, term_idx, section) %>% 
-  summarise(pelm = mean(elm, na.rm=TRUE))
-ggplot(elmt, aes(x=term_idx, y=pelm, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("% ELM Status") + 
-  scale_color_manual(values=term.col, name = "Term") + theme_bw() +
+  summarise(pelm = mean(elm, na.rm=TRUE)) %>%
+  bind_rows(campus.pelm) %>% mutate(percent_elm = round(pelm,2))
+
+e <- ggplot(elmt, aes(x=term_idx, y=percent_elm, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  scale_color_manual(values=c("black", term.col), name = "Term") + theme_bw() +
   ggtitle("Proportion of students per section who have completed\nthe ELM requirement prior to enrollment in CHEM") +
   xlab("Semester") +
-  scale_y_continuous(labels = scales::percent_format(), limits=c(.8,1))
+  scale_y_continuous(labels = scales::percent_format(), limits=c(.75,1))
+
+ggplotly(e, tooltip = c("y", "x", "group"))
+
+rm(e, elmt, campus.pelm)
 ```
   
 
 ### EPT
 
 ```{r}
+campus.pept <- campus_props %>% filter(var=="ept" & level=="1") %>% 
+              mutate(pept = pct) %>% select(term_idx, term, pept)
 eptt <- chem %>%
   filter(term_idx != "NA") %>%
   group_by(term, term_idx, section) %>% 
-  summarise(pept = mean(ept, na.rm=TRUE))
-ggplot(eptt, aes(x=term_idx, y=pept, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("% EPT Status") + 
-  scale_color_manual(values=term.col, name = "Term") + theme_bw() +
+  summarise(pept = mean(ept, na.rm=TRUE)) %>%
+  bind_rows(campus.pept) %>% mutate(percent_ept = round(pept,2))
+
+f <- ggplot(eptt, aes(x=term_idx, y=percent_ept, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  scale_color_manual(values=c("black", term.col), name = "Term") + theme_bw() +
   ggtitle("Proportion of students per section who have completed\nthe EPT requirement prior to enrollment in CHEM") +
   xlab("Semester") +
   scale_y_continuous(labels = scales::percent_format(), limits = c(.8, 1))
+
+ggplotly(f, tooltip = c("y", "x", "group"))
+
+rm(f, eptt, campus.pept)
 ```
   
 
