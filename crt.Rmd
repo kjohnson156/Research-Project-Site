@@ -35,6 +35,7 @@ ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
 
 ew$crt[ew$term_idx == "F16"] <- 2
 ew$crt <- factor(ew$crt, labels=c("Traditional", "CRT", "CRT+SI"))
+ew$urm_status <- factor(ew$urm_status, labels=c("Non-URM", "URM", "Unknown"))
 
 class <- ew %>% group_by(year, term, term_idx, section, crt) %>%
           summarise(classgpa = mean(gpa), dfw = sum(repeat_grade), 
@@ -136,7 +137,8 @@ t.test((gender=="F") ~ term_idx, data=f146)
 ```
 
 ```{r, results='show'}
-kable(g.term$table, row.names = FALSE, align='c') %>%  kable_styling(bootstrap_options="striped", full_width=F)
+kable(g.term$table, row.names = FALSE, align='c', caption = "Distribution of gender across terms") %>%  
+  kable_styling(bootstrap_options="striped", full_width=F)
 
 g.term$plot + scale_y_continuous(labels=scales::percent, limits=c(.25, .75)) + 
   theme_bw() + ylab("") + xlab("Semester") + scale_color_manual(values=sex.col)
@@ -160,11 +162,9 @@ names(a) <- c("Gender", "Mean", "SD", "p-value",  "Mean", "SD", "p-value")
 ```
 
 ```{r, results='show'}
-kable(a[,1:4], digits=2, align='c', caption="Full Sample") %>% 
-  kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
-
-kable(a[,c(1,5:7)], digits=2, align='c', caption="F14-F16 only") %>% 
-  kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+kable(a, digits=2, align='c', caption="Comparison of GPA across genders") %>% 
+    add_header_above(c(" " = 1, "Full Sample" = 3, "F14 and F16 only" = 3)) %>%
+    kable_styling(bootstrap_options="striped", full_width=F)
 
 ```
 
@@ -198,13 +198,27 @@ names(a) <- c("Repeat Grade", "N (%) Female", "N(%) Male", "p-value",
 ```
 
 ```{r, results='show'}
-kable(a[,1:4], digits=2, align='c', caption="Full Sample") %>% 
-  kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
+kable(a, digits=2, align='c', caption="Comparing DFW rate across genders") %>% 
+  add_header_above(c(" " = 1, "Full Sample" = 3, "F14 and F16 only" = 3)) %>%
+  kable_styling(bootstrap_options="striped", full_width=F)
+```
 
-kable(a[,c(1,5:7)], digits=2, align='c', caption="F14-F16 only") %>% 
-  kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+A logistic regression model on the full data indicates that students in the redesigned section (CRT and CRT + SI) have significantly lower odds of failing Chem 111 compared to students in the traditional courses after adjusting for gender. 
+
+```{r, results="show"}
+a <- mlogr.table(glm(pass ~ gender + crt, data=ew, family="binomial"))
+names(a) <- c("OR", "CI", "p-value")
+rownames(a) <- c("Gender", "CRT", "CRT + SI")
+
+kable(a, align='c', caption="Logistic Regression of course type on the receipt of repeatable grade") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F)
 
 ```
+
+
+
+**Summary:** The redesign had a positive effect on GPA and DWF rate after controlling for gender. 
+
 
 ## Age 
 
@@ -248,7 +262,7 @@ grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="bottom")
 
 
 
-A linear spline model was fit with a knot at 20 to allow the slopes to differ while controlling for the effect of the course type. 
+A linear spline model was fit on the full sample using a knot at 20 to allow for a change in slope while controlling for the effect of the course type. 
 
 ```{r, results='show'}
 lt25 <- subset(ew, age<25)
@@ -271,57 +285,98 @@ An interaction term between age and course type was tested but found to be non-s
 
 <br>
 
-#### Performance - DFW rate [[NOT DONE YET]]
+#### Performance - DFW rate
+There is no difference in the average age for students receiving a repeatable grade or not, with our without the older students included in the analysis. 
 ```{r}
 age.dfw.ew   <- biv.mean(df=ew, var='age', group='pass')
-age.dfw.ew$plot + scale_fill_discrete(name="")
+a <- age.dfw.ew$plot + scale_fill_discrete(name="") + xlab("") + ggtitle("Full Sample - all ages")
+
+agey.dfw.ew   <- biv.mean(df=filter(ew, age<25), var='age', group='pass')
+b <- agey.dfw.ew$plot + scale_fill_discrete(name="") + xlab("") + ggtitle("Full sample - Under 25")+ ylab("")
+
+age.dfw.f146   <- biv.mean(df=f146, var='age', group='pass')
+d <- age.dfw.ew$plot + scale_fill_discrete(name="") + xlab("") + ggtitle("F14 and F16 - all ages")
+
+agey.dfw.f146   <- biv.mean(df=filter(f146, age<25), var='age', group='pass')
+e <- agey.dfw.ew$plot + scale_fill_discrete(name="") + xlab("") + ggtitle("F14 and F16 - Under 25") + ylab("")
+
+grid_arrange_shared_legend(a, b, d, e, ncol=2, nrow=2, position="bottom")
+```
+
+
+```{r}
+ds1 <- data.frame(g = c("No", "Yes"),
+           age.dfw.ew$table[,-1], 
+           p=c(format.pval(age.dfw.ew$test$p.value, digits=2), NA), 
+           agey.dfw.ew$table[,-1], 
+           p=c(format.pval(agey.dfw.ew$test$p.value, digits=2), NA))
+
+ds2 <- data.frame(g = c("No", "Yes"),
+           age.dfw.f146$table[,-1], 
+           p=c(format.pval(age.dfw.f146$test$p.value, digits=2), NA), 
+           agey.dfw.f146$table[,-1], 
+           p=c(format.pval(agey.dfw.f146$test$p.value, digits=2), NA))
+
+ds <- rbind(ds1, ds2)
+
+names(ds) <- c("Repeat Grade", "Mean", "SD", "p-value",  "Mean", "SD", "p-value")
 ```
 
 ```{r, results='show'}
-kable(biv.mean.wide(df=ew, var='age', group='crt'), align='c', caption="Mean and SD for ages within class types")
+kable(ds, digits=2, align='c', 
+      caption="Mean and SD of student ages grouped by whether or not they passed the class") %>% 
+  kable_styling(bootstrap_options="striped", full_width=F, position = "float_left") %>% 
+  add_header_above(c(" " = 1, "Full Sample" = 3, "F14 and F16 only" = 3)) %>%
+  group_rows("All Ages", 1,2) %>%
+  group_rows("Under 25", 3,4)
 ```
 
 
-**Sumary**
-* CRT has a positive effect on GPA and DWF rate after controlling for age. 
+```{r, results="show"}
+a <- mlogr.table(glm(pass ~ age + crt, data=ew, family="binomial"))
+names(a) <- c("OR", "CI", "p-value")
+rownames(a) <- c("Age", "CRT", "CRT + SI")
 
+kable(a, align='c', caption="Logistic Regression of course type on the receipt of repeatable grade") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
 
-## Race / Ethnicity
-The demographic shift across all chem classes is displayed in the Exploratory Analysis document. How does this compare to the campus-wide shift? 
-
-```{r}
-eth.term <- biv.n.row.pct(df=ew, row.var = 'race_code', col.var = 'term_idx')
-kable(eth.term$table, row.names = FALSE)
-eth.term$plot
 ```
 
-There are too many ethnicities with low sample sizes to compare statistically. Here we just look at two smaller groupings of race/ethnicity. 
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+A logistic regression model on the full data across all ages indicates that students in the redesigned section (CRT and CRT + SI) have significantly lower odds of failing Chem 111 compared to students in the traditional courses after adjusting for age. 
+
+**Summary:** The redesign had a positive effect on GPA and DWF rate after controlling for age. 
 
 
 ## Underrepresented Minority (URM)
+The definition used in this report for an underrepresented minority student is as follows:
+
 * Non-URM: Asian, NHOPI, White
 * URM: Black, HL
 * UNK: Mult, Unk
 
-#### CRT vs. Traditional 
+#### Course Type
+The proportion of students in each URM category listed above has changed significantly since F14 ($\chi^2_{6}$=18.0, p=.006). Most notably is that the proportion of African-American and Hispanic-Latino students has increased greatly from F14 to S16, while the other groups were in decline. 
 
-**Full Sample**
-The distribution of URM across the past four terms has changed significantly. 
 ```{r}
 urm.term <- biv.n.row.pct(df=ew, row.var = 'urm_status', col.var = 'term_idx')
-kable(urm.term$table, row.names = FALSE)
-urm.term$plot
 chisq.test(table(ew$urm_status, ew$term_idx))
 ```
 
-**F14 & F16 only**
-No statistical difference in the distribution of proportions between years. 
-```{r}
-urm.146 <- biv.n.row.pct(df=f146, row.var = 'urm_status', col.var = 'term_idx')
-kable(urm.146$table, row.names = FALSE)
-chisq.test(table(f146$urm_status, f146$term_idx))
+```{r, results='show'}
+kable(urm.term$table, row.names = FALSE, align='c', 
+      caption="Proportion of students in each URM classification across terms") %>% 
+      kable_styling(bootstrap_options="striped", full_width=F)
+
+urm.term$plot + scale_y_continuous(labels=scales::percent, limits=c(0, 1)) + 
+  theme_bw() + ylab("") + xlab("Semester") + scale_color_discrete(name="URM Status")
 ```
 
+
+#####################################
+# HERE HERE HERE HERE HERE HERE HERE 
+#####################################
 
 #### Performance - GPA
 **Full Sample**

@@ -25,7 +25,6 @@ options(knitr.kable.NA = '')
 
 source("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/code/helper functions.R")
 rawtrends <-read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/chem_data_20170227.txt", sep = "\t")
-
 campus_aves <- read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/campus_aves.txt", sep="\t")
 campus_props <- read.delim("C:/Dropbox/Professional/Grants_Current/SS Chemistry Data Mining/data/campus_props.txt", sep="\t")
 
@@ -283,7 +282,7 @@ ggplot(fsgt, aes(x=term_idx, y=pfsg, col=term, group=term)) +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, .5))
 ```
   
-### Race Code
+### <a id="race_trends"></a> Race Code 
 ```{r}
 rct <- chem %>%
   filter(race_code != "NA", term_idx != "NA") %>%
