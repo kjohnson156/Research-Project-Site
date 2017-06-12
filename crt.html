@@ -339,7 +339,7 @@ div.tocify {
 
 <div id="analysis-overview" class="section level1">
 <h1>Analysis Overview</h1>
-<p>To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (<code>W/I</code>) are exluded from this analysis. A repeatable grade is defined as a student reciving a <em>D</em>, <em>D+</em>, <em>F</em> grade, or an unexcused withdrawl <em>WU</em>.</p>
+<p>To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receiving an incomplete (<code>W/I</code>) are excluded from this analysis. A repeatable grade is defined as a student receiving a <em>D</em>, <em>D+</em>, <em>F</em> grade, or an unexcused withdrawal <em>WU</em>.</p>
 <ol style="list-style-type: decimal">
 <li>Examine bivariate associations between outcome measures, covariates and the CRT intervention condition.
 <ol style="list-style-type: lower-alpha">
@@ -352,7 +352,7 @@ div.tocify {
 </ul></li>
 </ol></li>
 <li>Model building - Start with variables that were shown to be bivariately associated with either intervention or outcome, build a multivariable statistical model to assess the effect of the CRT on student performance.</li>
-<li>Use a supervised machine learning technique to identify other key characteristics highly predictive of a student recieving a repeatable grade.</li>
+<li>Use a supervised machine learning technique to identify other key characteristics highly predictive of a student receiving a repeatable grade.</li>
 </ol>
 <div id="outcome-measurements" class="section level3">
 <h3>Outcome measurements</h3>
@@ -499,8 +499,8 @@ CRT+SI
 <h1>Student Characteristics</h1>
 <div id="gender" class="section level2">
 <h2>Gender</h2>
-<div id="course-type" class="section level4">
-<h4>Course Type</h4>
+<div id="course-type" class="section level3">
+<h3>Course Type</h3>
 <p>Since Fall 14, the gender distribution has become closer to equal, with slightly more females than males since Spring 16. This difference is moderately statistically significant (<span class="math inline">\(\chi^2_{3}\)</span>=6.5, p=.09).</p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
@@ -565,8 +565,8 @@ M
 </table>
 <p><img src="crt_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---gpa" class="section level4">
-<h4>Performance - GPA</h4>
+<div id="performance---gpa" class="section level3">
+<h3>Performance - GPA</h3>
 <p>There is no statistical difference in the average GPA between males and females, regardless of cohort.</p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
@@ -659,100 +659,104 @@ M
 </tbody>
 </table>
 <p><img src="crt_files/figure-html/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-11-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>A multiple linear regression model found that the redesign did not have a statistically different impact on males and females.</p>
 </div>
-<div id="performance---dfw-rate" class="section level4">
-<h4>Performance - DFW rate</h4>
+<div id="performance---dfw-rate" class="section level3">
+<h3>Performance - DFW rate</h3>
 <p>There is no difference in proportion of males and females getting a repeatable grade on the entire sample, or when using data on the F14 and F16 cohorts only.</p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
-Comparing DFW rate across genders
+N(%) of students passing and failing Chem 111 by course type and gender
 </caption>
 <thead>
 <tr>
 <th style="border-bottom:hidden"/>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
 <div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
-Full Sample
+Females
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
 <div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
-F14 and F16 only
+Males
 </div>
 </th>
 </tr>
 <tr>
 <th style="text-align:center;">
-Repeat Grade
+Course Type
 </th>
 <th style="text-align:center;">
-N (%) Female
+Pass
 </th>
 <th style="text-align:center;">
-N(%) Male
+DFW
 </th>
 <th style="text-align:center;">
-p-value
+Pass
 </th>
 <th style="text-align:center;">
-N(%) Female
-</th>
-<th style="text-align:center;">
-N(%) Male
-</th>
-<th style="text-align:center;">
-p-value
+DFW
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:center;">
-No
+Traditional
 </td>
 <td style="text-align:center;">
-186 (64.6%)
+41 (62.1%)
 </td>
 <td style="text-align:center;">
-198 (61.5%)
+25 (37.9%)
 </td>
 <td style="text-align:center;">
-0.48
+45 (51.1%)
 </td>
 <td style="text-align:center;">
-92 (64.3%)
-</td>
-<td style="text-align:center;">
-94 (58.8%)
-</td>
-<td style="text-align:center;">
-0.38
+43 (48.9%)
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
-Yes
+CRT
 </td>
 <td style="text-align:center;">
-102 (35.4%)
+94 (64.8%)
 </td>
 <td style="text-align:center;">
-124 (38.5%)
+51 (35.2%)
 </td>
 <td style="text-align:center;">
+104 (64.2%)
 </td>
 <td style="text-align:center;">
-51 (35.7%)
+58 (35.8%)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT+SI
 </td>
 <td style="text-align:center;">
-66 (41.2%)
+51 (66.2%)
 </td>
 <td style="text-align:center;">
+26 (33.8%)
+</td>
+<td style="text-align:center;">
+49 (68.1%)
+</td>
+<td style="text-align:center;">
+23 (31.9%)
 </td>
 </tr>
 </tbody>
 </table>
+<p><img src="crt_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>A logistic regression model on the full data indicates that students in the redesigned section (CRT and CRT + SI) have significantly lower odds of failing Chem 111 compared to students in the traditional courses after adjusting for gender.</p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
@@ -819,15 +823,15 @@ CRT + SI
 </tr>
 </tbody>
 </table>
-<p><strong>Summary:</strong> The redesign had a positive effect on GPA and DWF rate after controlling for gender.</p>
+<p><strong>Summary:</strong> The redesign had a positive effect on GPA and DWF rate after controlling for gender, and while it appears as if males improved more than females between Traditional and CRT + SI, the difference is not statistically significant.</p>
 </div>
 </div>
 <div id="age" class="section level2">
 <h2>Age</h2>
-<div id="course-type-1" class="section level4">
-<h4>Course Type</h4>
+<div id="course-type-1" class="section level3">
+<h3>Course Type</h3>
 <p>Students in F14 were on average 0.68 (0.01, 1.34) years older than those in the two CRT semesters (p=.04), and 0.87 (0.1, 1.65) years older than students in Fall 16 (p=.02).</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;" /></p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; float: left; margin-right: 10px;">
 <caption>
@@ -944,10 +948,10 @@ CRT+SI-CRT
 </table>
 <p><br></br><br></br><br></br><br></br><br></br><br></br></p>
 </div>
-<div id="performance---gpa-1" class="section level4">
-<h4>Performance - GPA</h4>
+<div id="performance---gpa-1" class="section level3">
+<h3>Performance - GPA</h3>
 <p>GPA and age appear to have a non-linear relationship. Zooming in on students under 25, the relationship between age and GPA is decreasing until about 20, then increases afterward.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-17-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="crt_files/figure-html/unnamed-chunk-19-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>A linear spline model was fit on the full sample using a knot at 20 to allow for a change in slope while controlling for the effect of the course type.</p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; float: right; margin-left: 10px;">
@@ -1029,9 +1033,9 @@ CRT + SI
 <p>An interaction term between age and course type was tested but found to be non-significant. This indicates that the intervention has a similar positive effect on a student’s GPA regardless of their age.</p>
 <p><br></p>
 </div>
-<div id="performance---dfw-rate-1" class="section level4">
-<h4>Performance - DFW rate</h4>
-<p>There is no difference in the average age for students receiving a repeatable grade or not, with our without the older students included in the analysis. <img src="crt_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div id="performance---dfw-rate-1" class="section level3">
+<h3>Performance - DFW rate</h3>
+<p>There is no difference in the average age for students receiving a repeatable grade or not, with our without the older students included in the analysis. <img src="crt_files/figure-html/unnamed-chunk-21-1.png" width="576" style="display: block; margin: auto;" /></p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; float: left; margin-right: 10px;">
 <caption>
@@ -1252,11 +1256,11 @@ CRT + SI
 <ul>
 <li>Non-URM: Asian, NHOPI, White</li>
 <li>URM: Black, HL</li>
-<li>UNK: Mult, Unk</li>
+<li>Unknown: Mult, Unk</li>
 </ul>
-<div id="course-type-2" class="section level4">
-<h4>Course Type</h4>
-<p>The proportion of students in each URM category listed above has changed significantly since F14 (<span class="math inline">\(\chi^2_{6}\)</span>=18.0, p=.006). Most notably is that the proportion of African-American and Hispanic-Latino students has increased greatly from F14 to S16, while the other groups were in decline.</p>
+<div id="course-type-2" class="section level3">
+<h3>Course Type</h3>
+<p>The proportion of students in each URM category listed above has changed significantly since F14 (<span class="math inline">\(\chi^2_{6}\)</span>=18.0, p=.006). Most notably is that the proportion of URM students has increased greatly from F14 to S16, becoming about the same proportion (40%) as the non-URM group.</p>
 <?xml version="1.0" encoding="UTF-8"?>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
@@ -1301,23 +1305,6 @@ Non-URM
 </tr>
 <tr>
 <td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-29 (18.8%)
-</td>
-<td style="text-align:center;">
-17 (11.3%)
-</td>
-<td style="text-align:center;">
-14 (8.9%)
-</td>
-<td style="text-align:center;">
-24 (16.1%)
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
 URM
 </td>
 <td style="text-align:center;">
@@ -1333,116 +1320,970 @@ URM
 60 (40.3%)
 </td>
 </tr>
+<tr>
+<td style="text-align:center;">
+Unknown
+</td>
+<td style="text-align:center;">
+29 (18.8%)
+</td>
+<td style="text-align:center;">
+17 (11.3%)
+</td>
+<td style="text-align:center;">
+14 (8.9%)
+</td>
+<td style="text-align:center;">
+24 (16.1%)
+</td>
+</tr>
 </tbody>
 </table>
-<p><img src="crt_files/figure-html/unnamed-chunk-24-1.png" width="576" style="display: block; margin: auto;" /></p>
-</div>
-<div id="performance---gpa-2" class="section level4">
-<h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> URM students have significantly lower GPA (.38 lower) compared to non-URM students. The GPA for students with unknown URM status have marginally lower (.23) GPA compared to non-URM students.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-25-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> URM students have marginally lower GPA (.23 lower) on average compared to non-URM students. The GPA for students with unknown URM status is not different than the average GPA for non-URM students.</p>
 <p><img src="crt_files/figure-html/unnamed-chunk-26-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---dwf-rate" class="section level4">
-<h4>Performance - DWF rate</h4>
-<p><strong>Full Sample</strong> There is a statistical difference in DWF rate by URM status in the full cohort.</p>
-<p><strong>F14 &amp; F16 only</strong> There is no difference in dwf rate by URM status comparing F14 to F16 only.</p>
+<div id="performance---gpa-2" class="section level3">
+<h3>Performance - GPA</h3>
+<p>The distribution of GPA across URM status is similar for the entire sample and when only considering F14 and F16.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-27-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>When comparing the average GPA across URM status for all four semesters combined, Non URM students have on average 0.39 (95% CI 0.18-0.60, p&lt;.001) higher GPA compared to URM students.</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: left; margin-right: 10px;">
+<caption>
+Mean (SD) of GPA within URM classification
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+urm_status
+</th>
+<th style="text-align:center;">
+mean
+</th>
+<th style="text-align:center;">
+sd
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Non-URM
+</td>
+<td style="text-align:center;">
+1.896085
+</td>
+<td style="text-align:center;">
+1.0901600
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+URM
+</td>
+<td style="text-align:center;">
+1.508571
+</td>
+<td style="text-align:center;">
+0.9174358
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Unknown
+</td>
+<td style="text-align:center;">
+1.666667
+</td>
+<td style="text-align:center;">
+1.0534320
+</td>
+</tr>
+</tbody>
+</table>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: right; margin-left: 10px;">
+<caption>
+Tukeys Honest Significant Difference for pairwise differences in average GPA between URM classifications
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+diff
+</th>
+<th style="text-align:right;">
+lwr
+</th>
+<th style="text-align:right;">
+upr
+</th>
+<th style="text-align:right;">
+p adj
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+URM-Non-URM
+</td>
+<td style="text-align:right;">
+-0.39
+</td>
+<td style="text-align:right;">
+-0.60
+</td>
+<td style="text-align:right;">
+-0.18
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Unknown-Non-URM
+</td>
+<td style="text-align:right;">
+-0.23
+</td>
+<td style="text-align:right;">
+-0.53
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Unknown-URM
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+-0.14
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+</tbody>
+</table>
+<p><br><br><br><br><br><br><br><br><br><br><br><br></p>
+<p>Next we examine how the average GPA for students in each URM classification changes with the different redesign models. The plot below shows the mean with 95% CI for each combination of URM status and course type. The confidence intervals are added to this plot to more easily identify which pairs of URM status within course type are different. If the CI bars do not overlap (e.g. Non-URM vs URM in the CRT) this is a significant difference. However, if the bars overlap that <em>does not</em> mean there is <em>no</em> difference. You cannot make a statistical conclusion if the bars overlap.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-29-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>A multiple linear model of GPA using course type and URM status and the interaction between the two as predictors was run to test for a significant decrease in the gap between URM and non-URM students from each of the two redesigned course types compared to the traditional class. This is called a <em>difference of differences</em> analysis.</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: right; margin-left: 10px;">
+<caption>
+Difference in GPA as URM - NonURM for each course type
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+Course Type
+</th>
+<th style="text-align:center;">
+GPA gap
+</th>
+<th style="text-align:center;">
+CI
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Traditional
+</td>
+<td style="text-align:center;">
+-0.38
+</td>
+<td style="text-align:center;">
+(-0.76, -0.01)
+</td>
+<td style="text-align:center;">
+0.0431
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT
+</td>
+<td style="text-align:center;">
+-0.53
+</td>
+<td style="text-align:center;">
+(-0.77, -0.29)
+</td>
+<td style="text-align:center;">
+&lt;.0001
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT+SI
+</td>
+<td style="text-align:center;">
+-0.20
+</td>
+<td style="text-align:center;">
+(-0.56 , 0.16)
+</td>
+<td style="text-align:center;">
+0.271
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>The table to the right shows that under the traditional course model the gap in GPA between URM and non URM was 0.38 (with URM being significantly lower), the gap widened to 0.53, with URM still being statistically significantly lower, but under the CRT + SI model of redesign, the gap decreased such that URM students do not have a significantly lower GPA compared to NonURM students.</p>
+<p>The decrease from 0.32 to 0.28 however is not statistically significant (p=0.48).</p>
+<p><br><br><br><br></p>
 </div>
+<div id="performance---dfw-rate-2" class="section level3">
+<h3>Performance - DFW rate</h3>
+<p>The failure rate for URM status has decreased as the level of intervention increased from Traditional to CRT to CRT + SI.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-33-1.png" width="576" style="display: block; margin: auto;" /></p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+N(%) of students passing and failing Chem 111 by course type and URM status
+</caption>
+<thead>
+<tr>
+<th style="border-bottom:hidden"/>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+Non-URM
 </div>
-<div id="students-of-color-soc" class="section level2">
-<h2>Students of Color (SOC)</h2>
-<ul>
-<li>Non-SOC= White</li>
-<li>SOC = AIAN, Asian, Black, HL, NHOPI</li>
-<li>Multiple/Mixed = Multi, Unk</li>
-</ul>
-<div id="crt-vs.traditional" class="section level4">
-<h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of SOC across the past four terms has changed significantly (p=.01) <img src="crt_files/figure-html/unnamed-chunk-29-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> No statistical difference in the distribution of proportions between F14 &amp; F16.</p>
+</th>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+URM
 </div>
-<div id="performance---gpa-3" class="section level4">
-<h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong></p>
-<p>Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher). <img src="crt_files/figure-html/unnamed-chunk-31-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> Only comparing F14 and F16, non-SOC students have a significantly higher GPA compared to students of color (.28 higher), and marginally higher than those from Multiple/Mixed ethnicities (.29 higher).</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-32-1.png" width="576" style="display: block; margin: auto;" /></p>
+</th>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+Unknown
 </div>
-<div id="performance---dwf-rate-1" class="section level4">
-<h4>Performance - DWF rate</h4>
-<p><strong>Full Sample</strong> There is strong statistical difference in DWF rate by SOC status in the full cohort.</p>
-<p><strong>F14 &amp; F16 only</strong> There is a marginal difference in dwf rate by SOC status when looking at F14 and F16 only.</p>
+</th>
+</tr>
+<tr>
+<th style="text-align:center;">
+Course Type
+</th>
+<th style="text-align:center;">
+Pass
+</th>
+<th style="text-align:center;">
+DFW
+</th>
+<th style="text-align:center;">
+Pass
+</th>
+<th style="text-align:center;">
+DFW
+</th>
+<th style="text-align:center;">
+Pass
+</th>
+<th style="text-align:center;">
+DFW
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Traditional
+</td>
+<td style="text-align:center;">
+51 (63%)
+</td>
+<td style="text-align:center;">
+30 (37%)
+</td>
+<td style="text-align:center;">
+18 (40.9%)
+</td>
+<td style="text-align:center;">
+26 (59.1%)
+</td>
+<td style="text-align:center;">
+17 (58.6%)
+</td>
+<td style="text-align:center;">
+12 (41.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT
+</td>
+<td style="text-align:center;">
+100 (74.1%)
+</td>
+<td style="text-align:center;">
+35 (25.9%)
+</td>
+<td style="text-align:center;">
+75 (53.2%)
+</td>
+<td style="text-align:center;">
+66 (46.8%)
+</td>
+<td style="text-align:center;">
+23 (74.2%)
+</td>
+<td style="text-align:center;">
+8 (25.8%)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT+SI
+</td>
+<td style="text-align:center;">
+46 (70.8%)
+</td>
+<td style="text-align:center;">
+19 (29.2%)
+</td>
+<td style="text-align:center;">
+40 (66.7%)
+</td>
+<td style="text-align:center;">
+20 (33.3%)
+</td>
+<td style="text-align:center;">
+14 (58.3%)
+</td>
+<td style="text-align:center;">
+10 (41.7%)
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Summary</strong>: The CRT+SI redesign is associated with an improvement in GPA and reduction in DFW rates in URM students.</p>
 </div>
-</div>
-</div>
-<div id="student-groups" class="section level1">
-<h1>Student Groups</h1>
-<div id="eop" class="section level2">
-<h2>EOP</h2>
-<p>The number of EOP students is too small to make accurate comparisons.</p>
-<div id="crt-vs.traditional-1" class="section level4">
-<h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of EOP student status has not changed significantly.</p>
-</div>
-<div id="performance---gpa-4" class="section level4">
-<h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> There is no significant difference in average GPA for students in EOP compared to non-EOP students. <img src="crt_files/figure-html/unnamed-chunk-36-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> EOP students did significantly better compared to non-EOP students when looking at the F14 and F16 cohorts only.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-37-1.png" width="576" style="display: block; margin: auto;" /></p>
-</div>
-<div id="performance---dwf-rate-2" class="section level4">
-<h4>Performance - DWF rate</h4>
-<p><strong>Full Sample</strong> There is no difference in the % of repeatable grades between EOP and non-EOP students.</p>
-<p><strong>F14 &amp; F16 only</strong> There is no difference in the % of repeatable grades between EOP and non-EOP students.</p>
-</div>
-</div>
-<div id="any-formal-student-group-fsg" class="section level2">
-<h2>Any formal student group (FSG)</h2>
 </div>
 <div id="first-generation" class="section level2">
 <h2>First Generation</h2>
-<div id="crt-vs.traditional-2" class="section level4">
-<h4>CRT vs. Traditional</h4>
-<p><strong>Full Sample</strong> The distribution of first generation student status has not changed significantly across the past four terms.</p>
+<div id="course-type-3" class="section level3">
+<h3>Course Type</h3>
+<p>The proportion of students that are first generation has remained statistically constant for the past four semesters.</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Proportion of first generation students across terms
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+firstgeneration
+</th>
+<th style="text-align:center;">
+F14
+</th>
+<th style="text-align:center;">
+F15
+</th>
+<th style="text-align:center;">
+S16
+</th>
+<th style="text-align:center;">
+F16
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+N
+</td>
+<td style="text-align:center;">
+83 (53.9%)
+</td>
+<td style="text-align:center;">
+85 (56.7%)
+</td>
+<td style="text-align:center;">
+79 (50.3%)
+</td>
+<td style="text-align:center;">
+81 (54.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Y
+</td>
+<td style="text-align:center;">
+71 (46.1%)
+</td>
+<td style="text-align:center;">
+65 (43.3%)
+</td>
+<td style="text-align:center;">
+78 (49.7%)
+</td>
+<td style="text-align:center;">
+68 (45.6%)
+</td>
+</tr>
+</tbody>
+</table>
+<p><img src="crt_files/figure-html/unnamed-chunk-36-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="performance---gpa-5" class="section level4">
-<h4>Performance - GPA</h4>
-<p><strong>Full Sample</strong> First generation students have significantly lower GPA compared to non-first gen students. <img src="crt_files/figure-html/unnamed-chunk-41-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p><strong>F14 &amp; F16 only</strong> When comparing the F14 and F16 cohorts only, this difference disappears.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-42-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div id="performance---gpa-3" class="section level3">
+<h3>Performance - GPA</h3>
+<p>When considering the entire four semesters, first generation students have on average 0.29 gpa points lower than non-first generation students. The difference is non-significant when only considering the F14 and F16 cohorts, indicating that these samples are not the same.</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Comparison of GPA across first generation status
+</caption>
+<thead>
+<tr>
+<th style="border-bottom:hidden"/>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+Full Sample
 </div>
-<div id="performance---dwf-rate-3" class="section level4">
-<h4>Performance - DWF rate</h4>
-<p><strong>Full Sample</strong> A significantly higher proportion of first generation students received repeatable grades.</p>
-<p><strong>F14 &amp; F16 only</strong> Again, this difference disappears when considering only F14 vs F16 cohorts.</p>
+</th>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+F14 and F16 only
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:center;">
+First Generation
+</th>
+<th style="text-align:center;">
+Mean
+</th>
+<th style="text-align:center;">
+SD
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+<th style="text-align:center;">
+Mean
+</th>
+<th style="text-align:center;">
+SD
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+N
+</td>
+<td style="text-align:center;">
+1.84
+</td>
+<td style="text-align:center;">
+1.03
+</td>
+<td style="text-align:center;">
+0.00047
+</td>
+<td style="text-align:center;">
+1.74
+</td>
+<td style="text-align:center;">
+1.08
+</td>
+<td style="text-align:center;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Y
+</td>
+<td style="text-align:center;">
+1.55
+</td>
+<td style="text-align:center;">
+1.01
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+1.66
+</td>
+<td style="text-align:center;">
+1.02
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+</tbody>
+</table>
+<p><img src="crt_files/figure-html/unnamed-chunk-39-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Next we examine the average GPA for first generation and non-first generation students under the different redesign models. The mean profile plot with 95% CI below indicate that just flipping the classroom improves the overall GPA of the class, but primarily for non-first generation students only. However when adding SI to the course model the GPA for the first generation students rises to meet that of the non-first gen. This explains why the difference in average GPA is significantly different when considering the full sample, but not when considering the Traditional and CRT + SI cohorts only.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-40-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="performance---dfw-rate-3" class="section level3">
+<h3>Performance - DFW rate</h3>
+<p>The failure rate for each group decreases in a similar pattern to the improvement in GPA.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-41-1.png" width="576" style="display: block; margin: auto;" /></p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+N(%) of students passing and failing Chem 111 by course type and first generation status
+</caption>
+<thead>
+<tr>
+<th style="border-bottom:hidden"/>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+Non-First Generation
+</div>
+</th>
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
+First Generation
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:center;">
+Course Type
+</th>
+<th style="text-align:center;">
+Pass
+</th>
+<th style="text-align:center;">
+DFW
+</th>
+<th style="text-align:center;">
+Pass
+</th>
+<th style="text-align:center;">
+DFW
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Traditional
+</td>
+<td style="text-align:center;">
+47 (56.6%)
+</td>
+<td style="text-align:center;">
+36 (43.4%)
+</td>
+<td style="text-align:center;">
+39 (54.9%)
+</td>
+<td style="text-align:center;">
+32 (45.1%)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT
+</td>
+<td style="text-align:center;">
+120 (73.2%)
+</td>
+<td style="text-align:center;">
+44 (26.8%)
+</td>
+<td style="text-align:center;">
+78 (54.5%)
+</td>
+<td style="text-align:center;">
+65 (45.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT+SI
+</td>
+<td style="text-align:center;">
+54 (66.7%)
+</td>
+<td style="text-align:center;">
+27 (33.3%)
+</td>
+<td style="text-align:center;">
+46 (67.6%)
+</td>
+<td style="text-align:center;">
+22 (32.4%)
+</td>
+</tr>
+</tbody>
+</table>
+<p>For both groups the DFW rate went from 43-45% under the traditional course type, to 32-33% under redesign with SI.</p>
+<p><strong>Summary:</strong> Both the course type and first generation status are associated with a difference in GPA and DFW rate, but the redesign type has different effects for first generation students, specifically the redesign was associated with an improvement in performance for non-first generation students only. Adding on SI to the redesigned class bridged that gap for the first generation students.</p>
 </div>
 </div>
-</div>
-<div id="college-prep" class="section level1">
-<h1>College Prep</h1>
-<p>This section examines the relationship between the amount and type of college prep courses (HS and college) a student has at the time of admission, and the student’s gpa in Chem 111.</p>
 <div id="admissions-index-hs-eligibility" class="section level2">
 <h2>Admissions Index (HS Eligibility)</h2>
-<p><img src="crt_files/figure-html/unnamed-chunk-45-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Average admission index is marginally statistically different across years.</p>
-<div id="gpa-1" class="section level4">
-<h4>GPA</h4>
-<p>In the following scatterplots, each dot represents one student. Due to the discrete nature of gpa and number of classes, many points are overlaid on the same spot. So the darker the point, the more students are represented there.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-47-1.png" width="576" style="display: block; margin: auto;" /><img src="crt_files/figure-html/unnamed-chunk-47-2.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Admissions index does not have a strictly linear relationship with GPA. A standard linear model is not appropriate, a spline model with a knot around 3.5 should be used instead. <span style="color:red">Do this</span></p>
+<div id="course-type-4" class="section level3">
+<h3>Course Type</h3>
+<p>There is no significant difference in average admissions index across the three course types.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-44-1.png" width="576" style="display: block; margin: auto;" /></p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: left; margin-right: 10px;">
+<caption>
+Mean and SD of HSEI within class types
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Traditional
+</th>
+<th style="text-align:center;">
+CRT
+</th>
+<th style="text-align:center;">
+CRT+SI
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+admission_index
+</td>
+<td style="text-align:center;">
+3.74 (0.37)
+</td>
+<td style="text-align:center;">
+3.73 (0.33)
+</td>
+<td style="text-align:center;">
+3.79 (0.35)
+</td>
+</tr>
+</tbody>
+</table>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: right; margin-left: 10px;">
+<caption>
+Tukeys Honest Significant Difference for differences in average HSEI between all pairs of class types
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+diff
+</th>
+<th style="text-align:right;">
+lwr
+</th>
+<th style="text-align:right;">
+upr
+</th>
+<th style="text-align:right;">
+p adj
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+CRT-Traditional
+</td>
+<td style="text-align:right;">
+-0.01
+</td>
+<td style="text-align:right;">
+-0.10
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0.94
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRT+SI-Traditional
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+-0.05
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRT+SI-CRT
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+-0.02
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></br><br></br><br></br><br></br><br></br><br></br></p>
 </div>
-<div id="dfw" class="section level4">
-<h4>DFW</h4>
-<p><img src="crt_files/figure-html/unnamed-chunk-48-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>There is a strong relationship between admissions index and whether or not the student will pass the class.</p>
+<div id="performance---gpa-4" class="section level3">
+<h3>Performance - GPA</h3>
+<p>Admissions index does not have a strictly linear relationship with GPA, and that the relationship differs across the course types. For the Traditional and CRT + SI , there appears to be a flat relationship between HSEI and GPA until about HSEI=3.5, then a positive relationship for HSEI above 3.5.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-46-1.png" width="576" style="display: block; margin: auto;" /></p>
+<ul>
+<li>The slopes below HSEI &lt; 3.5 do not significantly differ based on course type - this is primarily due to the large standard error of the slope rather than the magnitude of the slope itself.</li>
+<li>The GPA for students in the CRT + SI is moderately (p&lt;.10) larger than the average GPA for students in the traditional classes (0.38, 95% CI -0.07, 0.83)</li>
+</ul>
+<p>A linear spline model was fit on the full sample using a knot at 3.5 to allow for a change in slope. No interaction terms were included since there was no significant difference in slope across CRT group.</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: right; margin-left: 10px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Estimate
+</th>
+<th style="text-align:center;">
+CI
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Age
+</td>
+<td style="text-align:center;">
+0.147
+</td>
+<td style="text-align:center;">
+(-0.67,0.96)
+</td>
+<td style="text-align:center;">
+0.7227
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HSEI over 3.5
+</td>
+<td style="text-align:center;">
+1.323
+</td>
+<td style="text-align:center;">
+(0.33,2.31)
+</td>
+<td style="text-align:center;">
+0.0089
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRT
+</td>
+<td style="text-align:center;">
+0.146
+</td>
+<td style="text-align:center;">
+(-0.06,0.35)
+</td>
+<td style="text-align:center;">
+0.1589
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRT + SI
+</td>
+<td style="text-align:center;">
+0.249
+</td>
+<td style="text-align:center;">
+(0.02,0.48)
+</td>
+<td style="text-align:center;">
+0.0369
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>There no effect of HSEI on GPA when HSEI is below 3.5 (p=.7)</li>
+<li>There is a strong effect of HSEI on GPA when HSEI is above 3.5 (p=.0089)</li>
+<li>After controlling for HSEI there is still a significant improvement in GPA for students in the CRT + SI redesign compared to those in the traditional course.</li>
+</ul>
+<p><br><br><br><br></p>
 </div>
+<div id="course-type---dfw" class="section level3">
+<h3>Course Type - DFW</h3>
+<p>Students who pass CHEM 111 have on average a 0.2 GPA higher admissions index compared to students who receive a repeatable grade (3.62 vs 3.82, p&lt;.0001).</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-49-1.png" width="576" style="display: block; margin: auto;" /></p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: left; margin-right: 10px;">
+<caption>
+Mean and SD of admissions index grouped by whether or not they passed the class
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+</th>
+<th style="text-align:center;">
+Mean
+</th>
+<th style="text-align:center;">
+SD
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Pass
+</td>
+<td style="text-align:center;">
+3.82
+</td>
+<td style="text-align:center;">
+0.34
+</td>
+<td style="text-align:center;">
+&lt; 0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Fail
+</td>
+<td style="text-align:center;">
+3.62
+</td>
+<td style="text-align:center;">
+0.31
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+</tbody>
+</table>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; float: right; margin-left: 10px;">
+<caption>
+Logistic Regression of course type on the receipt of repeatable grade
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+OR
+</th>
+<th style="text-align:center;">
+CI
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+HSEI
+</td>
+<td style="text-align:center;">
+0.151
+</td>
+<td style="text-align:center;">
+(0.08,0.27)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRT
+</td>
+<td style="text-align:center;">
+0.731
+</td>
+<td style="text-align:center;">
+(0.46,1.17)
+</td>
+<td style="text-align:center;">
+0.19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRT + SI
+</td>
+<td style="text-align:center;">
+0.736
+</td>
+<td style="text-align:center;">
+(0.43,1.27)
+</td>
+<td style="text-align:center;">
+0.27
+</td>
+</tr>
+</tbody>
+</table>
+<p><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
+<p><strong>Summary</strong>:</p>
+<ul>
+<li>After controlling for admissions index, there is no direct effect of the course redesign on the likelihood a student will pass the course.</li>
+<li>There is a positive relationship between admissions index and GPA, but only for a high admissions score.</li>
+<li>The type of course redesign does not significantly change the relationship between admissions index and GPA.</li>
+</ul>
 </div>
-<div id="elm-status" class="section level2">
-<h2>ELM Status</h2>
-</div>
-<div id="ept-status" class="section level2">
-<h2>EPT Status</h2>
 </div>
 <div id="ge-status" class="section level2">
 <h2>GE Status</h2>
@@ -1450,41 +2291,400 @@ URM
 </div>
 <div id="bivariate-summary" class="section level1">
 <h1>Bivariate Summary</h1>
-<p>Factors that were associated with GPA or passing the class</p>
+<p>Factors unable to be controlled for due to inconsistent data or small sample sizes:</p>
 <ul>
-<li>Admissions index - but not linearly</li>
-<li></li>
+<li>EOP</li>
+<li>Formal student groups (EOP/Reach/TRIO/DSS)</li>
 </ul>
-<p>Comparing the entire cohort to F14 and F16 only – often differences seen in the entire cohort were not seen when only considering the F14 and F16 cohorts only. Even though there is only one spring term included, this may be an indication of a “semester” effect that we have seen evidence of in other places.</p>
+<p>Demographic factors that were associated with GPA or passing the class</p>
+<ul>
+<li>Age</li>
+<li>Under-represented minority classification</li>
+<li>First Generation status</li>
+<li>Admissions index - but not linearly</li>
+</ul>
 </div>
 <div id="multivariate-modeling" class="section level1">
 <h1>Multivariate modeling</h1>
-<div id="gpa---recap-of-relationship" class="section level2">
-<h2>GPA - recap of relationship</h2>
-<p><img src="crt_files/figure-html/unnamed-chunk-50-1.png" width="576" style="display: block; margin: auto;" /> For those under 25, after accounting for a <strong>linear</strong> effect of age, the CRT significantly improves GPA.</p>
+<div id="data-preparation" class="section level3">
+<h3>Data preparation</h3>
+<div id="imputing-missing-values" class="section level4">
+<h4>Imputing missing values</h4>
+<p>About 15% of the records in the data were missing admissions index, so for the purpose of machine learning modeling missing values are imputed using predictive mean matching via the MICE (multiple imputation using chained equations) package in R. Only one computed data set is used (instead of multiple) for exploratory purposes only.</p>
 </div>
-<div id="hs-eligibility-in-progress" class="section level2">
-<h2>HS eligibility [In progress]</h2>
-<p><img src="crt_files/figure-html/unnamed-chunk-52-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Fit a linear spline model, with a knot at 3.75. That is, two linear models with differing slopes.</p>
-<p><img src="crt_files/figure-html/unnamed-chunk-53-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Interaction between admissions index and CRT – allow there to be separate slopes between CRT groups in both high and low admission index areas. – in other words– does the CRT group <em>change</em> the relationship between admissions index and GPA?</p>
-<hr />
-<p>Notes</p>
+<div id="collapsing-and-grouping-varibles." class="section level4">
+<h4>Collapsing and grouping varibles.</h4>
 <ul>
-<li><p>can we show that SI is the cause of the reduction of the GAP between first gen and/or URM students.</p></li>
-<li>DFW rate as a function of attendance</li>
-<li>HS eligibility vs. SI visits</li>
-<li></li>
-<li><p>add logistic regression of repeatable grade vs crt</p></li>
-<li>don’t forget to add difference between chem performance and other classes</li>
-<li><p>plot gap in gpa and dwf across term</p></li>
+<li>The number of college prep math, English, and lab science classes were grouped into more reasonable ranges such as under 6 units, 6 to 8, and over 10. Reference groups are always no units of college prep classes.</li>
+<li>The college in which the student is currently a major of was collapsed into
+<ul>
+<li>Other: BSS, BUS, CME, HFA, UGE</li>
+<li>ECC</li>
+<li>NS: NS and AGR</li>
+</ul></li>
+</ul>
+</div>
+<div id="restrict-on-age" class="section level4">
+<h4>Restrict on age</h4>
+<p>Since 95% of the students are below 25 years of age, the multivariable model will be fit on only students less than 25 years of age.</p>
+</div>
+</div>
+<div id="variable-selection" class="section level2">
+<h2>Variable Selection</h2>
+<p>A Random Forests model is fit to the full data, with all available student and class level information available to the model. This allows the model to consider the effects of secondary, non-demographic variables such as whether or not the student has passed a GE Math class by the time they take Chem 111, the number of units they are currently taking (including Chemistry), and if they participated in high impact practices such as Summer Bridge.</p>
+<p>The plot below graphs the % increase in unexplained variance (mean squared error MSE) if that variable were excluded from the model.</p>
+<ul>
+<li>A good model has a low amount of unexplained variance, so a high % increase means that variable plays an important role in predicting GPA.</li>
+<li>For display purposes only those showing an increase of greater than .1% are displayed.</li>
+</ul>
+<p><img src="crt_files/figure-html/rf-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Variables with high importance were then used as a starting point to build a multiple linear regression model to assess the effect of the course redesign after controlling for these other features.</p>
+<div id="multivariable-linear-regression" class="section level3">
+<h3>Multivariable Linear Regression</h3>
+<p>Prior to modeling, a single classification tree was built to determine the optimal location of knots for the known non-linear relationships between GPA, age and admissions index. Spline knots were created at HSEI = 3.8, and Age = 22 and included in the starting linear model.</p>
+<p>Further variable selection was conducted via backwards selection, removing the variables that were found to be not significant with GPA with a pvalue &gt; 0.5. Certain demographics of great interest (i.e. First Generation status) were kept in the model regardless of their statistical significance level.</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Estimate
+</th>
+<th style="text-align:center;">
+CI
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Term GPA
+</td>
+<td style="text-align:center;">
+0.877
+</td>
+<td style="text-align:center;">
+(0.81,0.94)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HSEI
+</td>
+<td style="text-align:center;">
+-0.005
+</td>
+<td style="text-align:center;">
+(-0.28,0.27)
+</td>
+<td style="text-align:center;">
+0.9712
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HSEI &gt; 3.8
+</td>
+<td style="text-align:center;">
+0.723
+</td>
+<td style="text-align:center;">
+(0.2,1.24)
+</td>
+<td style="text-align:center;">
+0.0066
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Level: Sophmore
+</td>
+<td style="text-align:center;">
+0.007
+</td>
+<td style="text-align:center;">
+(-0.11,0.13)
+</td>
+<td style="text-align:center;">
+0.9133
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Level: Junior
+</td>
+<td style="text-align:center;">
+0.168
+</td>
+<td style="text-align:center;">
+(-0.01,0.35)
+</td>
+<td style="text-align:center;">
+0.0646
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Level: Senior
+</td>
+<td style="text-align:center;">
+0.119
+</td>
+<td style="text-align:center;">
+(-0.13,0.37)
+</td>
+<td style="text-align:center;">
+0.3552
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CP Math units: [6-8)
+</td>
+<td style="text-align:center;">
+0.704
+</td>
+<td style="text-align:center;">
+(-0.52,1.92)
+</td>
+<td style="text-align:center;">
+0.2576
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CP Math units: [8-10)
+</td>
+<td style="text-align:center;">
+0.988
+</td>
+<td style="text-align:center;">
+(-0.22,2.2)
+</td>
+<td style="text-align:center;">
+0.1101
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CP Math units: 10+
+</td>
+<td style="text-align:center;">
+1.008
+</td>
+<td style="text-align:center;">
+(-0.21,2.22)
+</td>
+<td style="text-align:center;">
+0.1033
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+College: ECC
+</td>
+<td style="text-align:center;">
+0.122
+</td>
+<td style="text-align:center;">
+(-0.02,0.26)
+</td>
+<td style="text-align:center;">
+0.0813
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+College: Other
+</td>
+<td style="text-align:center;">
+-0.228
+</td>
+<td style="text-align:center;">
+(-0.37,-0.09)
+</td>
+<td style="text-align:center;">
+0.0011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:center;">
+0.295
+</td>
+<td style="text-align:center;">
+(0.18,0.41)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GE Math Complete
+</td>
+<td style="text-align:center;">
+0.280
+</td>
+<td style="text-align:center;">
+(-0.01,0.57)
+</td>
+<td style="text-align:center;">
+0.0583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Redesign: CRT
+</td>
+<td style="text-align:center;">
+0.059
+</td>
+<td style="text-align:center;">
+(-0.07,0.19)
+</td>
+<td style="text-align:center;">
+0.3656
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Redesign: CRT + SI
+</td>
+<td style="text-align:center;">
+0.191
+</td>
+<td style="text-align:center;">
+(0.04,0.34)
+</td>
+<td style="text-align:center;">
+0.0112
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GE English Complete
+</td>
+<td style="text-align:center;">
+-0.300
+</td>
+<td style="text-align:center;">
+(-0.59,-0.02)
+</td>
+<td style="text-align:center;">
+0.0391
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+URM
+</td>
+<td style="text-align:center;">
+0.004
+</td>
+<td style="text-align:center;">
+(-0.12,0.12)
+</td>
+<td style="text-align:center;">
+0.9490
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+URM-Unknown
+</td>
+<td style="text-align:center;">
+0.079
+</td>
+<td style="text-align:center;">
+(-0.09,0.25)
+</td>
+<td style="text-align:center;">
+0.3496
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+First Generation
+</td>
+<td style="text-align:center;">
+-0.052
+</td>
+<td style="text-align:center;">
+(-0.16,0.06)
+</td>
+<td style="text-align:center;">
+0.3592
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Any College prep English
+</td>
+<td style="text-align:center;">
+-1.089
+</td>
+<td style="text-align:center;">
+(-2.35,0.17)
+</td>
+<td style="text-align:center;">
+0.0893
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Summary</strong></p>
+<p>After controlling for other significant and demographic characteristics:</p>
+<ul>
+<li>Gender</li>
+<li>URM status</li>
+<li>First generation status</li>
+<li>Admissions index</li>
+<li>Academic level</li>
+<li>College prep English and math classes</li>
+<li>Completion of GE English and Math classes</li>
+<li>Term GPA</li>
+</ul>
+<p>Students in the CRT + SI class had significantly higher GPA compared to students in the traditional course (0.18, 95% CI (0.03-0.33), p=.0155).</p>
+<div id="notes-and-comments" class="section level4">
+<h4>Notes and Comments</h4>
+<ul>
+<li>This model is an additive model, each covariate is modeled as if it modifies GPA in a linear manner.</li>
+<li>This model is simple in that unless interactions between variables are explicitly specified, they are not considered.</li>
+<li>This differs from the supervised learning model such as a Random Forest model, that allows for all variables to interact with each other.</li>
+<li>The effect for all categorical variables represent a change from baseline or reference group, to the group listed.</li>
 </ul>
 </div>
 </div>
-<div id="cart---predicting-a-failing-grade." class="section level1">
-<h1>CART - Predicting a failing grade.</h1>
-<p>Work in progress…</p>
+</div>
+</div>
+<div id="next-steps" class="section level1">
+<h1>Next steps</h1>
+<ul>
+<li>This analysis only examined courses taught by the same instructor across four semsters to assess the effectiveness of a single individual course redesign.</li>
+<li>SI was only incorporated during the Spring 16 semester.</li>
+<li>A follow-up analysis to examine the impact of SI by attendance should analyze data from multiple instructors for the same semester where SI was available.
+<ul>
+<li>Zero visits for courses where SI is not even available is different than zero visits for a course where SI is available.</li>
+<li>This becomes a difference between opting out of SI, and not even having the option.</li>
+</ul></li>
+</ul>
+<p>This would allow us to examine the following questions:</p>
+<ul>
+<li>Can we show that SI is related to the reduction of the GAP between first gen and/or URM students?</li>
+<li>How does the DFW rate change as a function of SI attendance?</li>
+<li>Do people self-select into SI based on admissions index?</li>
+</ul>
 </div>
 
 

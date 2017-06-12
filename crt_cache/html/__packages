@@ -1,10 +1,15 @@
 base
 dplyr
-knitr
 RColorBrewer
 ggplot2
 gridExtra
+knitr
+kableExtra
 scales
 foreach
 plotly
-kableExtra
+randomForest
+Rcpp
+mice
+rpart
+rpart.plot

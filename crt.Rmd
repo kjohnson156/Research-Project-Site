@@ -35,7 +35,7 @@ ew <- raw %>% filter(((term_idx == "F14" & section==1) | crt==1)  &
 
 ew$crt[ew$term_idx == "F16"] <- 2
 ew$crt <- factor(ew$crt, labels=c("Traditional", "CRT", "CRT+SI"))
-ew$urm_status <- factor(ew$urm_status, labels=c("Non-URM", "URM", "Unknown"))
+ew$urm_status <- factor(ew$urm_status, levels=c("Non-URM", "URM", "Unknown"))
 
 class <- ew %>% group_by(year, term, term_idx, section, crt) %>%
           summarise(classgpa = mean(gpa), dfw = sum(repeat_grade), 
@@ -52,7 +52,7 @@ sex.col <- brewer.pal(10, "Paired")[c(8,10)]
 
 # Analysis Overview
 
-To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receving an incomplete (`W/I`) are exluded from this analysis. A repeatable grade is defined as a student reciving a *D*, *D+*, *F* grade, or an unexcused withdrawl *WU*. 
+To analyze the effect of the course redesign, we consider data from Fall 2014 to Fall 2016, for all sections of Chemistry 111. Students withdrawing or receiving an incomplete (`W/I`) are excluded from this analysis. A repeatable grade is defined as a student receiving a *D*, *D+*, *F* grade, or an unexcused withdrawal *WU*. 
 
 1. Examine bivariate associations between outcome measures, covariates and the CRT intervention condition. 
     a. Student and class level characteristics are used as covariates. 
@@ -61,7 +61,7 @@ To analyze the effect of the course redesign, we consider data from Fall 2014 to
         - All terms (Full sample) 
         - Just F14 and F16 terms only 
 2. Model building - Start with variables that were shown to be bivariately associated with either intervention or outcome, build a multivariable statistical model to assess the effect of the CRT on student performance. 
-3. Use a supervised machine learning technique to identify other key characteristics highly predictive of a student recieving a repeatable grade. 
+3. Use a supervised machine learning technique to identify other key characteristics highly predictive of a student receiving a repeatable grade. 
 
 
 ### Outcome measurements
@@ -126,7 +126,7 @@ gpa.crt.f146 <- univ.gpa(f146, col.var = 'crt')
 # Student Characteristics 
 
 ## Gender
-#### Course Type
+### Course Type
 
 Since Fall 14, the gender distribution has become closer to equal, with slightly more females than males since Spring 16. This difference is moderately statistically significant ($\chi^2_{3}$=6.5, p=.09).
 
@@ -145,7 +145,7 @@ g.term$plot + scale_y_continuous(labels=scales::percent, limits=c(.25, .75)) +
 ```
 
 
-#### Performance - GPA
+### Performance - GPA
 There is no statistical difference in the average GPA between males and females, regardless of cohort. 
 
 ```{r}
@@ -175,32 +175,58 @@ b <- gpa.gender.f146$plot + ggtitle("F14 & F16 only") + xlab("") + scale_fill_ma
 grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="right")
 ```
 
+```{r}
+gpa.g.crt <- ew %>% group_by(crt, gender) %>% 
+                  summarise(mean=mean(gpa), 
+                            se = sd(gpa)/sqrt(n()), 
+                            lcl=mean-1.96*se, 
+                            ucl=mean+1.96*se) 
+pd <- position_dodge(.1)
+ggplot(gpa.g.crt, aes(x=crt, y=mean, group=gender, col=gender)) + 
+        geom_point(size=2, position=pd) + geom_line(position=pd) +
+        geom_errorbar(aes(ymin=lcl, ymax=ucl), width=.1, position=pd) + 
+        scale_y_continuous(limits=c(0, 3)) + 
+        theme_bw() + ylab("") + xlab("Course Type") + 
+        scale_color_manual(name="Gender", values=sex.col) + 
+        ggtitle("Mean (95 %CI) GPA by First Gen status and across genders")
+```
 
-#### Performance - DFW rate
+A multiple linear regression model found that the redesign did not have a statistically different impact on males and females. 
+```{r}
+summary(lm(gpa~crt + gender + crt*gender, data=ew))
+```
+
+
+### Performance - DFW rate
 There is no difference in proportion of males and females getting a repeatable grade on the entire sample, or when using data on the F14 and F16 cohorts only.
 
 ```{r}
-gender.dwf.ew <- biv.n.row.pct(ew, col.var = 'gender', row.var='repeat_grade')
-gender.dwf.f146<- biv.n.row.pct(f146, col.var = 'gender',row.var='repeat_grade')
+fs <- ew %>% group_by(crt, gender, repeat_grade) %>% 
+    summarise(count=n()) %>%
+    mutate(pct=round(count/sum(count),3)) %>%
+    mutate(Total = paste0(count, " (", pct*100,"%)"))
+```
+
+
+```{r, results='show'}
+fs2 <- fs %>% arrange(crt, gender, repeat_grade) %>% select(-count, -pct) %>% mutate(ut = paste0(gender, "_", repeat_grade))
+
+ws <- reshape(as.data.frame(fs2), timevar = 'ut', idvar='crt', direction="wide")
+ws <- ws[,c(1, 4, 7, 10, 13)]
+colnames(ws) <- c("Course Type", "Pass", "DFW", "Pass", "DFW")
+
+kable(ws, align='c', row.names=FALSE,
+      caption=" N(%) of students passing and failing Chem 111 by course type and gender") %>% 
+  kable_styling(bootstrap_options="striped",full_width=F) %>% 
+  add_header_above(c(" " = 1, "Females" = 2, "Males"=2)) 
 ```
 
 ```{r}
-a <- data.frame(g = c("No", "Yes"),
-           gender.dwf.ew$table[,-1], 
-           p=c(format.pval(chisq.test(ew$repeat_grade, ew$gender)$p.value, digits=2), NA), 
-           gender.dwf.f146$table[,-1], 
-           p=c(format.pval(chisq.test(f146$repeat_grade, f146$gender)$p.value, digits=2), NA)
-           )
+fsp <- fs %>% filter(repeat_grade==1)
 
-names(a) <- c("Repeat Grade", "N (%) Female", "N(%) Male", "p-value",  
-                          "N(%) Female", "N(%) Male", "p-value")
-
-```
-
-```{r, results='show'}
-kable(a, digits=2, align='c', caption="Comparing DFW rate across genders") %>% 
-  add_header_above(c(" " = 1, "Full Sample" = 3, "F14 and F16 only" = 3)) %>%
-  kable_styling(bootstrap_options="striped", full_width=F)
+ggplot(fsp, aes(x=crt, y=pct, group=gender, col=gender)) + 
+    geom_point() + geom_line() + scale_y_continuous(labels=scales::percent, limits=c(0, 1)) + 
+    theme_bw() + ylab("") + xlab("Course Type") + scale_color_manual(name="Gender", values=sex.col)
 ```
 
 A logistic regression model on the full data indicates that students in the redesigned section (CRT and CRT + SI) have significantly lower odds of failing Chem 111 compared to students in the traditional courses after adjusting for gender. 
@@ -216,13 +242,12 @@ kable(a, align='c', caption="Logistic Regression of course type on the receipt o
 ```
 
 
-
-**Summary:** The redesign had a positive effect on GPA and DWF rate after controlling for gender. 
+**Summary:** The redesign had a positive effect on GPA and DWF rate after controlling for gender, and while it appears as if males improved more than females between Traditional and CRT + SI, the difference is not statistically significant. 
 
 
 ## Age 
 
-#### Course Type
+### Course Type
 
 Students in F14 were on average 0.68 (0.01, 1.34) years older than those in the two CRT semesters (p=.04), and 0.87 (0.1, 1.65) years older than students in Fall 16 (p=.02).
 
@@ -245,7 +270,7 @@ kable(TukeyHSD(aov(age~crt, data=ew))$crt, digits=2,
 
 
 
-#### Performance - GPA
+### Performance - GPA
 GPA and age appear to have a non-linear relationship. Zooming in on students under 25, the relationship between age and GPA is decreasing until about 20, then increases afterward. 
 
 ```{r, fig.width=10}
@@ -285,7 +310,7 @@ An interaction term between age and course type was tested but found to be non-s
 
 <br>
 
-#### Performance - DFW rate
+### Performance - DFW rate
 There is no difference in the average age for students receiving a repeatable grade or not, with our without the older students included in the analysis. 
 ```{r}
 age.dfw.ew   <- biv.mean(df=ew, var='age', group='pass')
@@ -354,10 +379,10 @@ The definition used in this report for an underrepresented minority student is a
 
 * Non-URM: Asian, NHOPI, White
 * URM: Black, HL
-* UNK: Mult, Unk
+* Unknown: Mult, Unk
 
-#### Course Type
-The proportion of students in each URM category listed above has changed significantly since F14 ($\chi^2_{6}$=18.0, p=.006). Most notably is that the proportion of African-American and Hispanic-Latino students has increased greatly from F14 to S16, while the other groups were in decline. 
+### Course Type
+The proportion of students in each URM category listed above has changed significantly since F14 ($\chi^2_{6}$=18.0, p=.006). Most notably is that the proportion of URM students has increased greatly from F14 to S16, becoming about the same proportion (40%) as the non-URM group. 
 
 ```{r}
 urm.term <- biv.n.row.pct(df=ew, row.var = 'urm_status', col.var = 'term_idx')
@@ -373,286 +398,351 @@ urm.term$plot + scale_y_continuous(labels=scales::percent, limits=c(0, 1)) +
   theme_bw() + ylab("") + xlab("Semester") + scale_color_discrete(name="URM Status")
 ```
 
+### Performance - GPA
 
-#####################################
-# HERE HERE HERE HERE HERE HERE HERE 
-#####################################
+The distribution of GPA across URM status is similar for the entire sample and when only considering F14 and F16. 
 
-#### Performance - GPA
-**Full Sample**
-URM students have significantly lower GPA (.38 lower) compared to non-URM students. The GPA for students with unknown URM status have marginally lower (.23) GPA compared to non-URM students. 
+```{r, fig.width=12, fig.height=6}
+gpa.urm.ew    <- biv.mean(df=ew, var='gpa', group='urm_status')
+gpa.urm.f146  <- biv.mean(df=f146, var='gpa', group='urm_status')
 
-```{r}
-gpa.urm.ew <- univ.gpa(ew, col.var = 'urm_status')
-kable(gpa.urm.ew$table, digits=2)
-gpa.urm.ew$plot
-summary(gpa.urm.ew$test)
-```
+a <- gpa.urm.ew$plot + ggtitle("Full Sample") + xlab("") + scale_fill_discrete(name="")
+b <- gpa.urm.f146$plot + ggtitle("F14 & F16 only") + xlab("") 
 
-**F14 & F16 only**
-URM students have marginally lower GPA (.23 lower) on average compared to non-URM students. The GPA for students with unknown URM status is not different than the average GPA for non-URM students. 
-
-```{r}
-gpa.urm.f146 <- univ.gpa(f146, col.var = 'urm_status')
-kable(gpa.urm.f146$table, digits=2)
-gpa.urm.f146$plot
-summary(gpa.urm.f146$test)
-```
-
-#### Performance - DWF rate
-
-**Full Sample**
-There is a statistical difference in DWF rate by URM status in the full cohort.
-```{r}
-urm.dwf.ew <- biv.n.row.pct(ew, col.var = 'urm_status', row.var='repeat_grade')
-kable(urm.dwf.ew$table, row.names = FALSE)
-chisq.test(ew$repeat_grade, ew$urm_status)
-```
-
-**F14 & F16 only**
-There is no difference in dwf rate by URM status comparing F14 to F16 only. 
-```{r}
-urm.dwf.f146 <- biv.n.row.pct(f146, col.var = 'urm_status', row.var='repeat_grade')
-kable(urm.dwf.f146$table, row.names = FALSE)
-chisq.test(f146$repeat_grade, f146$urm_status)
+grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="right")
 ```
 
 
-## Students of Color (SOC)
-* Non-SOC= White
-* SOC = AIAN, Asian, Black, HL, NHOPI
-* Multiple/Mixed = Multi, Unk
+When comparing the average GPA across URM status for all four semesters combined, Non URM students have on average 0.39 (95% CI 0.18-0.60, p<.001) higher GPA compared to URM students. 
 
+```{r, results='show'}
+kable(biv.mean(df=ew, var='gpa', group='urm_status')$table, align='c', 
+      caption="Mean (SD) of GPA within URM classification")  %>% 
+      kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
 
-#### CRT vs. Traditional 
-
-**Full Sample**
-The distribution of SOC across the past four terms has changed significantly (p=.01)
-```{r}
-soc.term <- biv.n.row.pct(df=ew, row.var = 'soc', col.var = 'term_idx')
-kable(soc.term$table, row.names = FALSE)
-soc.term$plot
-chisq.test(table(ew$soc, ew$term_idx))
+kable(TukeyHSD(aov(gpa~urm_status, data=ew))$urm_status, digits=2, 
+      caption="Tukeys Honest Significant Difference for pairwise differences in average GPA between URM classifications") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
 ```
 
-**F14 & F16 only**
-No statistical difference in the distribution of proportions between F14 & F16. 
-```{r}
-soc.146 <- biv.n.row.pct(df=f146, row.var = 'soc', col.var = 'term_idx')
-kable(soc.146$table, row.names = FALSE)
-chisq.test(table(f146$soc, f146$term_idx))
-```
+<br><br><br><br><br><br><br><br><br><br><br><br>
 
 
-#### Performance - GPA
-**Full Sample**
-
-Non-SOC students have a significantly higher GPA compared to students of color (.39 higher),and students identifying as Multiple/Mixed ethnities (.27 higher). 
-```{r}
-gpa.soc.ew <- univ.gpa(ew, col.var = 'soc')
-kable(gpa.soc.ew$table, digits=2)
-gpa.soc.ew$plot
-summary(gpa.soc.ew$test)
-```
-
-**F14 & F16 only**
-Only comparing F14 and F16, non-SOC students have a significantly higher GPA compared to students of color (.28 higher), and marginally higher than those from Multiple/Mixed ethnicities (.29 higher). 
+Next we examine how the average GPA for students in each URM classification changes with the different redesign models. The plot below shows the mean with 95% CI for each combination of URM status and course type. The confidence intervals are added to this plot to more easily identify which pairs of URM status within course type are different. If the CI bars do not overlap (e.g. Non-URM vs URM in the CRT) this is a significant difference. However, if the bars overlap that _does not_ mean there is _no_ difference. You cannot make a statistical conclusion if the bars overlap. 
 
 ```{r}
-gpa.soc.f146 <- univ.gpa(f146, col.var = 'soc')
-kable(gpa.soc.f146$table, digits=2)
-gpa.soc.f146$plot
-summary(gpa.soc.f146$test)
+gpa.urm.crt <- ew %>% group_by(crt, urm_status) %>% 
+                  summarise(mean=mean(gpa), 
+                            se = sd(gpa)/sqrt(n()), 
+                            lcl=mean-1.96*se, 
+                            ucl=mean+1.96*se) 
+pd <- position_dodge(.1)
+ggplot(gpa.urm.crt, aes(x=crt, y=mean, group=urm_status, col=urm_status)) + 
+        geom_point(size=2, position=pd) + geom_line(position=pd) +
+        geom_errorbar(aes(ymin=lcl, ymax=ucl), width=.1, position=pd) + 
+        scale_y_continuous(limits=c(0, 3)) + 
+        theme_bw() + ylab("") + xlab("Course Type") + 
+        scale_color_discrete(name="URM Status") + 
+        ggtitle("Mean (95 %CI) GPA for each URM status across course type")
 ```
 
-#### Performance - DWF rate
+```{r, eval=FALSE}
+urm.mod <- lm(gpa~crt + urm_status, data=ew)
+a <- mlr.table(urm.mod) 
+names(a) <- c("Estimate", "CI", "p-value")
+rownames(a) <- c("CRT", "CRT + SI", "URM", "URM Unknown")
 
-**Full Sample**
-There is strong statistical difference in DWF rate by SOC status in the full cohort.
-```{r}
-soc.dwf.ew <- biv.n.row.pct(ew, col.var = 'soc', row.var='repeat_grade')
-kable(soc.dwf.ew$table, row.names = FALSE)
-chisq.test(ew$repeat_grade, ew$soc)
+kable(a, align='c', caption="Linear regression estimates for a model of GPA on Coures type and URM status") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
 ```
 
-**F14 & F16 only**
-There is a marginal difference in dwf rate by SOC status when looking at F14 and F16 only. 
-```{r}
-soc.dwf.f146 <- biv.n.row.pct(f146, col.var = 'soc', row.var='repeat_grade')
-kable(soc.dwf.f146$table, row.names = FALSE)
-chisq.test(f146$repeat_grade, f146$soc)
-```
+A multiple linear model of GPA using course type and URM status and the interaction between the two as predictors was run to test for a significant decrease in the gap between URM and non-URM students from each of the two redesigned course types compared to the traditional class. This is called a _difference of differences_ analysis.
 
-
-# Student Groups 
-
-## EOP
-The number of EOP students is too small to make accurate comparisons. 
-
-#### CRT vs. Traditional 
-
-**Full Sample**
-The distribution of EOP student status has not changed significantly. 
-```{r}
-eop.term <- biv.n.row.pct(df=ew, row.var = 'eop', col.var = 'term_idx')
-kable(eop.term$table, row.names = FALSE)
-chisq.test(table(ew$eop, ew$term_idx))
-```
-
-#### Performance - GPA
-**Full Sample**
-There is no significant difference in average GPA for students in EOP compared to non-EOP students. 
-```{r}
-gpa.eop.ew <- univ.gpa(ew, col.var = 'eop')
-kable(gpa.eop.ew$table, digits=2)
-gpa.eop.ew$plot
-gpa.eop.ew$test
-```
-
-**F14 & F16 only**
-EOP students did significantly better compared to non-EOP students when looking at the F14 and F16 cohorts only. 
 
 ```{r}
-gpa.eop.f146 <- univ.gpa(f146, col.var = 'eop')
-kable(gpa.eop.f146$table, digits=2)
-gpa.eop.f146$plot
-gpa.eop.f146$test
+did.model <- lm(gpa~crt + urm_status + crt:urm_status, data=ew)
+
+tm <- multcomp::glht(did.model, linfct=matrix(c(0,0,0,1,0,0,0,0,0),1))
+cm <- multcomp::glht(did.model, linfct=matrix(c(0,0,0,1,0,1,0,0,0),1))
+sm <- multcomp::glht(did.model, linfct=matrix(c(0,0,0,1,0,0,1,0,0),1))
+
+ct <- data.frame(g=levels(ew$crt), 
+           est = c(-0.38, -0.53 , -0.20), 
+           ci = c("(-0.76, -0.01)", "(-0.77, -0.29)", "(-0.56 , 0.16)"), 
+           p = c("0.0431", "<.0001", "0.271"))
 ```
 
-#### Performance - DWF rate
+```{r, results='show'}
+names(ct) <- c("Course Type", "GPA gap", "CI", "p-value")
+kable(ct, align='c', caption="Difference in GPA as URM - NonURM for each course type") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+```
 
-**Full Sample**
-There is no difference in the % of repeatable grades between EOP and non-EOP students. 
+<br>
+
+The table to the right shows that under the traditional course model the gap in GPA between URM and non URM was 0.38 (with URM being significantly lower), the gap widened to 0.53, with URM still being statistically significantly lower, but under the CRT + SI model of redesign, the gap decreased such that URM students do not have a significantly lower GPA compared to NonURM students. 
+
+The decrease from 0.32 to 0.28 however is not statistically significant (p=0.48). 
+
+
+
+<br><br><br><br>
+
+### Performance - DFW rate
+
+The failure rate for URM status has decreased as the level of intervention increased from Traditional to CRT to CRT + SI. 
+
+
 ```{r}
-eop.dwf.ew <- biv.n.row.pct(ew, col.var = 'eop', row.var='repeat_grade')
-kable(eop.dwf.ew$table, row.names = FALSE)
-chisq.test(ew$repeat_grade, ew$eop)
+fs <- ew %>% group_by(crt, urm_status, repeat_grade) %>% 
+    summarise(count=n()) %>%
+    mutate(pct=round(count/sum(count),3)) %>%
+    mutate(Total = paste0(count, " (", pct*100,"%)"))
+
+fsp <- fs %>% filter(repeat_grade==1)
+
+ggplot(fsp, aes(x=crt, y=pct, group=urm_status, col=urm_status)) + 
+    geom_point() + geom_line() + scale_y_continuous(labels=scales::percent, limits=c(0, 1)) + 
+    theme_bw() + ylab("") + xlab("Course Type") + scale_color_discrete(name="URM Status")
 ```
 
-**F14 & F16 only**
-There is no difference in the % of repeatable grades between EOP and non-EOP students.
-```{r}
-eop.dwf.f146 <- biv.n.row.pct(f146, col.var = 'eop', row.var='repeat_grade')
-kable(eop.dwf.f146$table, row.names = FALSE)
-fisher.test(f146$repeat_grade, f146$eop)
+```{r, results='show'}
+fs2 <- fs %>% arrange(urm_status, crt, repeat_grade) %>% select(-count, -pct) %>% mutate(ut = paste0(urm_status, "_", repeat_grade))
+
+ws <- reshape(as.data.frame(fs2), timevar = 'ut', idvar='crt', direction="wide")
+ws <- ws[,c(1, 4, 7, 10, 13, 16, 19)]
+colnames(ws) <- c("Course Type", "Pass", "DFW", "Pass", "DFW", "Pass", "DFW")
+
+kable(ws, align='c', row.names=FALSE,
+      caption=" N(%) of students passing and failing Chem 111 by course type and URM status") %>% 
+  kable_styling(bootstrap_options="striped",full_width=F) %>% 
+  add_header_above(c(" " = 1, "Non-URM" = 2, "URM"=2, "Unknown"=2))
 ```
 
-
-## Any formal student group (FSG)
-
+**Summary**: The CRT+SI redesign is associated with an improvement in GPA and reduction in DFW rates in URM students. 
 
 
 ## First Generation
 
-#### CRT vs. Traditional 
+### Course Type
 
-**Full Sample**
-The distribution of first generation student status has not changed significantly across the past four terms. 
+The proportion of students that are first generation has remained statistically constant for the past four semesters. 
+
 ```{r}
-firstgeneration.term <- biv.n.row.pct(df=ew, row.var = 'firstgeneration', col.var = 'term_idx')
-kable(firstgeneration.term$table, row.names = FALSE)
+fg.term <- biv.n.row.pct(df=ew, row.var = 'firstgeneration', col.var = 'term_idx')
 chisq.test(table(ew$firstgeneration, ew$term_idx))
+t.test((firstgeneration=="Y") ~ term_idx, data=f146)
 ```
 
-#### Performance - GPA
-**Full Sample**
-First generation students have significantly lower GPA compared to non-first gen students. 
+```{r, results='show'}
+kable(fg.term$table, row.names = FALSE, align='c', caption = "Proportion of first generation students across terms") %>%  
+  kable_styling(bootstrap_options="striped", full_width=F)
+
+fg.term$plot + scale_y_continuous(labels=scales::percent, limits=c(.25, .75)) + 
+  theme_bw() + ylab("") + xlab("Semester") 
+```
+
+### Performance - GPA
+
+When considering the entire four semesters, first generation students have on average 0.29 gpa points lower than non-first generation students. The difference is non-significant when only considering the F14 and F16 cohorts, indicating that these samples are not the same. 
+
 ```{r}
-gpa.firstgeneration.ew <- univ.gpa(ew, col.var = 'firstgeneration')
-kable(gpa.firstgeneration.ew$table, digits=2)
-gpa.firstgeneration.ew$plot
-gpa.firstgeneration.ew$test
+gpa.fg.ew   <- univ.gpa(ew, col.var = 'firstgeneration')
+gpa.fg.f146 <- univ.gpa(f146, col.var = 'firstgeneration')
+
+a <- data.frame(gpa.fg.ew$table, 
+               p = c(format.pval(gpa.fg.ew$test$p.value, digits=2), NA), 
+               gpa.fg.f146$table[,-1],
+               p2 = c(format.pval(gpa.fg.f146$test$p.value, digits=2), NA)
+               )
+
+names(a) <- c("First Generation", "Mean", "SD", "p-value",  "Mean", "SD", "p-value")
 ```
 
-**F14 & F16 only**
-When comparing the F14 and F16 cohorts only, this difference disappears. 
+```{r, results='show'}
+kable(a, digits=2, align='c', caption="Comparison of GPA across first generation status") %>% 
+    add_header_above(c(" " = 1, "Full Sample" = 3, "F14 and F16 only" = 3)) %>%
+    kable_styling(bootstrap_options="striped", full_width=F)
+
+```
+
+```{r, fig.width=12, fig.height=6}
+a <- gpa.fg.ew$plot + ggtitle("Full Sample") + xlab("") 
+b <- gpa.fg.f146$plot + ggtitle("F14 & F16 only") + xlab("") 
+
+grid_arrange_shared_legend(a, b, ncol=2, nrow=1, position="right")
+```
+
+Next we examine the average GPA for first generation and non-first generation students under the different redesign models. 
+The mean profile plot with 95% CI below indicate that just flipping the classroom improves the overall GPA of the class, but primarily for non-first generation students only. However when adding SI to the course model the GPA for the first generation students rises to meet that of the non-first gen. This explains why the difference in average GPA is significantly different when considering the full sample, but not when considering the Traditional and CRT + SI cohorts only. 
 
 ```{r}
-gpa.firstgeneration.f146 <- univ.gpa(f146, col.var = 'firstgeneration')
-kable(gpa.firstgeneration.f146$table, digits=2)
-gpa.firstgeneration.f146$plot
-gpa.firstgeneration.f146$test
+gpa.fg.crt <- ew %>% group_by(crt, firstgeneration) %>% 
+                  summarise(mean=mean(gpa), 
+                            se = sd(gpa)/sqrt(n()), 
+                            lcl=mean-1.96*se, 
+                            ucl=mean+1.96*se) 
+pd <- position_dodge(.1)
+ggplot(gpa.fg.crt, aes(x=crt, y=mean, group=firstgeneration, col=firstgeneration)) + 
+        geom_point(size=2, position=pd) + geom_line(position=pd) +
+        geom_errorbar(aes(ymin=lcl, ymax=ucl), width=.1, position=pd) + 
+        scale_y_continuous(limits=c(0, 3)) + 
+        theme_bw() + ylab("") + xlab("Course Type") + 
+        scale_color_discrete(name="First Generation") + 
+        ggtitle("Mean (95 %CI) GPA by First Gen status and across course type")
 ```
 
-#### Performance - DWF rate
 
-**Full Sample**
-A significantly higher proportion of first generation students received repeatable grades. 
+### Performance - DFW rate
+The failure rate for each group decreases in a similar pattern to the improvement in GPA.
+
 ```{r}
-firstgeneration.dwf.ew <- biv.n.row.pct(ew, col.var = 'firstgeneration', row.var='repeat_grade')
-kable(firstgeneration.dwf.ew$table, row.names = FALSE)
-chisq.test(ew$repeat_grade, ew$firstgeneration)
+fs <- ew %>% group_by(crt, firstgeneration, repeat_grade) %>% 
+    summarise(count=n()) %>%
+    mutate(pct=round(count/sum(count),3)) %>%
+    mutate(Total = paste0(count, " (", pct*100,"%)"))
+
+fsp <- fs %>% filter(repeat_grade==1)
+
+ggplot(fsp, aes(x=crt, y=pct, group=firstgeneration, col=firstgeneration)) + 
+    geom_point() + geom_line() + scale_y_continuous(labels=scales::percent, limits=c(0, 1)) + 
+    theme_bw() + ylab("") + xlab("Course Type") + scale_color_discrete(name="First Generation")
 ```
 
-**F14 & F16 only**
-Again, this difference disappears when considering only F14 vs F16 cohorts. 
+
+```{r, results='show'}
+fs2 <- fs %>% arrange(crt, firstgeneration, repeat_grade) %>% select(-count, -pct) %>% mutate(ut = paste0(firstgeneration, "_", repeat_grade))
+
+ws <- reshape(as.data.frame(fs2), timevar = 'ut', idvar='crt', direction="wide")
+ws <- ws[,c(1, 4, 7, 10, 13)]
+colnames(ws) <- c("Course Type", "Pass", "DFW", "Pass", "DFW")
+
+kable(ws, align='c', row.names=FALSE,
+      caption=" N(%) of students passing and failing Chem 111 by course type and first generation status") %>% 
+  kable_styling(bootstrap_options="striped",full_width=F) %>% 
+  add_header_above(c(" " = 1, "Non-First Generation" = 2, "First Generation"=2)) 
+```
+
+For both groups the DFW rate went from 43-45% under the traditional course type, to 32-33% under redesign with SI. 
+
 ```{r}
-firstgeneration.dwf.f146 <- biv.n.row.pct(f146, col.var = 'firstgeneration', row.var='repeat_grade')
-kable(firstgeneration.dwf.f146$table, row.names = FALSE)
-fisher.test(f146$repeat_grade, f146$firstgeneration)
+summary(glm(repeat_grade ~ crt + firstgeneration + crt*firstgeneration, data=ew, family="binomial"))
+summary(aov(lm(repeat_grade ~ crt + firstgeneration + crt*firstgeneration, data=ew)))
 ```
 
-
-
-# College Prep
-This section examines the relationship between the amount and type of college prep
-courses (HS and college) a student has at the time of admission, and the student's 
-gpa in Chem 111.
-
+**Summary:** Both the course type and first generation status are associated with a difference in GPA and DFW rate, but the redesign type has different effects for first generation students, specifically the redesign was associated with an improvement in performance for non-first generation students only. Adding on SI to the redesigned class bridged that gap for the first generation students. 
 
 ## Admissions Index (HS Eligibility)
 
+### Course Type
+
+There is no significant difference in average admissions index across the three course types. 
+
 ```{r}
-ggplot(ew, aes(y=admission_index, x=term_idx, fill=crt)) + geom_boxplot(alpha=.5, width=.4) +
-       geom_violin(alpha=.3) + xlab("") + 
-       scale_fill_manual(values=crt.col, guide=FALSE) + 
-       stat_summary(fun.y=mean, geom="point", shape=18, size=4) 
+hsei.crt.ew   <- biv.mean(df=ew, var='admission_index', group='crt')
+hsei.crt.ew$plot + scale_fill_manual(name="Class Type", values=crt.col) + ylab("HSEI")
 ```
 
-Average admission index is marginally statistically different across years. 
-```{r}
-summary(aov(admission_index ~ term_idx, data=ew))
+```{r, results='show'}
+kable(biv.mean.wide(df=ew, var='admission_index', group='crt'), align='c', 
+      caption="Mean and SD of HSEI within class types")  %>% 
+      kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
+
+kable(TukeyHSD(aov(admission_index~crt, data=ew))$crt, digits=2, 
+      caption="Tukeys Honest Significant Difference for differences in average HSEI between all pairs of class types") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
 ```
 
-#### GPA
-In the following scatterplots, each dot represents one student. Due to the discrete nature of gpa and number of classes, many points are overlaid on the same spot. So the darker the point, the more students are represented there. 
+<br></br><br></br><br></br><br></br><br></br><br></br>
+
+
+### Performance - GPA
+Admissions index does not have a strictly linear relationship with GPA, and that the relationship differs across the course types. For the Traditional and CRT + SI , there appears to be a flat relationship between HSEI and GPA until about HSEI=3.5, then a positive relationship for HSEI above 3.5. 
 
 ```{r}
 ggplot(ew, aes(x=admission_index, y=gpa, col=crt)) + 
-        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by Admission index - by CRT group") + 
-        scale_color_manual(values=crt.col) 
-
-ggplot(f146, aes(x=admission_index, y=gpa, col=crt)) + 
-        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by Admission index - for Fall '14 and '16 only") + 
-        scale_color_manual(values=crt.col) 
+        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + xlab("HSEI") + 
+        scale_color_manual(name="Course Type", values=crt.col) 
 ```
 
-Admissions index does not have a strictly linear relationship with GPA. 
-A standard linear model is not appropriate, a spline model with a knot around 3.5 should be used instead. <span style="color:red">Do this</span>
+```{r, results='hide'}
+lowhsei <- subset(ew, admission_index<3.5)
+summary(lm(gpa ~ admission_index + crt + crt*admission_index, data=lowhsei))
+#ggplot(lowhsei, aes(x=admission_index, y=gpa, col=crt)) + geom_point() + geom_smooth(se=FALSE, method="lm")
+```
 
-#### DFW 
+* The slopes below HSEI < 3.5 do not significantly differ based on course type - this is primarily due to the large standard error of the slope rather than the magnitude of the slope itself. 
+* The GPA for students in the CRT + SI is moderately (p<.10) larger than the average GPA for students in the traditional classes (0.38, 95% CI -0.07, 0.83)
+
+
+A linear spline model was fit on the full sample using a knot at 3.5 to allow for a change in slope. No interaction terms were included since there was no significant difference in slope across CRT group. 
+
+```{r, results='show'}
+ew$hsei_high <- (ew$admission_index - 3.5)
+ew$hsei_high[ew$admission_index<3.5] <- 0
+
+fit.spline <- lm(gpa~admission_index + hsei_high + crt, data=ew)
+
+a <- mlr.table(fit.spline)
+names(a) <- c("Estimate", "CI", "p-value")
+rownames(a) <- c("Age", "HSEI over 3.5", "CRT", "CRT + SI")
+
+kable(a, align='c') %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+```
+
+* There no effect of HSEI on GPA when HSEI is below 3.5 (p=.7)
+* There is a strong effect of HSEI on GPA when HSEI is above 3.5 (p=.0089)
+* After controlling for HSEI there is still a significant improvement in GPA for students in the CRT + SI redesign compared to those in the traditional course. 
+
+<br><br><br><br>
+
+### Course Type - DFW 
+Students who pass CHEM 111 have on average a 0.2 GPA higher admissions index compared to students who receive a repeatable grade (3.62 vs 3.82, p<.0001). 
+
+
 ```{r}
 ggplot(ew, aes(y=admission_index, x=pass, fill=pass)) +  
        geom_boxplot(alpha=.5, width=.4) +
        geom_violin(alpha=.3) + xlab("") + 
        scale_fill_manual(values=crt.col, guide=FALSE) + 
        stat_summary(fun.y=mean, geom="point", shape=18, size=4) + 
-       theme_minimal() + 
-       ggtitle("Distribution of admissions index by success status.") 
+       theme_minimal() + ylab("HSEI") + 
+       ggtitle("Distribution of admissions index by course success status.") 
 ```
 
-There is a strong relationship between admissions index and whether or not
-the student will pass the class. 
-```{r}
-t.test(admission_index ~ pass, data=ew)
+```{r, results='show'}
+hs.pass  <- biv.mean(ew, var='admission_index', 'pass')
+
+a <- data.frame(hs.pass$table, 
+               p = c(format.pval(hs.pass$test$p.value, eps=.001), NA))
+
+names(a) <- c("", "Mean", "SD", "p-value")
+
+kable(a, digits=2, align='c', 
+      caption="Mean and SD of admissions index grouped by whether or not they passed the class") %>% 
+  kable_styling(bootstrap_options="striped", full_width=F, position = "float_left")
+  
 ```
 
-## ELM Status
 
+```{r, results="show"}
+a <- mlogr.table(glm(pass ~ admission_index + crt, data=ew, family="binomial"))
+names(a) <- c("OR", "CI", "p-value")
+rownames(a) <- c("HSEI", "CRT", "CRT + SI")
 
-## EPT Status
+kable(a, align='c', caption="Logistic Regression of course type on the receipt of repeatable grade") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F, position = "float_right")
+```
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+**Summary**: 
+
+* After controlling for admissions index, there is no direct effect of the course redesign on the likelihood a student will pass the course. 
+* There is a positive relationship between admissions index and GPA, but only for a high admissions score. 
+* The type of course redesign does not significantly change the relationship between admissions index and GPA. 
+
 
 
 ## GE Status
@@ -662,100 +752,198 @@ t.test(admission_index ~ pass, data=ew)
 
 # Bivariate Summary
 
-Factors that were associated with GPA or passing the class
+Factors unable to be controlled for due to inconsistent data or small sample sizes:
 
+* EOP
+* Formal student groups (EOP/Reach/TRIO/DSS)
+
+
+Demographic factors that were associated with GPA or passing the class
+
+* Age
+* Under-represented minority classification
+* First Generation status
 * Admissions index - but not linearly
-* 
-
-Comparing the entire cohort to F14 and F16 only -- often differences seen in the entire cohort were not seen when only considering the F14 and F16 cohorts only. Even though there is only one spring term included, this may be an indication of a "semester" effect that we have seen evidence of in other places. 
 
 
+
+```{r}
+rm(a, cl, class, ct, ds, ds1, ds2, fs, fs2, fsp, gpa.fg.crt, gpa.g.crt, gpa.urm.crt, 
+   lowhsei, lt25, ws, age.crt.ew, age.dfw.ew, age.dfw.f146, agey.dfw.ew, agey.dfw.f146, b, 
+   cm, crt.p, d, did.model, e, fg.term, fit.spline, g.term, gpa.crt.ew, gpa.crt.f146, gpa.fg.ew, 
+   gpa.fg.f146, gpa.gender.ew, gpa.gender.f146, gpa.urm.ew, gpa.urm.f146, hs.pass, hsei.crt.ew, pd,
+   sm, tm, urm.term)
+invisible(gc())
+```
 # Multivariate modeling
 
-## GPA - recap of relationship
-```{r}
-ggplot(ew, aes(x=age, y=gpa, col=crt)) + 
-        geom_point(alpha=.5) + geom_smooth(se=FALSE) + theme_minimal() + 
-        ggtitle("GPA by age index - full sample") + 
-        geom_smooth(method=lm, se=FALSE)+ 
-        scale_color_manual(values=crt.col) +     
-        scale_x_continuous(limits=c(17,25))
-```
-For those under 25, after accounting for a **linear** effect of age, the CRT significantly improves GPA. 
-```{r}
-summary(lm(gpa ~ age + crt, data=filter(ew, age<=25)))
-```
+### Data preparation
 
-
-## HS eligibility [In progress]
-```{r}
-ggplot(ew, aes(x=admission_index, y=gpa, col=crt)) + 
-        geom_point(alpha=.5) + geom_smooth(se=FALSE) + 
-        theme_minimal() + 
-        ggtitle("GPA by Admission index - by CRT group") + 
-        scale_color_manual(values=crt.col) 
-```        
-
-Fit a linear spline model, with a knot at 3.75. That is, 
-two linear models with differing slopes.
+#### Imputing missing values
+About 15% of the records in the data were missing admissions index, so for the purpose of machine learning modeling missing values are imputed using predictive mean matching via the MICE (multiple imputation using chained equations) package in R. Only one computed data set is used (instead of multiple) for exploratory purposes only. 
 
 ```{r}
-ew$lowai <- (ew$admission_index - 3.75)
-ew$lowai[ew$admission_index < 3.75] <- 0
+library(randomForest); library(mice)
+d <- ew %>% select(-grade, -pass, -class_diff, -repeat_grade, -si.visits, -hsei_high, -origstartterm, -repeat_grade, -id, -year, -term, -sequential_term, -department_name, -major_name, -section)
 
-fit.spline <- lm(gpa~admission_index + lowai, data=ew)
-plot(fit.spline$model$gpa~fit.spline$model$admission_index)
-lines(sort(predict(fit.spline)) ~ sort(fit.spline$model$admission_index), lwd=2)
+# impute missing values for EPT and admssions index
+d.imp <- mice(d)
+d2 <- complete(d.imp, 1)
 ```
 
-Interaction between admissions index and CRT -- allow there to be separate slopes between CRT groups in both high and low admission index areas. 
--- in other words-- does the CRT group _change_ the relationship between admissions index and GPA? 
+#### Collapsing and grouping varibles. 
+
+* The number of college prep math, English, and lab science classes were grouped into more reasonable ranges such as under 6 units, 6 to 8, and over 10. Reference groups are always no units of college prep classes. 
+* The college in which the student is currently a major of was collapsed into
+    - Other: BSS, BUS, CME, HFA, UGE
+    - ECC
+    - NS: NS and AGR
 ```{r}
-summary(lm(gpa~admission_index + lowai + gpa, data=ew))
-summary(lm(gpa~admission_index + lowai + crt + 
-             crt*admission_index + lowai*crt, data=ew))
+# group number of CP classes
+d2 <- d2 %>% mutate(cpmath = cut(cp_math, c(0,6,8,10,17), right=FALSE),
+                    cplab = cut(cp_lab, c(0,4,6,8,15), right=FALSE),
+                    cpengl = (cp_engl>0))
+
+## Recoding d2$college_name into d2$college_name_rec
+d2$college_name_rec <- as.character(d2$college_name)
+d2$college_name_rec[d2$college_name == "AGR"] <- "NS"
+d2$college_name_rec[d2$college_name %in%  c("BSS", "BUS", "CME", "HFA", "UGE")] <- "OTH"
+d2$college_name_rec <- factor(d2$college_name_rec, levels=c("NS", "ECC", "OTH"))
 ```
 
 
----- 
-Notes
+#### Restrict on age
+Since 95% of the students are below 25 years of age, the multivariable model will be fit on only students less than 25 years of age. 
+
 
 ```{r}
-a <- lm(gpa ~ crt + gender + firstgeneration, data=ew)
-summary(a)
+# remove some variables that won't be used in random forest modeling
+rf.dta <- d2 %>% select(-DSS, -erss_enrstat, -race_code, -term_idx, -erss_totunits, 
+                        -dfw, -dfw_rate, -cohort, -enrollment, -classgpa, 
+                        -cp_math, -cp_lab, -cp_engl, -soc, -college_name) %>% 
+                 filter(age < 25)
 ```
-* can we show that SI is the cause of the reduction of the GAP between first gen and/or URM students. 
 
-* DFW rate as a function of attendance
-* HS eligibility vs. SI visits
-* 
+## Variable Selection
+
+A Random Forests model is fit to the full data, with all available student and class level information available to the model. This allows the model to consider the effects of secondary, non-demographic variables such as whether or not the student has passed a GE Math class by the time they take Chem 111, the number of units they are currently taking (including Chemistry), and if they participated in high impact practices such as Summer Bridge.
+
+The plot below graphs the % increase in unexplained variance (mean squared error MSE) if that variable were excluded from the model. 
+
+* A good model has a low amount of unexplained variance, so a high % increase means that variable plays an important role in predicting GPA. 
+* For display purposes only those showing an increase of greater than .1% are displayed. 
+
+```{r rf, fig.height=7, fig.width=7}
+set.seed(12345)
+a <- randomForest(gpa ~ ., data=rf.dta, importance=TRUE, ntree=1000)
+
+plot.imp <- data.frame(var = rownames(a$importance), imp=round(a$importance[,1]*100,2)) %>% 
+              arrange(desc(imp)) %>% filter(imp > .1)
+
+ggplot(plot.imp, aes(x=imp, y=reorder(var, imp))) +  
+  geom_point(size = 3) + xlab("% Increase in MSE") + 
+  geom_text(aes(x=imp, y=reorder(var,imp), label=paste0(imp, "%")), nudge_y=.3) + 
+  theme_bw() + ylab("Variable") + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color='grey60', linetype='dashed'))
+```
+
+
+Variables with high importance were then used as a starting point to build a multiple linear regression model to assess the effect of the course redesign after controlling for these other features. 
+
+### Multivariable Linear Regression
+
+Prior to modeling, a single classification tree was built to determine the optimal location of knots for the known non-linear relationships between GPA, age and admissions index. Spline knots were created at HSEI = 3.8, and Age = 22 and included in the starting linear model.
+
+```{r rpart, eval=FALSE}
+library(rpart);library(rpart.plot)
+set.seed(12345)
+a <- rpart(gpa ~ age + admission_index , data=rf.dta)
+rpart.plot(a)
+```
 
 ```{r}
-a <- lm(gpa ~ crt + gender + firstgeneration, data=filter(ew, term_idx %in% c('F14', 'F16')))
-summary(a)
+rf.dta$over22 <- (rf.dta$age - 22)
+rf.dta$over22[rf.dta$age<22] <- 0
+rf.dta$hseigt38 <- (rf.dta$admission_index - 3.8)
+rf.dta$hseigt38[rf.dta$admission_index<3.8] <- 0
+
+lm(gpa ~ term_gpa + admission_index + hseigt38 + stulevel + cpmath + 
+                 college_name_rec + age + over22 + gender  + gemathdone + crt + 
+                 geenlgdone + urm_status + cplab +  gecritdone + firstgeneration + 
+                 term_units + cpengl + citizen
+              , data=rf.dta)
 ```
 
-* add logistic regression of repeatable grade vs crt
+Further variable selection was conducted via backwards selection, removing the variables that were found to be not significant with GPA with a pvalue > 0.5. Certain demographics of great interest (i.e. First Generation status) were kept in the model regardless of their statistical significance level. 
+
 ```{r}
-b <- glm(repeat_grade ~ crt + admission_index, 
-         data=ew, family='binomial')
-summary(b)
-exp(coef(b))
+mod <- lm(gpa ~ term_gpa + admission_index + hseigt38 + stulevel + cpmath + 
+                 college_name_rec + gender  + gemathdone + crt + 
+                 geenlgdone + urm_status + firstgeneration + 
+                 cpengl
+              , data=rf.dta)
+
+#summary(aov(mod))
+#summary(mod)
 ```
 
-* don't forget to add difference between chem performance and other classes 
-* plot gap in gpa and dwf across term
+```{r, results='show'}
+a <- mlr.table(mod)
+names(a) <- c("Estimate", "CI", "p-value")
+rownames(a) <- c("Term GPA", "HSEI", "HSEI > 3.8", "Level: Sophmore", 
+                 "Level: Junior", "Level: Senior",  
+                 "CP Math units: [6-8)", "CP Math units: [8-10)", "CP Math units: 10+",
+                 "College: ECC", "College: Other", "Male", "GE Math Complete", 
+                 "Redesign: CRT", "Redesign: CRT + SI", 
+                 "GE English Complete", "URM", "URM-Unknown", "First Generation", 
+                 "Any College prep English")
 
-
-# CART - Predicting a failing grade. 
-Work in progress...
-
-```{r, eval=FALSE}
-library(rpart)
-a <- rpart(repeat_grade ~ crt + age + gender, 
-           data=ew, method="class")
-#a <- prune(a, cp=.014)
-
-plot(a, uniform=TRUE)
-text(a, use.n=TRUE, all=TRUE, cex=.8)
+kable(a, align='c') %>% 
+   kable_styling(bootstrap_options="striped")
 ```
+
+
+**Summary**
+
+After controlling for other significant and demographic characteristics:
+
+* Gender
+* URM status
+* First generation status
+* Admissions index
+* Academic level
+* College prep English and math classes
+* Completion of GE English and Math classes
+* Term GPA
+
+
+Students in the CRT + SI class had significantly higher GPA compared to students in the traditional course (0.18, 95% CI (0.03-0.33), p=.0155). 
+
+
+#### Notes and Comments
+* This model is an additive model, each covariate is modeled as if it modifies GPA in a linear manner. 
+* This model is simple in that unless interactions between variables are explicitly specified, they are not considered. 
+* This differs from the supervised learning model such as a Random Forest model, that allows for all variables to interact with each other. 
+* The effect for all categorical variables represent a change from baseline or reference group, to the group listed. 
+
+
+
+
+# Next steps
+
+* This analysis only examined courses taught by the same instructor across four semsters to assess the effectiveness of a single individual course redesign. 
+* SI was only incorporated during the Spring 16 semester. 
+* A follow-up analysis to examine the impact of SI by attendance should analyze data from multiple instructors  for the same semester where SI was available. 
+    - Zero visits for courses where SI is not even available is different than zero visits for a course where SI is available. 
+    - This becomes a difference between opting out of SI, and not even having the option. 
+
+This would allow us to examine the following questions: 
+
+* Can we show that SI is related to the reduction of the GAP between first gen and/or URM students? 
+* How does the DFW rate change as a function of SI attendance?
+* Do people self-select into SI based on admissions index?
+
+
+
