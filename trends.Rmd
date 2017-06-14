@@ -191,6 +191,120 @@ ggplot(art, aes(x=term_idx, y=pct, col=residareaname, group=residareaname)) + ge
   scale_color_discrete(name = "Area of Residence") + facet_wrap(~term)
 ```
 
+
+### Race Code 
+
+In 2009, the proportion of White and Hispanic/Latino students taking Chemistry was similar to the campus averages (53.2% White and 17.7% Hispanic/Latino). However the proportion of Hispanic/Latino students rose to match that of White students taking Chemistry 111 in Fall 2015: 40.5% white and 40.1% Hispanic/Latino. This is a more equal balance compared to the campus average in Fall 2016 which is 44.1% White and 32.5% Hispanic/Latino. 
+
+```{r}
+rct <- chem %>%
+  filter(race_code != "NA", term_idx != "NA") %>%
+  group_by(term_idx, race_code) %>%
+  summarise(n=n()) %>%
+  mutate(pct=n/sum(n), term="Chemistry 111")
+
+
+campus.area <- campus_props %>% filter(var=="race_code") %>% 
+                mutate(race_code=level) %>% select(term_idx, term, race_code, pct)
+
+art <- bind_rows(rct, campus.area)
+
+
+ggplot(art, aes(x=term_idx, y=pct, col=race_code, group=race_code)) + geom_point() +
+  xlab("Semester") +  ylab(" ") +
+  geom_smooth(se=FALSE) + theme_bw()  + theme(legend.position="bottom") +
+  scale_y_continuous(limits=c(0, .75), labels = scales::percent_format()) +
+  scale_color_discrete(name = "Race") + facet_wrap(~term)
+```
+  
+Since eight race/ethnic categories is too many to compare, especially when six of those categories make up less than 80% of the population, two additional groupings of categories are commonly used: One to identify "underrepresented minority" students, and the other to identify "students of color". The historical trends for both of these are looked at next, but essentially show the same information as the plot just discussed. 
+
+
+### URM
+
+The definition used in this report follows the campus definition for an underrepresented minority student and is as follows:
+
+* Non-URM: Asian, NHOPI, White
+* URM: Black, HL
+* Unknown: Mult, Unk
+
+Since 2009, Chemistry 111 has had a higher proportion of URM students enrolled compared to the campus average. This gap has widened since around Fall 2012 or 2013, the proportion of URM taking in Chem 111 is increasing faster than the campus average. 
+
+```{r}
+
+campus.purm <- campus_props %>% filter(var=="urm_status") %>% mutate(urm_status=level) %>% 
+                  select(term_idx, urm_status, pct, term)
+
+urmt <- chem %>%
+  filter(urm_status != "NA", term_idx != "NA") %>%
+  group_by(term_idx, urm_status) %>%
+  summarise(n=n()) %>%
+  mutate(pct=n/sum(n), term="Chemistry 111") %>%
+  bind_rows(campus.purm)
+
+
+ggplot(urmt, aes(x=term_idx, y=pct, col=interaction(urm_status, term), 
+                 group=interaction(urm_status, term), shape=term)) + 
+  geom_point() + geom_smooth(se=FALSE) + theme_bw() + 
+  xlab("Semester") +  ylab("% URM status") +
+  scale_y_continuous(limits=c(0, .75), labels = scales::percent_format()) +
+  scale_shape_discrete(name = " ") +
+  scale_colour_manual(name = "URM Status"
+                      , values=brewer.pal(6, "Paired")[c(1,3,5,2,4,6)]
+                      , labels=c("Non-URM: Campus Average", 
+                                 "Unknown: Campus Average", 
+                                 "URM: Campus Average", 
+                                 "Non-URM: Chemistry 111", 
+                                 "Unknown: Chemistry 111", 
+                                 "URM: Chemistry 111")) 
+
+rm(urmt, campus.purm)
+
+```
+  
+### SOC
+
+The definition used in this report for "Student of Color" is as follows:
+
+* SOC: American Indian/Alaskan Native, Asian, Black, Hispanic/Latino, 
+* Non-SOC: White
+* Multiple/Mixed: Multiple, Unknown
+
+A very similar trend is seen using the classification that lumps all students non of white or of mixed or unknown ethnicity together. Using this metric, the proportion of students of color surpasseed the proporiton of white students in Chemistry 111 by Spring 2014. 
+By Fall 2016 students taking Chemistry 111 are 47.7% students of color and 38.6% White
+
+```{r}
+
+campus.psoc <- campus_props %>% filter(var=="soc") %>% mutate(soc=level) %>% 
+                  select(term_idx, soc, pct, term)
+
+soct <- chem %>%
+  filter(soc != "NA", term_idx != "NA") %>%
+  group_by(term_idx, soc) %>%
+  summarise(n=n()) %>%
+  mutate(pct=n/sum(n), term="Chemistry 111") %>%
+  bind_rows(campus.psoc)
+
+
+ggplot(soct, aes(x=term_idx, y=pct, col=interaction(soc, term), 
+                 group=interaction(soc, term), shape=term)) + 
+  geom_point() + geom_smooth(se=FALSE) + theme_bw() + 
+  xlab("Semester") +  ylab(" ") +
+  scale_y_continuous(limits=c(0, .75), labels = scales::percent_format()) +
+  scale_shape_discrete(name = " ") +
+  scale_colour_manual(name = "Student of Color"
+                      , values=brewer.pal(6, "Paired")[c(1,3,5,2,4,6)]
+                      , labels=c("Mixed: Campus Average", 
+                                 "White: Campus Average", 
+                                 "SOC: Campus Average", 
+                                 "Mixed: Chemistry 111", 
+                                 "White: Chemistry 111", 
+                                 "SOC: Chemistry 111")) 
+
+rm(urmt, campus.psoc)
+
+```
+
 ### Citizenship
 The proportion of non-citizens enrolled campus-wide levels off at about 5%, but there has been an increase in non-citizens enrolling in Chem 111 since around 2011. The three sections of Chem 111 in Fall 16 had 5%, 8% and 11% non-citizens enrolled in their classes.
 
@@ -308,51 +422,6 @@ ggplot(fsgt, aes(x=term_idx, y=pfsg, col=term, group=term)) +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, .5))
 ```
   
-### <a id="race_trends"></a> Race Code 
-```{r}
-rct <- chem %>%
-  filter(race_code != "NA", term_idx != "NA") %>%
-  group_by(term_idx, race_code) %>%
-  summarise(n=n()) %>%
-  mutate(prc=n/sum(n))
-ggplot(rct, aes(x=term_idx, y=prc, col=race_code, group=race_code)) + geom_point() +
-  xlab("Semester") + ggtitle("Proportion of students' race per semester") + ylab("% RACE") +
-  geom_smooth(se=FALSE) + theme_bw() + scale_y_continuous(limits=c(0, 1), labels = scales::percent_format()) +
-  scale_color_discrete(name = "Race")
-```
-  
-
-
-### URM
-
-  
-```{r}
-urmt <- chem %>%
-  filter(urm_status != "NA", term_idx != "NA") %>%
-  group_by(term_idx, urm_status) %>%
-  summarise(n=n()) %>%
-  mutate(purm=n/sum(n))
-ggplot(urmt, aes(x=term_idx, y=purm, col=urm_status, group=urm_status)) + geom_point() +
-  xlab("Semester") + ggtitle("Proportion of students' URM status per semester") + ylab("% URM status") +
-  geom_smooth(se=FALSE) + theme_bw() + scale_y_continuous(limits=c(0, 1), labels = scales::percent_format()) +
-  scale_color_discrete(name = "URM Status")
-
-```
-  
-### SOC
-
-```{r}
-soct <- chem %>%
-  filter(soc != "NA", term_idx != "NA") %>%
-  group_by(term_idx, soc) %>%
-  summarise(n=n()) %>%
-  mutate(psoc=n/sum(n))
-ggplot(soct, aes(x=term_idx, y=psoc, col=soc, group=soc)) + geom_point() +
-  xlab("Semester") + ggtitle("Proportion of students' SOC status per semester") + ylab("% SOC status") +
-  geom_smooth(se=FALSE) + theme_bw() + scale_y_continuous(limits=c(0, 1), labels = scales::percent_format()) +
-  scale_color_discrete(name = "SOC Status")
-```
-
 ## Pre-enrollment Information  
   
 ### Admission Index
