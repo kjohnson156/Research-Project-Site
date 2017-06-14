@@ -744,27 +744,16 @@ kable(a, align='c', caption="Logistic Regression of course type on the receipt o
 * The type of course redesign does not significantly change the relationship between admissions index and GPA. 
 
 
-
-## GE Status
-
-
-
-
 # Bivariate Summary
 
-Factors unable to be controlled for due to inconsistent data or small sample sizes:
-
-* EOP
-* Formal student groups (EOP/Reach/TRIO/DSS)
-
-
-Demographic factors that were associated with GPA or passing the class
+Demographic factors that were associated with GPA or passing the class:
 
 * Age
 * Under-represented minority classification
 * First Generation status
 * Admissions index - but not linearly
 
+Formal student groups (EOP/Reach/TRIO/DSS) were unable to be analyzed due to either inconsistent data or small sample sizes.
 
 
 ```{r}

@@ -155,17 +155,16 @@ age <- chem %>%
   bind_rows(ave) %>% mutate(mean=round(mean,1))
 
 p <- ggplot(age, aes(x=term_idx, y=mean, col=term, group=term)) +
-      geom_point(size=3) + geom_smooth(se=FALSE) + geom_pointrange(aes(ymin=p10, ymax=p90))+ 
-      ylab("Age") + 
+      geom_point(size=3) + geom_smooth(se=FALSE) + ylab("Age") + 
       scale_color_manual(values=c("grey20", term.col), name = "Term")+ theme_bw() +
       ggtitle("Average student age per section") + xlab("Semester") + 
-      scale_y_continuous(limits=c(17, 28))
+      scale_y_continuous(limits=c(17, 24))
   
 ggplotly(p, tooltip = c("y", "x", "group")) %>% config(displayModeBar = F)
 rm(ave, age, p)
 ```
   
-The black horizonal line represents the **median** age of all students across campus -- at the time of enrollment. The vertical lines spanning the youngest 10% to the oldest 90% of ages of enrolled students during that term. From 2009 to about 2013 there was an increase in the average age of students at enrollment campus wide, which has seemed to have leveled off. 
+The black horizonal line represents the **median** age of all students across campus -- at the time of enrollment. From 2009 to about 2013 there was an increase in the average age of students at enrollment campus wide, which has seemed to have leveled off. 
 
 Students taking Chemistry tend to be slightly younger than the average campus age, and those taking Chemistry in the fall are on average younger than those taking chemistry in the Spring. Recall this is age at admission, not the age when the student is taking Chem 111. 
 
@@ -216,7 +215,10 @@ rm(b, campus.pnc, ct)
 ```
   
   
-### Students who are recieving services from DSS
+### Disabled Student Services
+
+Students who are recieving services from DSS has varied over the past 7 years, but generally stayed below 5%, which is what the campus average has been at since around Spring 2013. 
+
 ```{r}
 campus.pd <- campus_props %>% filter(var=="dss" & level=="Y") %>% 
               mutate(pd = pct) %>% select(term_idx, term, pd)
@@ -226,10 +228,10 @@ dt <- chem %>%
   summarise(pd = mean((DSS=="DSS"), na.rm=TRUE)) %>%
   bind_rows(campus.pd) %>% mutate(percent_dss = round(pd,2))
 cc <- ggplot(dt, aes(x=term_idx, y=percent_dss, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  geom_point() + geom_smooth(se=FALSE) + ylab(" ") + 
   scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of DSS students per section") + xlab("Semester") +
-  scale_y_continuous(labels = scales::percent_format(), limits = c(0, .1))
+  scale_y_continuous(labels = scales::percent_format(), limits = c(0, .25))
 
 ggplotly(cc, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
 
@@ -238,6 +240,10 @@ rm(cc, dt, campus.pd)
   
   
 ### EOP Status
+The proportion of students who are participating in the EOP program while enrolled in Chem 111 have historically been higher than the campus level average. There is indiciation that while the campus average remains constant at about 7%, both Fall and Spring terms for Chemistry have declined to 3-4% by 2016. Between 2011 and 2014 the average proportion of students in EOP was higher in Spring than it was in the Fall, nearly double in some cases (6% vs 12%).
+
+**Note** These higher numbers of EOP students in the spring could be students who did not pass Chem 111 in the Fall and so are repeating the class in the Spring. 
+
 ```{r}
 campus.peop <- campus_props %>% filter(var=="eopstat" & level=="Y") %>% 
               mutate(peop = pct) %>% select(term_idx, term, peop)
@@ -249,7 +255,7 @@ eopt <- chem %>%
   bind_rows(campus.peop) %>% mutate(percent_eop = round(peop,2))
 
 d <- ggplot(eopt, aes(x=term_idx, y=percent_eop, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
+  geom_point() + geom_smooth(se=FALSE) + ylab(" ") + 
   scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of EOP students per section") + xlab("Semester") +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, .25))
@@ -265,20 +271,30 @@ rm(d, eopt, campus.pd)
 
 
 ### REACH
-    
+Campus level averages for the Reach program were not available. Furthermore, it appears as if the program was either not contributing data to the SIS system or not in place prior to Fall 2013. 
+
 ```{r}
 reacht <- chem %>%
   filter(term_idx != "NA") %>%
   group_by(term, term_idx, section) %>% 
   summarise(prea = mean(reach, na.rm=TRUE))
-ggplot(reacht, aes(x=term_idx, y=prea, col=term, group=term)) +
+
+d <- ggplot(reacht, aes(x=term_idx, y=prea, col=term, group=term)) +
   geom_point() + geom_smooth(se=FALSE) + ylab("% Reach") + 
   scale_color_manual(values=term.col, name = "Term") + theme_bw() +
   ggtitle("Proportion of Reach students per section") + xlab("Semester") +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, .25))
+
+ggplotly(d, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
+
+rm(d, eopt, campus.pd)
+
 ```
   
-### Any formal student group (fsg)
+### Any formal student group
+
+This section considers membership in any formal student support group such as DSS, Reach, TRIO and other programs where data was available. Campus averages are not available for this combined group. 
+
   
 ```{r}
 fsgt <- chem %>%

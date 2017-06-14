@@ -42,5 +42,8 @@
 * Request clear descriptions of data sources (real time vs snapshot, vs )
   - It's hard to know what you want to analyze if you don't know what's collected.
 * Request security clearance and access to the databases directly, *or* sufficiently compensate the database administrator/IR assistant who will spend weeks if not months extracting, processing and merging the data from across campus for you to analyze. 
+* Student services data (EOP/Reach/DSS) is very unstable. These student programs tend to manage their own data records and are not consistently or cleanly attached to the more commonly used SIS data.  
+
+
 
  
