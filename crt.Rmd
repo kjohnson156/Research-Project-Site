@@ -919,20 +919,24 @@ Students in the CRT + SI class had significantly higher GPA compared to students
 
 
 
+* This analysis only examined courses taught by the same instructor across four semsters to assess 
+the effectiveness of a single individual course redesign. 
 
-# Next steps
 
-* This analysis only examined courses taught by the same instructor across four semsters to assess the effectiveness of a single individual course redesign. 
-* SI was only incorporated during the Spring 16 semester. 
-* A follow-up analysis to examine the impact of SI by attendance should analyze data from multiple instructors  for the same semester where SI was available. 
-    - Zero visits for courses where SI is not even available is different than zero visits for a course where SI is available. 
-    - This becomes a difference between opting out of SI, and not even having the option. 
+# Next steps / Needed followup
+
+* Enhancements to the current model
+  - Controll for whether or not the student is on the second time taking the class.
+  
+* Create an SI specific model
+  - using additional data from Spring 16, and other Chemistry classes other than Chem 111 and by other instructors. 
+     
 
 This would allow us to examine the following questions: 
 
 * Can we show that SI is related to the reduction of the GAP between first gen and/or URM students? 
 * How does the DFW rate change as a function of SI attendance?
-* Do people self-select into SI based on admissions index?
+* Do people self-select into SI based on a measurable characteristic?
 
 
 
