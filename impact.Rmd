@@ -1,98 +1,68 @@
-## Faculty Impact and Commitment
-
-what me and ppl are getting out of this. 
-are we plannning on publishing? in what form and what way? 
-partially developed poster at national american chemical socieityt in SF 2017
-presenting at JSM in august. 
+## Impact and Outcomes
 
 
+### Insights gained from this collaboration
 
-### Scholarship and/or Professional Development Activities
+* One of the more impactfull insights gained was from observing the increase in the amount of students coming from the LA Area. 
+    - This means there is an increasing proportion of students who might have a harder time to adjusting to life in Chico than a student from the North State. 
+    - Chemistry 111 is seeing this increase more so than the average Chico State student. 
+    - This adjustment is on top of learning how to be a chemist! They have to learn how to be successful in a more adaptive way. 
+    - This means that all the issues and discussions around campus about how Chico State being a Hispanic Serving institution (Starting Fall 2016), and the difficulties with "belonging syndrome" causing additional stress are going to be more pronounced in Chemistry 111 than in other classes around campus. 
+    - Chemistry instructors need to know that their classes may be hit harder with these issues, and that they may have to address it explicitly. 
+    
+* About 15% of students enrolling in Chemistry 111do not meet the entry level requirements in either Math or English. This could result in an inability to reduce the DFW rate below around 15%, regardless of the redesign. 
 
-* What professional development activities were included in this project? Webinars? Training? Conference Presentation? Publishing?
-
-### Retention, Tenure, and Promotion (RTP)
-
-* How was this project considered as a tenant in the RTP process?  Explain.  
-grant is part of PGA 
-GIT is under service
-
-
-### Creating Community
-
-* How will this project be used on campus? Dissemination?
-
-
-* pilot for ESAT
+* This course redesign was shown to improve the GPA and lower the failure rate for Chemistry 111 after controlling for other student characteristics. 
+    - But instructors should be cognizant of the impact a redesign can have on the top performing students. What works for the "D" students doesn't always work with the "A" students. 
 
 
 
-### Commitment
+### Faculty Impact
 
-#### Outcomes and Benefits
-* Describe how the project outcomes and benefits were assessed.  
+* This project will benefit the RTP process for Robin Donatello (at least). The grant writing and presentations will be considered under Professional Growth and Achievement. 
 
-interdisiplinary convesation on a regular basis. 
-
-
-#### Collaboration Outcomes
-* How the faculty reached the end of the final project. How did they work together?  Were there established mentors, etc?  
-
-## Course Redesign Sustainability on Your campus
-
--- what did you l earn, 
-how can someone go with it? 
-what is the futue of this looks like? 
-we learned a lot about assessingn coures redesign. that's esssnetail movign forward witth WASC/GI2025 we'll now have good answers. 
-any new redesign project comes through, we ehave a vehincle which to assess whether or not it's working. 
-
-
-### Project Reflection by Team and/or Faculty Involved
-* Takeaways that made this project worthwhile?
-* Reflect on your participation in the Sustaining Success Course redesigns.
-* Include reflections by the team and/or faculty involved.  
-
-
-### Lessons Learned
-
--- this is where most impact can  be made on future factuly looking forward. 
-
-* Positive and negative aspects of the project
-
-* Consider including your students' comments about sustaining the course redesigns.  
--- Comments by Erik's 112 class on seeing trends. Demonstrative importance of sharing information.
-
-students are beign eexposed to the reality that tfaculty are working cross disciplinary to oimprove courses and that each discipline doesn't work in a silo. (or shouldn't
-works best not in a silo)
+* The information gained as part of this analysis process can be used to inform the larger campus Graduation Initiative 2025 conversation around student learning programs. This would count as service to the University.
 
 
 
-### Advice
-* Trust, but verify data quality.
-* Expect very long delays in getting data. 
-* Request clear descriptions of data sources (real time vs snapshot, vs )
-  - It's hard to know what you want to analyze if you don't know what's collected.
+### Dissimenation 
+This work has been/will be presented in the following venues
+
+* _Implementing a flipped classroom and active learning techniques in general chemistry to augment student success at a mid-sized rural university._ Poster Presentation at the 253 American Chemical Society National Meeting and Exposition, San Francisco, CA, April 2-6, 2017
+* _Examining the effect of a pedagogical change in a high failure rate college science course in the face of a shift demographic student body_. Oral Presentation at the Joint Statistical Meetings, Baltimore MD, July 29-August 3, 2017.
+* [In Submission] Oral Presentation at the 23rd Annual Center for Excellence in Learning and Teaching Conference, Chico, CA, Oct 5-6th, 2017. 
+* We plan on writing a paper for the Journal of Chemistry Education discussing and promoting this type of interdisciplinary collaboration. 
+
+## Creating Community
+One of the best outcomes of this project is a strong interdisciplinary connection. Connecting an older, tenured professor in Chemistry with a Junior professor of Statistics benefits both parties, and their respective department and joint college has far reaching benefits. 
+
+* Having an interdisciplinary conversation on a regular (nearly weekly) basis allows the team members to really learn from each other. 
+    - Erik learned a little bit about the power (and limitations) of Statistics. 
+    - Robin learned more about what goes into each type of learning enhancement and what contributes to student success.
+* It was delightful to have a student (from a previous statistics class of mine) stop me in the hallway and say that they saw my work in Erik's Chemistry 112 class regarding the impact of SI in Chem 111. 
+    - This is a clear example of students being exposed to the reality that faculty work together across disciplines, and that both Science and Education work best when not existing in a department silo. 
+    - Not just for their own research on some chemical or biological outcome, but also with the shared goal of improving course success. 
+    - This also demonstrates the importance of sharing information. Not just with other faculty members but with students also. 
+
+## Sustainability on Chico State campus 
+
+* The work done under this Sustaining Success project was used as a pilot study for an Exceptional Service Assigned Time internal grant awarded to Robin Donatello for Spring 18. The aim for that grant is to build a more generalizable framework for assessing the impact of course redesigns or other learning enhancement programs that can be used across campus. 
+
+* Chico State is working towards the GI202 goals, which will undoubtedly include an examination of student learning enhancements such a SI and other course redesigns. The information gained throughout this Sustaining Success project can help to inform the campus Graduation Initiative Team. 
+
+
+## Advice & Lessons Learned from a Statisticians Perspective
+* 80% of the time in any analysis project is spent in data preparation. Plan accordingly. 
 * Request security clearance and access to the databases directly, *or* sufficiently compensate the database administrator/IR assistant who will spend weeks if not months extracting, processing and merging the data from across campus for you to analyze. 
-* Student services data (EOP/Reach/DSS) is very unstable. These student programs tend to manage their own data records and are not consistently or cleanly attached to the more commonly used SIS data.  
-* cANNOT BE DONE ALL in one year. too many questions. 
+* Trust, but verify data quality. If something doesn't look right or match your records, ask. 
+* Expect very long delays in getting data. This isn't a trivial process. 
+* Request clear descriptions of data sources (real time vs snapshot)
+  - It's hard to know what you want to analyze if you don't know what's collected.
+* Student services data (EOP/Reach/DSS) seems to be very unstable or unreliable. These student programs tend to manage their own data records and are not consistently or cleanly attached to the more commonly used SIS data in a manner that lends itself well to analysis. 
+* Don't be an overachiever. Most questions beget other questions. You cannot answer them all in one year!
+    - Student success is a complicated issue that may never fully be understood. 
 
 
-find a place to put the comment that we're a Hioospanic serving institution start of 2016 -- this trend analysis h ighlights that chemistry has 
-
-
-greater proporiotn of students who  might have a  harder time to adjusting to life in chico (cos they comeo from socal) on top ofo learnign how to be a chemsit. tthey don't have eto learn how to eb successfull in a adapttive way. 
-chemistry 111 is seeing htat moreeso othan the average chico state studentt. prior to 2013 or so, a larger percentage was from butte county/service area which is more like chico than socal(or even the bay) area 
-
-this colalboration helps erik learn his students so ohe can understanad how to teach better. 
-all the "issues that thte university is talkign aout" HSEI campus, belonging sydnromo, his course is going to have even worose. he has to address it more explicity. 
-
-
-make sure link to erik's new portfolio is in there. 
-
-
-There is still about 15% of the class that are simply not prepared for Chemistry 111, they do not meet the entry level requirements in either Math or English. This could result in an inability to reduce the DFW rate below around 15%, regardless of the redesign. 
-
-Redesigns may work to improve the lower performing students to get them out of the failing range, but instructors should be cognisant of the impact a redesign can have on the top performing students. What works for the "D" students doesn't always work with the "A" students. 
 
 
 

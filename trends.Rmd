@@ -461,7 +461,7 @@ rm(d, reacht)
     
 ## Academic Characteristics +
 
-These next set of characteristics examined are considered to be academic characteristics, features that the student has direct control over, can change each semster, and are inherently part of the undergraduate process not the student themselves.  
+These next set of characteristics examined are considered to be academic characteristics, features that the student has direct control over, can change each semester, and are inherently part of the undergraduate process not the student themselves.  
 
 ### College
 
@@ -492,7 +492,7 @@ rm(rt, campus.college)
   
 ### Student Level
 
-Since this is a 100-level course, the majority of students are Freshman, however nearly a quarter are Sophmores and another quarter higher. The trend is pretty constant across years, but spring semesters tend to see a lower proportion of Freshman compared to the Fall. 
+Since this is a 100-level course, the majority of students are Freshman, however nearly a quarter are Sophomores and another quarter higher. The trend is pretty constant across years, but spring semesters tend to see a lower proportion of Freshman compared to the Fall. 
 
 ```{r studlvl}
 slt <- chem %>%
@@ -517,7 +517,7 @@ rm(a, slt)
 
 ### Current units in progress
 
-There is quite a range of average unit load for the semester that the student takes Chemistry 111. The Fall cohort is pretty constant, a little below 12.5 units, whereas Spring is more variable and generally a little higher. The obvious exception was during Spring 13, and one class in Spring 12 had lower than typicical class load.  
+There is quite a range of average unit load for the semester that the student takes Chemistry 111. The Fall cohort is pretty constant, a little below 12.5 units, whereas Spring is more variable and generally a little higher. The obvious exception was during Spring 13, and one class in Spring 12 had lower than typical class load.  
 
 ```{r units}
 utt <- chem %>% 
@@ -674,9 +674,9 @@ rm(e, entry, expandvars, entry.long)
 
 ### College prep
 
-Included in the student application data is the number of college prep units the student has taken in English, Math, and Labratory Science. There is a large variance in the number of units, and it doesn't always seem to translate directly to the number of classes. (E.g., how can you get 2 units only of College Prep Lab Science?)
+Included in the student application data is the number of college prep units the student has taken in English, Math, and Laboratory Science. There is a large variance in the number of units, and it doesn't always seem to translate directly to the number of classes. (E.g., how can you get 2 units only of College Prep Lab Science?)
 
-The plot below shows the average ($\pm$ Margin of Error) number of college prep units is higher for the fall cohort compared to the spring, but there is a large amount of variation in this type of college prep across the courses. How the amount of college-prep units completed translates to actual on the ground preparedness is yet another topic that could be investingated. 
+The plot below shows the average ($\pm$ Margin of Error) number of college prep units is higher for the fall cohort compared to the spring, but there is a large amount of variation in this type of college prep across the courses. How the amount of college-prep units completed translates to actual on the ground preparedness is yet another topic that could be investigated. 
 
 ```{r}
 
@@ -733,7 +733,7 @@ rm(f,prep, expandvars, prep.lmean, prep.lse)
   
 # Summary
 
-Understanding the population under investigation is a necessary first step in any analsysis.
+Understanding the population under investigation is a necessary first step in any analysis.
 
 This section provided information on the historical trends for students who take Chemistry 111, with a particular focus on the difference between the Fall and Spring cohorts. The demographics of the average student at Chico State are changing, and in some cases the shift is more pronounced (like the proportion of Hispanics) in the Chemistry students, or are trending right along with the rest of the campus (like the proportion of First generation students). 
 
