@@ -275,35 +275,20 @@ div.tocify {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Overview
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="bg.html">Background</a>
-    </li>
-    <li>
-      <a href="activities.html">Activities</a>
-    </li>
-  </ul>
+        <li>
+  <a href="index.html">Abstract</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Analysis
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="trends.html">Historical Trends</a>
-    </li>
-    <li>
-      <a href="crt.html">Course Redesign</a>
-    </li>
-  </ul>
+<li>
+  <a href="bg.html">Background</a>
+</li>
+<li>
+  <a href="activities.html">Activities</a>
+</li>
+<li>
+  <a href="trends.html">Historical Trends</a>
+</li>
+<li>
+  <a href="crt.html">Redesign Analysis</a>
 </li>
 <li>
   <a href="impact.html">Impact</a>
@@ -2297,14 +2282,10 @@ CRT + SI
 </ul>
 <p>Formal student groups (EOP/Reach/TRIO/DSS) were unable to be analyzed due to either inconsistent data or small sample sizes.</p>
 </div>
-<div id="multivariate-modeling" class="section level1">
-<h1>Multivariate modeling</h1>
+<div id="multivariable-modeling" class="section level1">
+<h1>Multivariable modeling</h1>
 <div id="data-preparation" class="section level3">
 <h3>Data preparation</h3>
-<div id="imputing-missing-values" class="section level4">
-<h4>Imputing missing values</h4>
-<p>About 15% of the records in the data were missing admissions index, so for the purpose of machine learning modeling missing values are imputed using predictive mean matching via the MICE (multiple imputation using chained equations) package in R. Only one computed data set is used (instead of multiple) for exploratory purposes only.</p>
-</div>
 <div id="collapsing-and-grouping-varibles." class="section level4">
 <h4>Collapsing and grouping varibles.</h4>
 <ul>
@@ -2321,6 +2302,10 @@ CRT + SI
 <h4>Restrict on age</h4>
 <p>Since 95% of the students are below 25 years of age, the multivariable model will be fit on only students less than 25 years of age.</p>
 </div>
+<div id="imputing-missing-values" class="section level4">
+<h4>Imputing missing values</h4>
+<p>About 15% of the records in the data were missing admissions index, so for the purpose of machine learning modeling missing values are imputed using predictive mean matching via the MICE (multiple imputation using chained equations) package in R. Only one computed data set is used (instead of multiple) for exploratory purposes only.</p>
+</div>
 </div>
 <div id="variable-selection" class="section level2">
 <h2>Variable Selection</h2>
@@ -2332,8 +2317,9 @@ CRT + SI
 </ul>
 <p><img src="crt_files/figure-html/rf-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Variables with high importance were then used as a starting point to build a multiple linear regression model to assess the effect of the course redesign after controlling for these other features.</p>
-<div id="multivariable-linear-regression" class="section level3">
-<h3>Multivariable Linear Regression</h3>
+</div>
+<div id="linear-regression-on-gpa" class="section level2">
+<h2>Linear Regression on GPA</h2>
 <p>Prior to modeling, a single classification tree was built to determine the optimal location of knots for the known non-linear relationships between GPA, age and admissions index. Spline knots were created at HSEI = 3.8, and Age = 22 and included in the starting linear model.</p>
 <p>Further variable selection was conducted via backwards selection, removing the variables that were found to be not significant with GPA with a pvalue &gt; 0.5. Certain demographics of great interest (i.e. First Generation status) were kept in the model regardless of their statistical significance level.</p>
 <?xml version="1.0" encoding="UTF-8"?>
@@ -2649,34 +2635,144 @@ Any College prep English
 <li>Term GPA</li>
 </ul>
 <p>Students in the CRT + SI class had significantly higher GPA compared to students in the traditional course (0.18, 95% CI (0.03-0.33), p=.0155).</p>
+</div>
+<div id="logistic-regression-on-a-repeat-grade" class="section level2">
+<h2>Logistic Regression on a repeat grade</h2>
+<p>Improving GPA by 0.18 points is great, but this doesn’t tell us which students are improving. Last we’ll analyze the likelihood of a student passing the class. Again our goal is to see if the redesign alone, or in conjunction with SI moves the needle significantly on the lower performing students after controlling for other factors.</p>
+<p>Here we see a similar plot as before, that shows the variable importance. The difference again is that we are now predicting a student <em>passing</em> the class, not simply their GPA. Each variable can inform the model differently. The measure being plotted here is the decrease in accuracy (correctly predicting the outcome), if that variable is not included in the model. Again for demonstration purposes only variables that would decrease the accuracy by over 0.1% are displayed.</p>
+<ul>
+<li>Unsurprisingly, how well a student does across all classes that semester is a strong predictor for whether or not the student passes Chemistry. This serves as an excellent reminder that classes don’t live in bubbles. If a student is doing poorly in one class, it is likely that they are struggling in their other classes as well.</li>
+</ul>
+<p><img src="crt_files/figure-html/class.model-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Using these variables as a starting point and subsequently doing backwards variable selection and testing some interaction terms we get to a final model to predict passing Chemistry 111 that includes:</p>
+<ul>
+<li>term level GPA</li>
+<li>admissions index</li>
+<li>URM status</li>
+<li>Gender</li>
+<li>First generation</li>
+<li>College</li>
+<li>Course Redesign type</li>
+<li>GE course status (English/Math/Critical Thinking)</li>
+<li>Entry level English/Math proficiency</li>
+<li>Interaction between admissions index and Course redesign type</li>
+</ul>
+<p>The inclusion of this interaction term indicates that the type of course redesign <em>changes</em> the relationship between admissions index and the probability of a student passing the course.</p>
+<p>The typical method of presenting results from a Logistic regression is to present the Odds Ratio, comparing the odds of passing the class for “Group A” compared to “Group B”. Most people don’t think in terms of Odds. So what we present here is the distribution of the <em>model predicted probability</em> of passing the class, after controlling for all these other variables, and display this by course type.</p>
+<p><img src="crt_files/figure-html/unnamed-chunk-61-1.png" width="576" style="display: block; margin: auto;" /></p>
+<?xml version="1.0" encoding="UTF-8"?>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Mean and Median predicted probability of passing the class by class type
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+crt
+</th>
+<th style="text-align:center;">
+mean
+</th>
+<th style="text-align:center;">
+median
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Traditional
+</td>
+<td style="text-align:center;">
+56.4%
+</td>
+<td style="text-align:center;">
+69%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT
+</td>
+<td style="text-align:center;">
+64.1%
+</td>
+<td style="text-align:center;">
+75.8%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CRT+SI
+</td>
+<td style="text-align:center;">
+66.9%
+</td>
+<td style="text-align:center;">
+79.3%
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The likelihood of passing Chem 111 significantly increases with the level of redesign (direct numbers not shown here).</li>
+<li>Under the Traditional course offering, on average a student would have a 56.4% chance of passing the course (according to this model)
+<ul>
+<li>With CRT, on average a student would have 64.1% chance of passing the course</li>
+<li>With CRT + SI, half the students were predicted to have up to 66.9% chance of passing the course.</li>
+</ul></li>
+</ul>
+<p>This may seem like a moderate gain, <em>only</em> a 10.5% percentage point increase in predicted probability of passing the course from Traditional to CRT + SI, but remember this is after controlling for all other factors, such as admissions index.</p>
+<ul>
+<li>This modeled probability reflects the unadjusted, raw, course (and coarse) level passing rates for the class.</li>
+<li>This strengthens the justification that these improvements are likely due to the redesign itself, not something external.</li>
+</ul>
+<p>This is a good place to further demonstrate how the redesign affects students with different ranges of admissions index, differently. The ranges shown here reflect the distribution of admissions index for Chemistry students: the bottom 25% of students had below a 3.5 admissions index, the median is 3.7, the third quartile is 4.0, with a max of 4.6.</p>
+<ul>
+<li>For the bottom half of the class, the course redesign improved the predicted probability of passing the course.</li>
+<li>For the upper half, there was either no, or a negative effect of the redesign.
+<ul>
+<li>These comparisons were not tested directly for statistical significance, but the redesign <em>did</em> significantly change the relationship between HSEI and the likelihood of passing the course. This plot simply demonstrates in what direction and magnitude that change occurred.</li>
+</ul></li>
+</ul>
+<p><img src="crt_files/figure-html/unnamed-chunk-63-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Summary</strong></p>
+<ul>
+<li>Course redesign significantly increased the probability a student will pass Chemistry 111.</li>
+</ul>
 <div id="notes-and-comments" class="section level4">
 <h4>Notes and Comments</h4>
 <ul>
-<li>This model is an additive model, each covariate is modeled as if it modifies GPA in a linear manner.</li>
+<li>These models are an additive, each covariate is modeled as if it modifies GPA or the probability of passing the class in a linear manner.</li>
 <li>This model is simple in that unless interactions between variables are explicitly specified, they are not considered.</li>
-<li>This differs from the supervised learning model such as a Random Forest model, that allows for all variables to interact with each other.</li>
+<li>This differs from the supervised learning model such as a Random Forest model, that allows for all variables to interact with each other.
+<ul>
+<li>The purpose of these models is classification, not assessing the impact of a covariate on an outcome.</li>
+</ul></li>
 <li>The effect for all categorical variables represent a change from baseline or reference group, to the group listed.</li>
+<li>This analysis only examined courses taught by the same instructor across four semsters to assess the effectiveness of a single individual course redesign.</li>
 </ul>
 </div>
 </div>
 </div>
-</div>
-<div id="next-steps" class="section level1">
-<h1>Next steps</h1>
+<div id="next-steps-needed-followup" class="section level1">
+<h1>Next steps / Needed followup</h1>
 <ul>
-<li>This analysis only examined courses taught by the same instructor across four semsters to assess the effectiveness of a single individual course redesign.</li>
-<li>SI was only incorporated during the Spring 16 semester.</li>
-<li>A follow-up analysis to examine the impact of SI by attendance should analyze data from multiple instructors for the same semester where SI was available.
+<li>Enhancements to the current model
 <ul>
-<li>Zero visits for courses where SI is not even available is different than zero visits for a course where SI is available.</li>
-<li>This becomes a difference between opting out of SI, and not even having the option.</li>
+<li>Control for whether or not the student is on the second time taking the class.</li>
 </ul></li>
+<li>Create an SI specific model
+<ul>
+<li>using additional data from Spring 16, and other Chemistry classes other than Chem 111 and by other instructors.</li>
+</ul></li>
+<li>Key informant interviews with top performing students to identify what they don’t like.</li>
 </ul>
 <p>This would allow us to examine the following questions:</p>
 <ul>
 <li>Can we show that SI is related to the reduction of the GAP between first gen and/or URM students?</li>
 <li>How does the DFW rate change as a function of SI attendance?</li>
-<li>Do people self-select into SI based on admissions index?</li>
+<li>Do people self-select into SI based on a measurable characteristic?</li>
 </ul>
 </div>
 

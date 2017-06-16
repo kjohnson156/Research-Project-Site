@@ -764,21 +764,9 @@ rm(a, cl, class, ct, ds, ds1, ds2, fs, fs2, fsp, gpa.fg.crt, gpa.g.crt, gpa.urm.
    sm, tm, urm.term)
 invisible(gc())
 ```
-# Multivariate modeling
+# Multivariable modeling
 
 ### Data preparation
-
-#### Imputing missing values
-About 15% of the records in the data were missing admissions index, so for the purpose of machine learning modeling missing values are imputed using predictive mean matching via the MICE (multiple imputation using chained equations) package in R. Only one computed data set is used (instead of multiple) for exploratory purposes only. 
-
-```{r}
-library(randomForest); library(mice)
-d <- ew %>% select(-grade, -pass, -class_diff, -repeat_grade, -si.visits, -hsei_high, -origstartterm, -repeat_grade, -id, -year, -term, -sequential_term, -department_name, -major_name, -section)
-
-# impute missing values for EPT and admssions index
-d.imp <- mice(d)
-d2 <- complete(d.imp, 1)
-```
 
 #### Collapsing and grouping varibles. 
 
@@ -789,7 +777,7 @@ d2 <- complete(d.imp, 1)
     - NS: NS and AGR
 ```{r}
 # group number of CP classes
-d2 <- d2 %>% mutate(cpmath = cut(cp_math, c(0,6,8,10,17), right=FALSE),
+d2 <- ew %>% mutate(cpmath = cut(cp_math, c(0,6,8,10,17), right=FALSE),
                     cplab = cut(cp_lab, c(0,4,6,8,15), right=FALSE),
                     cpengl = (cp_engl>0))
 
@@ -804,14 +792,26 @@ d2$college_name_rec <- factor(d2$college_name_rec, levels=c("NS", "ECC", "OTH"))
 #### Restrict on age
 Since 95% of the students are below 25 years of age, the multivariable model will be fit on only students less than 25 years of age. 
 
-
 ```{r}
 # remove some variables that won't be used in random forest modeling
-rf.dta <- d2 %>% select(-DSS, -erss_enrstat, -race_code, -term_idx, -erss_totunits, 
+d3 <- d2 %>% select(-DSS, -erss_enrstat, -race_code, -term_idx, -erss_totunits, 
                         -dfw, -dfw_rate, -cohort, -enrollment, -classgpa, 
                         -cp_math, -cp_lab, -cp_engl, -soc, -college_name) %>% 
                  filter(age < 25)
 ```
+
+#### Imputing missing values
+About 15% of the records in the data were missing admissions index, so for the purpose of machine learning modeling missing values are imputed using predictive mean matching via the MICE (multiple imputation using chained equations) package in R. Only one computed data set is used (instead of multiple) for exploratory purposes only. 
+
+```{r}
+library(mice)
+d4 <- d3 %>% select(-grade, -pass, -class_diff, -repeat_grade, -si.visits, -hsei_high, -origstartterm, -repeat_grade, -id, -year, -term, -sequential_term, -department_name, -major_name, -section)
+
+# impute missing values for EPT and admssions index
+d.imp <- mice(d4)
+rf.dta <- complete(d.imp, 1)
+```
+
 
 ## Variable Selection
 
@@ -823,6 +823,7 @@ The plot below graphs the % increase in unexplained variance (mean squared error
 * For display purposes only those showing an increase of greater than .1% are displayed. 
 
 ```{r rf, fig.height=7, fig.width=7}
+library(randomForest)
 set.seed(12345)
 a <- randomForest(gpa ~ ., data=rf.dta, importance=TRUE, ntree=1000)
 
@@ -841,7 +842,7 @@ ggplot(plot.imp, aes(x=imp, y=reorder(var, imp))) +
 
 Variables with high importance were then used as a starting point to build a multiple linear regression model to assess the effect of the course redesign after controlling for these other features. 
 
-### Multivariable Linear Regression
+## Linear Regression on GPA
 
 Prior to modeling, a single classification tree was built to determine the optimal location of knots for the known non-linear relationships between GPA, age and admissions index. Spline knots were created at HSEI = 3.8, and Age = 22 and included in the starting linear model.
 
@@ -910,27 +911,129 @@ After controlling for other significant and demographic characteristics:
 
 Students in the CRT + SI class had significantly higher GPA compared to students in the traditional course (0.18, 95% CI (0.03-0.33), p=.0155). 
 
+## Logistic Regression on a repeat grade
+
+Improving GPA by 0.18 points is great, but this doesn't tell us which students are improving. Last we'll analyze the likelihood of a student passing the class. Again our goal is to see if the redesign alone, or in conjunction with SI moves the needle significantly on the lower performing students after controlling for other factors. 
+
+```{r}
+d4b <- d3 %>% select(-grade, -gpa, -class_diff, -repeat_grade, -si.visits, -hsei_high, -origstartterm, -repeat_grade, -id, -year, -term, -sequential_term, -department_name, -major_name, -section, -cpmath, -cplab, -cpengl)
+
+# impute missing values for EPT and admssions index
+d.imp <- mice(d4b)
+class.dta <- complete(d.imp, 1)
+```
+
+Here we see a similar plot as before, that shows the variable importance. The difference again is that we are now predicting a student _passing_ the class, not simply their GPA. Each variable can inform the model differently. The measure being plotted here is the decrease in accuracy (correctly predicting the outcome), if that variable is not included in the model. Again for demonstration purposes only variables that would decrease the accuracy by over 0.1% are displayed. 
+
+* Unsurprisingly, how well a student does across all classes that semester is a strong predictor for whether or not the student passes Chemistry. This serves as an excellent reminder that classes don't live in bubbles. If a student is doing poorly in one class, it is likely that they are struggling in their other classes as well. 
+
+```{r class.model, fig.height=6, fig.width=7}
+set.seed(12345)
+a <- randomForest(pass ~ ., data=class.dta, importance=TRUE, ntree=1000)
+
+plot.imp <- data.frame(var = rownames(a$importance), imp=round(a$importance[,1]*100,2)) %>% 
+              arrange(desc(imp)) %>% filter(imp > .1)
+
+ggplot(plot.imp, aes(x=imp, y=reorder(var, imp))) +  
+  geom_point(size = 3) + xlab("% Decrease in Accuracy") + 
+  geom_text(aes(x=imp, y=reorder(var,imp), label=paste0(imp, "%")), nudge_y=.3) + 
+  theme_bw() + ylab("Variable") + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color='grey60', linetype='dashed'))
+```
+
+Using these variables as a starting point and subsequently doing backwards variable selection and testing some interaction terms we get to a final model to predict passing Chemistry 111 that includes: 
+
+* term level GPA
+* admissions index
+* URM status
+* Gender
+* First generation
+* College 
+* Course Redesign type
+* GE course status (English/Math/Critical Thinking)
+* Entry level English/Math proficiency
+* Interaction between admissions index and Course redesign type
+
+The inclusion of this interaction term indicates that the type of course redesign _changes_ the relationship between admissions index and the probability of a student passing the course. 
+
+```{r}
+mod <- glm((pass=="Pass") ~ term_gpa + admission_index + urm_status +
+              firstgeneration + crt + gender + college_name_rec + crt*admission_index + 
+              geenlgdone + gecritdone + gemathdone + ept + elm 
+           , data=class.dta, family='binomial')
+```
+
+The typical method of presenting results from a Logistic regression is to present the Odds Ratio, comparing the odds of passing the class for "Group A" compared to "Group B". Most people don't think in terms of Odds. So what we present here is the distribution of the _model predicted probability_ of passing the class, after controlling for all these other variables, and display this by course type. 
+
+```{r}
+pp <- predict(mod, type="response", se.fit=TRUE)
+p <- data.frame(prob = pp$fit, se=pp$se.fit, crt=class.dta$crt, admission_index = class.dta$admission_index)
+
+ggplot(p, aes(x=crt, y=prob, fill=crt)) +
+        geom_boxplot(alpha=.5, width=.3) +
+        geom_violin(alpha=.3) + xlab("") + theme_bw() + ylab("Predicted Probability of Passing Chemistry") + 
+        xlab("Course Type") + 
+        scale_fill_manual(values=crt.col, guide=FALSE) + 
+        stat_summary(fun.y=mean, geom="point", shape=18, size=4)
+```
+
+```{r, results="show"}
+summry <- p %>% group_by(crt) %>% summarise(mean=paste0(round(mean(prob)*100,1), "%"), 
+                                            median=paste0(round(median(prob)*100,1), "%"))
+kable(summry, align='c', caption="Mean and Median predicted probability of passing the class by class type") %>% 
+   kable_styling(bootstrap_options="striped", full_width=F)
+```
+
+* The likelihood of passing Chem 111 significantly increases with the level of redesign (direct numbers not shown here). 
+* Under the Traditional course offering, on average a student would have a 56.4% chance of passing the course (according to this model)
+    - With CRT, on average a student would have 64.1% chance of passing the course
+    - With CRT + SI, half the students were predicted to have up to 66.9% chance of passing the course. 
+    
+This may seem like a moderate gain, _only_ a 10.5% percentage point increase in predicted probability of passing the course from Traditional to CRT + SI, but remember this is after controlling for all other factors, such as admissions index. 
+
+* This modeled probability reflects the unadjusted, raw, course (and coarse) level passing rates for the class. 
+* This strengthens the justification that these improvements are likely due to the redesign itself, not something external. 
+    
+This is a good place to further demonstrate how the redesign affects students with different ranges of admissions index,  differently. The ranges shown here reflect the distribution of admissions index for Chemistry students: the bottom 25% of students had below a 3.5 admissions index, the median is 3.7, the third quartile is 4.0, with a max of 4.6. 
+
+* For the bottom half of the class, the course redesign improved the predicted probability of passing the course. 
+* For the upper half, there was either no, or a negative effect of the redesign. 
+    - These comparisons were not tested directly for statistical significance, but the redesign *did* significantly change the relationship between HSEI and the likelihood of passing the course. This plot simply demonstrates in what direction and magnitude that change occurred. 
+
+```{r}
+p.cat <- p %>% mutate(ai_cat = cut(admission_index, c(2.5, 3.5, 3.75, 4, 5)))
+
+ggplot(p.cat, aes(x=crt, y=prob, fill=crt)) +
+        geom_boxplot(alpha=.5, width=.3) + 
+        geom_violin(alpha=.3) + xlab("") + theme_bw() + ylab("Predicted Probability of Passing Chemistry") + 
+        xlab("Course Type") + facet_wrap(~ai_cat) + 
+        scale_fill_manual(values=crt.col, guide=FALSE) + 
+        stat_summary(fun.y=mean, geom="point", shape=18, size=4)
+```
+
+
+**Summary**
+
+* Course redesign significantly increased the probability a student will pass Chemistry 111. 
 
 #### Notes and Comments
-* This model is an additive model, each covariate is modeled as if it modifies GPA in a linear manner. 
+* These models are an additive, each covariate is modeled as if it modifies GPA or the probability of passing the class in a linear manner. 
 * This model is simple in that unless interactions between variables are explicitly specified, they are not considered. 
 * This differs from the supervised learning model such as a Random Forest model, that allows for all variables to interact with each other. 
+    - The purpose of these models is classification, not assessing the impact of a covariate on an outcome. 
 * The effect for all categorical variables represent a change from baseline or reference group, to the group listed. 
-
-
-
-* This analysis only examined courses taught by the same instructor across four semsters to assess 
-the effectiveness of a single individual course redesign. 
+* This analysis only examined courses taught by the same instructor across four semsters to assess the effectiveness of a single individual course redesign. 
 
 
 # Next steps / Needed followup
 
 * Enhancements to the current model
-  - Controll for whether or not the student is on the second time taking the class.
-  
+    - Control for whether or not the student is on the second time taking the class.
 * Create an SI specific model
-  - using additional data from Spring 16, and other Chemistry classes other than Chem 111 and by other instructors. 
-     
+    - using additional data from Spring 16, and other Chemistry classes other than Chem 111 and by other instructors. 
+* Key informant interviews with top performing students to identify what they don't like.  
 
 This would allow us to examine the following questions: 
 

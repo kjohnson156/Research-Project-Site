@@ -63,20 +63,33 @@ term.col <- brewer.pal(9, "Set1")[c(7, 3)]
 
 # Course Characteristics
 
+First we examine the historical trends of aggregated course level characteristic such as enrollment and DFW rate.
+You can click on the sidebar to the right to navigate through the table of contents for this report. 
+
+
 ## Enrollment
+
+Enrollment in Chemistry 111 has steadily increased since 2009, with Fall semester seeing about 100 more students compared to Spring. You can hover your mouse pointer over the points on the plot to see the actual enrollment numbers. 
+ 
 ```{r}
-ggplot(chem, aes(x=term_idx, y=..count.., fill=term)) + geom_bar() +
-  geom_text(stat="count", aes(y = ..count.., vjust=-.3, label=..count..)) +
-  xlab("Year") + ylab("Enrollment") + theme_bw() +  
-  scale_x_discrete(labels=yearlab) + scale_fill_manual(values=term.col, name = "Term")
+all <- chem %>% group_by(term, term_idx) %>% summarise(enrollment=n())
+
+p <- ggplot(all, aes(x=term_idx, y=enrollment, col=term, group=term)) + 
+  geom_point() + geom_smooth(se=FALSE) + 
+  scale_y_continuous(limits=c(0, 500)) + 
+  xlab("Year") + ylab(" ") + theme_bw() +  
+   scale_color_manual(values=term.col, name = "Term")
+
+ggplotly(p, tooltip = c("y", "x")) %>% config(displayModeBar = F)
+
+rm(all, p)
 ```
   
-Spring term demand has steadily increased since 2009. 
- 
+
 ## Class size
 
-Fall class sizes have remained relatively constant between 140-160 since 2009, even with an additional section starting in 2013. 
-You can hover over the plot to see the actual enrollment numbers. 
+Fall class sizes have remained relatively constant between 140-160 since 2009. A third section in both Fall and Spring were added in AY 13-14. 
+
 
 ```{r}
 p <- ggplot(class, aes(x=term_idx, y=enrollment, group=term, col=term)) + 
@@ -91,6 +104,8 @@ ggplotly(p, tooltip = c("y", "x")) %>% config(displayModeBar = F)
 ## GPA
 The average class-level GPA across years is `r round(mean(class$classgpa, na.rm=TRUE), 2)`, with standard deviation `r round(sd(class$classgpa, na.rm=TRUE), 2)`. Spring and Fall semesters have different patterns of oscillating increase and decrease of class-level GPA, but there is no statistical linear trend across terms nor a difference in average GPA between Fall and Spring. 
 
+For the next two plots, the size of the dot represents the size of the class. This is an important characteristic since a DFW rate of 30% for a class of 100 is larger than for a class half that size. 
+
 ```{r}
 #lm(classgpa~as.numeric(term_idx)+ term, data=class)
 #t.test(classgpa~term, data=class)
@@ -98,7 +113,7 @@ The average class-level GPA across years is `r round(mean(class$classgpa, na.rm=
 p <- ggplot(class, aes(x=term_idx, y=classgpa, group=term, col=term)) + 
   geom_point(aes(size=enrollment)) + geom_smooth(se=FALSE) + xlab("Semester") + 
   scale_color_manual(values=term.col, name = "Term") + theme_bw() +
-  scale_y_continuous(limits = c(1,3)) + ylab("Class Average GPA, size of point depicts size of class") 
+  scale_y_continuous(limits = c(1,3)) + ylab("GPA") 
 
 ggplotly(p, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
 ```
@@ -112,24 +127,25 @@ As expected we see a similar pattern, slightly different between Fall and Spring
 ```{r}
 c_0NA <- class %>% filter(term_idx != "NA") %>% mutate(dfw_rate = round(dfw_rate,2))
 
-a <- ggplot(class, aes(x=term_idx, y=dfw_rate, group=term, col=term)) + ylab("") + 
+a <- ggplot(class, aes(x=term_idx, y=dfw_rate, group=term, col=term)) + ylab(" ") + 
             geom_point(aes(size=enrollment)) + geom_smooth(se=FALSE) + xlab("Semester") + 
             scale_color_manual(values=term.col, name = "Term")+ theme_bw() + 
             scale_y_continuous(limits=c(0,1), breaks=seq(0, .80, by=.20),
-                               labels = scales::percent_format()) + 
-            ggtitle("DWF Rate by semester, size of point depicts size of class") 
+                               labels = scales::percent_format()) 
 
 ggplotly(a, tooltip = c("y", "size", "enrollment"))%>% config(displayModeBar = F)
 
 ```
 
-# Student Characteristics 
+# Student Characteristics
+This section examines trends about student level characteristics over time. Where available, campus level averages are presented for comparison purposes. 
 
-## Demographics
+
+## Demographics +
 
 ### Gender
 
-Campus has a seen a steady rate of slightly higher than 50% female students for the past 7 years. Female enrollment in Chem111 has been historically much lower than the campus average, but a clear uptick is being seen since AY14-15. 
+Campus has a seen a steady rate of slightly higher than 50% female students for the past 7 years. Female enrollment in Chem111 has been historically much lower than the campus average, with Spring semester consistently seeing a higher proportion of males. 
 
 ```{r gender}
 campus.pf <- campus_props %>% filter(var=="gender" & level=="F") %>% 
@@ -142,10 +158,9 @@ pft <- chem %>%
   bind_rows(campus.pf) %>% mutate(percent_female = round(pf,2))
 
 a <- ggplot(pft, aes(x=term_idx, y=percent_female, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
-  scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
-  ggtitle("Proportion of females per class") + xlab("Semester") + 
-  scale_y_continuous(labels = scales::percent_format(), limits=c(.2, .7)) 
+  geom_point() + geom_smooth(se=FALSE) + ylab(" ") + xlab("Semester") + 
+  scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() + 
+  scale_y_continuous(labels = scales::percent_format(), limits=c(0, 1)) 
 
 
 ggplotly(a, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
@@ -155,6 +170,9 @@ rm(a, pft, campus.pf)
 
 
 ### Age
+The black horizontal line represents the **median** age of all students across campus -- at the time of enrollment. From 2009 to about 2013 there was an increase in the average age of students at enrollment campus wide, which has seemed to have leveled off. 
+
+
 ```{r age}
 ave <- campus_aves %>% filter(var=="age") %>% mutate(mean=median) %>%
           select(term, term_idx, mean, p10, p90) 
@@ -166,21 +184,18 @@ age <- chem %>%
   bind_rows(ave) %>% mutate(mean=round(mean,1))
 
 p <- ggplot(age, aes(x=term_idx, y=mean, col=term, group=term)) +
-      geom_point(size=3) + geom_smooth(se=FALSE) + ylab("Age") + 
+      geom_point(size=3) + geom_smooth(se=FALSE) + ylab("Age") + xlab("Semester") + 
       scale_color_manual(values=c("grey20", term.col), name = "Term")+ theme_bw() +
-      ggtitle("Average student age per section") + xlab("Semester") + 
       scale_y_continuous(limits=c(17, 24))
   
 ggplotly(p, tooltip = c("y", "x", "group")) %>% config(displayModeBar = F)
 rm(ave, age, p)
 ```
-  
-The black horizontal line represents the **median** age of all students across campus -- at the time of enrollment. From 2009 to about 2013 there was an increase in the average age of students at enrollment campus wide, which has seemed to have leveled off. 
 
 Students taking Chemistry tend to be slightly younger than the average campus age, and those taking Chemistry in the fall are on average younger than those taking chemistry in the Spring. Recall this is age at admission, not the age when the student is taking Chem 111. 
 
 
-### Where the stuent comes from
+### Where the student comes from
 
 The patterns of trend for the shifting demographics for where the students come from and enroll in Chemistry is similar to the overall campus trends. We see a decline in the proportion of students coming from Butte County (gold line), our general service area (red-orange line), and from the Rest of California (purple line) in general. There is steep increase in the enrollment from students in the Los Angeles area since around Fall 2011 (green line). By the F16 23% of the campus population is from the LA area, whereas these students make up 31% of Chemistry 111 classes in F16. 
 
@@ -198,7 +213,7 @@ art <- bind_rows(rt, campus.area)
 
 ggplot(art, aes(x=term_idx, y=pct, col=residareaname, group=residareaname)) + geom_point() +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0,.5)) + xlab("Semester") +
-  ylab("% Areas") + geom_smooth(se=FALSE) + theme_bw() + theme(legend.position="bottom") + 
+  ylab(" ") + geom_smooth(se=FALSE) + theme_bw() + theme(legend.position="bottom") + 
   scale_color_discrete(name = "Area of Residence") + facet_wrap(~term)
 ```
 
@@ -224,7 +239,7 @@ art <- bind_rows(rct, campus.area)
 ggplot(art, aes(x=term_idx, y=pct, col=race_code, group=race_code)) + geom_point() +
   xlab("Semester") +  ylab(" ") +
   geom_smooth(se=FALSE) + theme_bw()  + theme(legend.position="bottom") +
-  scale_y_continuous(limits=c(0, .75), labels = scales::percent_format()) +
+  scale_y_continuous(limits=c(0, 1), labels = scales::percent_format()) +
   scale_color_discrete(name = "Race / Ethnicity") + facet_wrap(~term)
 ```
   
@@ -257,7 +272,7 @@ ggplot(urmt, aes(x=term_idx, y=pct, col=interaction(urm_status, term),
                  group=interaction(urm_status, term), shape=term)) + 
   geom_point() + geom_smooth(se=FALSE) + theme_bw() + 
   xlab("Semester") +  ylab("% URM status") +
-  scale_y_continuous(limits=c(0, .75), labels = scales::percent_format()) +
+  scale_y_continuous(limits=c(0, 1), labels = scales::percent_format()) +
   scale_shape_discrete(name = " ") +
   scale_colour_manual(name = "URM Status"
                       , values=brewer.pal(6, "Paired")[c(1,3,5,2,4,6)], 
@@ -299,7 +314,7 @@ ggplot(soct, aes(x=term_idx, y=pct, col=interaction(soc, term),
                  group=interaction(soc, term), shape=term)) + 
   geom_point() + geom_smooth(se=FALSE) + theme_bw() + 
   xlab("Semester") +  ylab(" ") +
-  scale_y_continuous(limits=c(0, .75), labels = scales::percent_format()) +
+  scale_y_continuous(limits=c(0, 1), labels = scales::percent_format()) +
   scale_shape_discrete(name = " ") +
   scale_colour_manual(name = "Student of Color"
                       , values=brewer.pal(6, "Paired")[c(1,3,5,2,4,6)]
@@ -333,7 +348,7 @@ a <- ggplot(pfgt, aes(x=term_idx, y=pct_firstgen, col=term, group=term)) +
   geom_point() + geom_smooth(se=FALSE) + ylab(" ") + 
   scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   xlab("Semester") + 
-  scale_y_continuous(labels = scales::percent_format(), limits=c(.2, .7)) 
+  scale_y_continuous(labels = scales::percent_format(), limits=c(0, 1)) 
 
 ggplotly(a, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
 
@@ -358,7 +373,7 @@ b <- ggplot(ct, aes(x=term_idx, y=percent_noncitizen, col=term, group=term)) +
   geom_point() + geom_smooth(se=FALSE) + ylab(" ") + 
   scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   xlab("Semester") +
-  scale_y_continuous(limits=c(0, .25), labels = scales::percent_format())
+  scale_y_continuous(limits=c(0, .5), labels = scales::percent_format())
 
 ggplotly(b, tooltip = c("y", "x", "group")) %>% config(displayModeBar = F)
 
@@ -382,7 +397,7 @@ cc <- ggplot(dt, aes(x=term_idx, y=percent_dss, col=term, group=term)) +
   geom_point() + geom_smooth(se=FALSE) + ylab(" ") + 
   scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of DSS students per section") + xlab("Semester") +
-  scale_y_continuous(labels = scales::percent_format(), limits = c(0, .25))
+  scale_y_continuous(labels = scales::percent_format(), limits = c(0, .5))
 
 ggplotly(cc, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
 
@@ -409,7 +424,7 @@ d <- ggplot(eopt, aes(x=term_idx, y=percent_eop, col=term, group=term)) +
   geom_point() + geom_smooth(se=FALSE) + ylab(" ") + 
   scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
   ggtitle("Proportion of EOP students per section") + xlab("Semester") +
-  scale_y_continuous(labels = scales::percent_format(), limits = c(0, .25))
+  scale_y_continuous(labels = scales::percent_format(), limits = c(0, .5))
 
  campus.pd <- campus_props %>% filter(var=="dss" & level=="Y") %>% 
               mutate(pd = pct) %>% select(term_idx, term, pd)
@@ -424,7 +439,7 @@ rm(d, eopt, campus.pd)
 ### REACH
 
 Data on the reach program was was either not contributing data to the SIS system or not in place prior to Fall 2013.
-Campus level averages for the Reach program were also not available. Similar to EOP, the proportion of students in the REACH program are higher in Spring compared to Fall. However it is my opinion that this data is not reliable due to some discrepencies found while working with Erik. 
+Campus level averages for the Reach program were also not available. Similar to EOP, the proportion of students in the REACH program are higher in Spring compared to Fall. However it is my opinion that this data is not reliable due to some discrepancies found while working with Erik. 
 
 ```{r reach}
 reacht <- chem %>%
@@ -444,144 +459,36 @@ rm(d, reacht)
 ```
   
   
-## Pre-enrollment Information  
-  
-### Admission Index
-Students enrolling in Chemistry 111 tend to have a higher admissions index (high school eligibility index (HSEI)) than the average student on campus. This average is created based on all students on campus during that semester, but the HSEI measure is only created upon admission. 
-
-There was a lot of variation in the average index prior to around 2013, the campus level HSEI in Spring 10 was 3.44, up to 3.66 in Fall 10, back down to 3.26 in Spring 11, and up again to 3.60 in the Fall. 
-
-There may be a slight upward trend for both Chemistry student and the campus average, after 2014 we see class level averages for Chemsitry courses that are over 3.8. 
-
-
-```{r hsei}
-ave <- campus_aves %>% filter(var=="admission_index") %>% 
-          select(term, term_idx, mean) 
-            
-ai <- chem %>% 
-  filter(term_idx != "NA") %>%
-  group_by(term, term_idx, section) %>% 
-  summarise(mean = mean(admission_index, na.rm=TRUE)) %>%
-  bind_rows(ave) %>% mutate(mean=round(mean,2))
-
-a <- ggplot(ai, aes(x=term_idx, y=mean, col=term, group=term)) +
-      geom_point(size=3) + geom_smooth(se=FALSE) + ylab("Admissions Index") + 
-      scale_color_manual(values=c("grey20", term.col), name = "Term")+ theme_bw() +
-      xlab("Semester") + 
-      scale_y_continuous(limits=c(3, 4))
-  
-ggplotly(a, tooltip = c("y", "x", "group")) %>% config(displayModeBar = F)
-
-rm(ai, ave, a)
-```
-
-```{r, eval=FALSE}
-hsei_out <- biv.var(df=chem, var='admission_index',  row.var='section', col.var='term_idx')
-hsei_out1 <- hsei_out[1:3,1:8]
-hsei_out2 <- hsei_out[c(1,2,4),c(1,9:15)]
-
-kable(hsei_out1,  align='c', row.names=FALSE, caption='Mean(sd) HSEI per section, per term (09-12)')
-kable(hsei_out2,  align='c', row.names=FALSE, caption='Mean(sd) HSEI per section, per term (13-16)')
-```
-
-
-
-  
-## Tests and Benchmarks
-
-### GE-Breadth Course Completion Status
-
-```{r ge}
-matht <- chem %>%
-  filter(term_idx != "NA") %>%
-  group_by(term_idx, section) %>% 
-  summarise(prop = mean(gemathdone, na.rm=TRUE)) %>%
-  mutate(GE = "Math")
-engt <- chem %>%
-  filter(term_idx != "NA") %>%
-  group_by(term_idx, section) %>% 
-  summarise(prop = mean(geenlgdone, na.rm=TRUE)) %>%
-  mutate(GE = "English")  
-critt <- chem %>%
-  filter(term_idx != "NA") %>%
-  group_by(term_idx, section) %>% 
-  summarise(prop = mean(gecritdone, na.rm=TRUE)) %>%
-  mutate(GE = "Critical Thinking")
-get <- rbind(matht, engt, critt)
-
-ggplot(get, aes(x=term_idx, y=prop, col=GE, group=GE)) + geom_point() + xlab("Semester") + 
-  ggtitle("Proportion of students who have completed these GE's\nprior to enrolling at a CSU campus per semester") +
-  ylab("% Completed GE's") + geom_smooth(se=FALSE) + theme_bw() +
-  scale_y_continuous(limits=c(0, .5), labels = scales::percent_format())
-
-```
-  
-
-### ELM
-```{r elm}
-campus.pelm <- campus_props %>% filter(var=="elm" & level=="1") %>% 
-              mutate(pelm = pct) %>% select(term_idx, term, pelm)
-
-elmt <- chem %>%
-  filter(term_idx != "NA") %>%
-  group_by(term, term_idx, section) %>% 
-  summarise(pelm = mean(elm, na.rm=TRUE)) %>%
-  bind_rows(campus.pelm) %>% mutate(percent_elm = round(pelm,2))
-
-e <- ggplot(elmt, aes(x=term_idx, y=percent_elm, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
-  scale_color_manual(values=c("black", term.col), name = "Term") + theme_bw() +
-  ggtitle("Proportion of students per section who have completed\nthe ELM requirement prior to enrollment in CHEM") +
-  xlab("Semester") +
-  scale_y_continuous(labels = scales::percent_format(), limits=c(.75,1))
-
-ggplotly(e, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
-
-rm(e, elmt, campus.pelm)
-```
-  
-
-### EPT
-
-```{r ept}
-campus.pept <- campus_props %>% filter(var=="ept" & level=="1") %>% 
-              mutate(pept = pct) %>% select(term_idx, term, pept)
-eptt <- chem %>%
-  filter(term_idx != "NA") %>%
-  group_by(term, term_idx, section) %>% 
-  summarise(pept = mean(ept, na.rm=TRUE)) %>%
-  bind_rows(campus.pept) %>% mutate(percent_ept = round(pept,2))
-
-f <- ggplot(eptt, aes(x=term_idx, y=percent_ept, col=term, group=term)) +
-  geom_point() + geom_smooth(se=FALSE) + ylab("") + 
-  scale_color_manual(values=c("black", term.col), name = "Term") + theme_bw() +
-  ggtitle("Proportion of students per section who have completed\nthe EPT requirement prior to enrollment in CHEM") +
-  xlab("Semester") +
-  scale_y_continuous(labels = scales::percent_format(), limits = c(.8, 1))
-
-ggplotly(f, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
-
-rm(f, eptt, campus.pept)
-```
-  
-
-  
-### College prep
 
     
+## Academic Characteristics +
 
-    
-## Academic Standing
+These next set of characteristics examined are considered to be academic characteristics, features that the student has direct control over, can change each semster, and are inherently part of the undergraduate process not the student themselves.  
 
 ### College
+
+Chemistry 111 is not a required class for all majors across campus. Most Chemistry students come from the College of Natural Sciences (NS), which is somewhat obvious, but the second most common college is Engineering, Computer Science and Construction Management. 
+
+
 ```{r college}
+campus.college <- campus_props %>% filter(var=="college_name") %>% 
+                mutate(college_name=level) %>% 
+                select(term_idx, term, college_name, pct)
+
+
 rt <- chem %>%
   group_by(term_idx, college_name) %>%
   summarise(n=n()) %>%
-  mutate(pct=n/sum(n))
+  mutate(pct=n/sum(n), term="Chemistry 111") %>% 
+  bind_rows(campus.college)
+
+
 ggplot(rt, aes(x=term_idx, y=pct, col=college_name, group=college_name)) + geom_point() +
-  scale_y_continuous(labels = scales::percent_format(), limits = c(0,.5)) + xlab("Semester") + ylab(" ") +
-  geom_smooth(se=FALSE) + theme_bw() + scale_color_discrete(name = "College Name")
+  scale_y_continuous(labels = scales::percent_format(), limits = c(0,.5)) + xlab("Semester") +
+  ylab(" ") + geom_smooth(se=FALSE) + theme_bw() + theme(legend.position="bottom") + 
+  scale_color_discrete(name = "College of Enrollment") + facet_wrap(~term)
+
+rm(rt, campus.college)
 ```
   
   
@@ -607,7 +514,7 @@ rm(a, slt)
 
   
 
-### Units taken this semester
+### Current units in progress
 
 ```{r units}
 utt <- chem %>% 
@@ -622,7 +529,144 @@ ggplot(utt, aes(x=term_idx, y=mean, col=term, group=term)) +
   xlab("Semester") + scale_y_continuous()
 ```
   
+### Term level GPA
+
+This was a last minute addition that I thought would be interesting to look at, but I didn't have the campus level term GPA readily available. So the campus level GPA for the past five years was obtained in aggregate from the Institutional Research Reporting website.
+
+Students taking Chemistry 111 have a much lower average GPA compared to the average Chico State student. There could be a number of reasons at play here, the least of which is that this is college dependent. If the raw data were available then a more accurate comparison would be to compare the term level GPA to the campus average - within at least the same college. Furthermore, when you are taking an average of around 15 thousand students, an _average_ GPA change of 0.2 (F12 to S13) seems like a data mistake to me. 
+
+```{r termgpa}
+campus.ave.gpa <- data.frame(term_idx = c("F12", "S13", "F13", "S14", "F14", "S15", "F15", "S16", "F16"), 
+                             mean = c(3, 2.81, 2.83, 2.82, 2.84, 2.82, 2.83, 2.85, 2.87), 
+                             term = "Campus Average")
+
+tg <- chem %>% 
+  filter(term_idx != "NA") %>%
+  group_by(term, term_idx, section) %>% 
+  summarise(mean = mean(term_gpa, na.rm=TRUE)) %>%
+  bind_rows(campus.ave.gpa) %>% ungroup() %>% 
+  mutate(term_gpa = round(mean,2),
+         term_idx = factor(term_idx, 
+                      levels = c("F09", "S10", "F10", "S11", "F11", "S12", "F12", "S13", 
+                                "F13", "S14", "F14", "S15", "F15", "S16", "F16")))
+
+a <- ggplot(tg, aes(x=term_idx, y=term_gpa, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab("GPA ") + 
+  scale_color_manual(values=c("black", term.col), name = "Term")+ theme_bw() +
+  xlab("Semester") + 
+  scale_y_continuous(limits=c(2, 3.5))
+
+
+ggplotly(a, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
+
+rm(a, tg, campus.ave.gpa)
+
+```
+
+## Tests and Benchmarks +
+
+### Admission Index
+Students enrolling in Chemistry 111 tend to have a higher admissions index (high school eligibility index (HSEI)) than the average student on campus. This average is created based on all students on campus during that semester, but the HSEI measure is only created upon admission. 
+
+There was a lot of variation in the average index prior to around 2013, the campus level HSEI in Spring 10 was 3.44, up to 3.66 in Fall 10, back down to 3.26 in Spring 11, and up again to 3.60 in the Fall. 
+
+There may be a slight upward trend for both Chemistry student and the campus average, after 2014 we see class level averages for Chemistry courses that are over 3.8. 
+
+
+```{r hsei}
+ave <- campus_aves %>% filter(var=="admission_index") %>% 
+          select(term, term_idx, mean) 
+            
+ai <- chem %>% 
+  filter(term_idx != "NA") %>%
+  group_by(term, term_idx, section) %>% 
+  summarise(mean = mean(admission_index, na.rm=TRUE)) %>%
+  bind_rows(ave) %>% mutate(mean=round(mean,2))
+
+a <- ggplot(ai, aes(x=term_idx, y=mean, col=term, group=term)) +
+      geom_point(size=3) + geom_smooth(se=FALSE) + ylab("Admissions Index") + 
+      scale_color_manual(values=c("grey20", term.col), name = "Term")+ theme_bw() +
+      xlab("Semester") + 
+      scale_y_continuous(limits=c(3, 4))
+  
+ggplotly(a, tooltip = c("y", "x", "group")) %>% config(displayModeBar = F)
+
+rm(ai, ave, a)
+```
+
+
+### GE-Breadth Course Completion Status
+
+Next we look at the proportion of students who have completed their General Education English (A2), Critical Thinking (A3), or Quantitative Reasoning (A4) requirements _before_ enrolling in Chemistry 111. Since this is depending on the student taking chemistry, no campus level comparisons are appropriate here. 
+
+Less than 30% of students have any of their Area A GE requirements completed prior to taking Chemistry. This is not unexpected since Chem 111 is a freshman level course. Students who don't come in with some sort of transfer or AP credit would not have these requirements met. The patterns for English and Math track together, with critical thinking having the same trend across years but shifted down about 4-6%. 
+
+```{r ge}
+matht <- chem %>%
+  filter(term_idx != "NA") %>%
+  group_by(term_idx, section) %>% 
+  summarise(prop = mean(gemathdone, na.rm=TRUE)) %>%
+  mutate(GE = "Math")
+engt <- chem %>%
+  filter(term_idx != "NA") %>%
+  group_by(term_idx, section) %>% 
+  summarise(prop = mean(geenlgdone, na.rm=TRUE)) %>%
+  mutate(GE = "English")  
+critt <- chem %>%
+  filter(term_idx != "NA") %>%
+  group_by(term_idx, section) %>% 
+  summarise(prop = mean(gecritdone, na.rm=TRUE)) %>%
+  mutate(GE = "Critical Thinking")
+
+get <- rbind(matht, engt, critt) %>% mutate(pct_complete = round(prop, 3))
+
+
+a <- ggplot(get, aes(x=term_idx, y=pct_complete, col=GE, group=GE)) + geom_point() + xlab("Semester") + 
+  ylab(" ") + geom_smooth(se=FALSE) + theme_bw() +
+  scale_y_continuous(limits=c(0, .5), labels = scales::percent_format())
+
+ggplotly(a, tooltip = c("y", "x", "group")) %>% config(displayModeBar = F)
+
+rm(matht, engt, critt, a)
+```
   
 
+### Entry Level Proficiency
 
+Entry level Math and English proficiency are assessed at the time of admission using the ELM and EPT respectively. However students who do not pass these tests can become proficient by taking specific remedial classes. This section looks to see if students are considered Entry level Math and English proficient by the time they take Chemistry. Campus comparisons are similarly not available.  
 
+Overall more than 85% of the students taking Chemistry 111 are considered to have entry level math and English proficiency. A higher percent of the Fall cohort historically is English proficient compared to the Spring cohort. 
+
+```{r elmept, fig.width=12}
+entry <- chem %>%
+  filter(term_idx != "NA") %>%
+  group_by(term, term_idx, section) %>% 
+  summarise(ELM = mean(elm, na.rm=TRUE), 
+            EPT = mean(ept, na.rm=TRUE)) %>% ungroup() 
+
+expandvars <- c("ELM","EPT")
+
+entry.long <- reshape(as.data.frame(entry), 
+                  idvar=c("term_idx","section"),
+                  varying=list(expandvars),
+                  v.names=c("pct_complete"),
+                  times=expandvars,
+                  direction="long") %>% mutate(test = time, pct_complete = round(pct_complete, 3))
+
+e <- ggplot(entry.long, aes(x=term_idx, y=pct_complete, col=term, group=term)) +
+  geom_point() + geom_smooth(se=FALSE) + ylab(" ") + xlab("Semester") +
+  scale_color_manual(values=term.col, name = "Term") + theme_bw() +
+  scale_y_continuous(labels = scales::percent_format(), limits=c(.5,1)) + 
+  facet_wrap(~test)
+
+ggplotly(e, tooltip = c("y", "x", "group"))%>% config(displayModeBar = F)
+
+rm(e, entry, expandvars, entry.long)
+
+```
+  
+
+  
+### College prep
+
+    

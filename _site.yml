@@ -3,19 +3,16 @@ output_dir: "."
 navbar:
   title: "SUSTAINING SUCCESS IN CHEMISTRY"
   left:
-    - text: "Overview"
+    - text: "Abstract"
       href: index.html
-      menu:
-        - text: "Background"
-          href: bg.html
-        - text: "Activities"
-          href: activities.html
-    - text: "Analysis"
-      menu: 
-        - text: "Historical Trends"
-          href: trends.html
-        - text: "Course Redesign"
-          href: crt.html
+    - text: "Background"
+      href: bg.html
+    - text: "Activities"
+      href: activities.html
+    - text: "Historical Trends"
+      href: trends.html
+    - text: "Redesign Analysis"
+      href: crt.html
     - text: "Impact"
       href: impact.html
   right:

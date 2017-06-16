@@ -5,7 +5,7 @@
     - And even then several updates to the data were necessary due to finding out that variables that we thought measured one thing, really did not. 
 * The first task is to explore longitudinal trends in student characteristics and performance measures. 
 * Then we use student data to identify student characteristics (demographics, academic preparation, academic status) that are statistically significantly associated with GPA in Chem 111. 
-* Lastly we analyze the effect of the course redesign on GPA in Chem 111 after controlling for characteristics that were found to be associated with student success. . 
+* Lastly we analyze the effect of the course redesign on GPA in Chem 111 after controlling for characteristics that were found to be associated with student success.
 
 
 # Describe the completed project activities, outcomes, and deliverables.
