@@ -1,28 +1,12 @@
 # Timeline
 
-* The original timeline consisted of data collection and analysis completed in Fall, development of departmental recommendations and possible extensions to Chem 112 to occur in Spring. 
-* Due to disorganized nature of student information storage, coupled with a major campus wide Data Infrastructure systems overhaul occurring at the same time, clean, mostly accurate data was not fully obtained until Spring. 
-    - And even then several updates to the data were necessary due to finding out that variables that we thought measured one thing, really did not. 
-* The first task is to explore longitudinal trends in student characteristics and performance measures. 
-* Then we use student data to identify student characteristics (demographics, academic preparation, academic status) that are statistically significantly associated with GPA in Chem 111. 
-* Lastly we analyze the effect of the course redesign on GPA in Chem 111 after controlling for characteristics that were found to be associated with student success.
+* 
 
 
 # Describe the completed project activities, outcomes, and deliverables.
-This project
 
-* serves as a pilot study from which to build a more generalizable framework to analyze efforts and programs designed to improve student success across campus.
-* provides a picture of the type of student that succeeds in Chem 111.
-* rigorously analyzes the effect of course redesign on student success.
-* provides a valuable part of the process improvement in student success. 
+* 
 
 
 
-# The Project Team
-
-* **Robin Donatello** Faculty, Department of Mathematics and Statistics. Statistics and Data expert. 
-* **Erik Wasinger** Faculty, Department of Chemistry and Biochemistry. Subject matter expert and implementer of the original (and sustaining) redesign. 
-* **Ricardo Aguilar** Undergraduate student of Statistics and Data Science. Data Analyst. 
-
-The project team met weekly during Spring 16 to discuss analysis results. This is a necessary component to any statistical analysis. Erik is essential to the analysis to put context and meaning to the data that the statisticians and analysts (Robin and Ricardo) generate. As initial results are discussed, interesting relationships emerge that inevitably raise more research questions from Erik, that Robin and Ricardo turn into statistical questions, code, and more results to discuss and put into the bigger picture.  
 

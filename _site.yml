@@ -1,7 +1,7 @@
-name: "Robin Donatello"
+name: "Kathleen Johnson"
 output_dir: "."
 navbar:
-  title: "SUSTAINING SUCCESS IN CHEMISTRY"
+  title: "Research Project"
   left:
     - text: "Abstract"
       href: index.html
@@ -9,19 +9,14 @@ navbar:
       href: bg.html
     - text: "Activities"
       href: activities.html
-    - text: "Historical Trends"
-      href: trends.html
-    - text: "Redesign Analysis"
       href: crt.html
-    - text: "Impact"
-      href: impact.html
+    - text: "Results"
+      href: results.html
   right:
       - text: ""
         icon: fa-envelope-o
-        href: mailto:rdonatello@csuchico.edu
-      - text: ""
-        icon: fa-github-alt
-        href: https://github.com/norcalbiostat
+        href: mailto:kjohnson156@csuchico.edu
+     
 output:
   html_document:
     theme: cosmo
