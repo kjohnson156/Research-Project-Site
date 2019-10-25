@@ -9,7 +9,6 @@ navbar:
       href: bg.html
     - text: "Activities"
       href: activities.html
-      href: crt.html
     - text: "Results"
       href: results.html
   right:
