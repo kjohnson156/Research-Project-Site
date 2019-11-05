@@ -1,11 +1,16 @@
-# Timeline
+# Study Design
 
-* 
+* This study design uses a pre and post-survey to examine the impact of a nutrition lesson on college students. The pilot study utilized quantitative research methods to evaluate the short-term impact of the lesson in changing the knowledge, skills, and perceived confidence of the college students regarding assisting this low-income, drug and/or alcohol addicted population. 
+* Prior to implementation, this study was approved by the University Human Subjects in Research Committee (HSRC) board in accordance with CSU, Chico’s research policy. All participants were provided a consent statement at the beginning of the survey. 
 
 
-# Describe the completed project activities, outcomes, and deliverables.
+# Participants & Procedure
 
-* 
+* A convenience sample of participants was recruited from the California State University, Chico Nutrition and Food Science department. The course selected to implement these lessons is an upper division course. Inclusion criteria includes being a college student currently majoring in Nutrition and Food Science, 18 years old or older and must be able to understand, read and write in English. The final sample size was 22 matched pre-post surveys.  
+The course that the lesson was administered in was NFSC 465 Community Nutrition. This course was selected due to content including briefly discussing resources available for low-income populations in general and learning about the development of interventions from the need’s assessment through the evaluation of the intervention after implementation. The lesson was a total of four hours long and spanned two class periods. 
+* Each two-hour lesson developed for the intervention was based on the literature regarding this specific population and the qualitative information that another researcher obtained and analyzed from semi-structured interviews with women in drug and alcohol recovery. The first lesson consisted of topics including: describing the population, identifying this population, and how best to communicate in a non-judgmental way. The second lesson included topics consisting of: identifying specific barriers this population experiences and how best to address those barriers to improve their nutritional status. 
+* The lessons incorporated how to approach these subjects in a non-judgmental way utilizing popular methods employed by nutrition professionals currently. Non-judgmental communication is important so that they seek out and/or continue to utilize services that are advised to them. It is especially vital to this population since there is a high concern of judgement and shaming. Materials were developed and provided to the students to emphasize lesson topics. 
+
 
 
 
