@@ -1,0 +1,15 @@
+---
+title: "Results"
+author: "Kathleen Johnson"
+date: "11/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+survey <-read.csv("C:\\Users\\kjohnson156\\Documents\\Research-Project-Site\\Survey Data.csv")
+```
+
