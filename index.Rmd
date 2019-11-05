@@ -1,14 +1,17 @@
 
 # Abstract
 
-As any instructor will tell you, teaching is an ever evolving project. You can always "do better", you can always "get better" at teaching. The content may stay stagnant, the instructor may stay stagnant, but the face and characteristics of the students being served are always changing. 
+*Background* Drug addiction prevalence continues to grow in this society, and negatively impacts individuals and the community in various ways including crime, medical and judicial costs, overdose, etc. A holistic approach to prevention and treatment of drug addiction is being recommended which includes nutrition professionals.  However, this population is not being covered by curriculum in nutrition courses at the college level. This pilot study examined the effect of a lesson delivered to college students in a nutrition course at California State University, Chico about individuals in drug addiction or recovery and if that altered their perceived confidence, knowledge and skills.
 
-This project enhances a current current [Sustaining Success](https://contentbuilder.merlot.org/toolkit/users/ewasinger/csuc-genchem-sustaining-success)  project designed to improve student performance in Chemistry 111 (increased GPA, decrease DWF rate) by providing a deeper look at the characteristics of who takes this course, and who passes this course. It is essential for faculty and administrators to have a holistic view of their students, and not consider the effects of changes such as a course redesign independent of other factors that affect student success. This project uses data mining techniques to examine historical trends and assess the impact of the redesign while controlling for other relevant factors. 
+<hr>
+
+*Methods* A curriculum was developed and implemented to these college students, along with a pre-post survey, that described individuals in drug addiction or recovery, their specific barriers, and how to help them overcome their barriers. There were 22 students that participated in this study. A Wilcoxon Signed Ranks test using SPSS was run to assess changes in mean pre to post scores for the three expected domains: perceived confidence, skills and knowledge. A Pearson’s Correlation was used to examine any relationship between age and change in pre to post survey scores. 
 
 
 <hr>
 
-<p>This work was conducted under a <a href="http://courseredesign.csuprojects.org/wp/sustaining-success/">Sustaining Success in Course Redesign Project</a> funded by the CSU Chancelors Office for 2016-17. The results and views expressed from this work do not represent official views from the CSU System, California State University, Chico nor any of the Colleges and Departments within. </p>
+<p>*Results* There was a significant increase in pre to post scores for perceived confidence (z = -2.005, p = .045), skills (z = -3.402, p = .001), and knowledge (z = -3.004, p = .003). There was no significance when comparing age and change in pre-post survey scores.
+Conclusion This pilot study shows that providing college students with education on this population increases the students perceived confidence, skill level and knowledge. </p>
 
 
 
