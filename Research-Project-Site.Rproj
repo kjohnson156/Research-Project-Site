@@ -13,4 +13,4 @@ RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
 BuildType: Website
-WebsitePath: C:/GitHub/chem_ss
+WebsitePath: ~/Research-Project-Site
