@@ -10,7 +10,7 @@
 
 <hr>
 
-<p>*Results* There was a significant increase in pre to post scores for perceived confidence (z = -2.005, p = .045), skills (z = -3.402, p = .001), and knowledge (z = -3.004, p = .003). There was no significance when comparing age and change in pre-post survey scores.
+<p>*Results* There was a significant increase in positive scores for perceived confidence (z = -2.005, p = .045), skills (z = -3.402, p = .001), and knowledge (z = -3.004, p = .003). There was no significance when comparing age and change in pre-post survey scores.
 Conclusion This pilot study shows that providing college students with education on this population increases the students perceived confidence, skill level and knowledge. </p>
 
 
